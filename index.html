@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bomisu.pl — Serwer Minecraft</title>
+<meta name="description" content="Bomisu.pl — polski serwer Minecraft. Tryby: Castle, TNT Tag i Flag Hunt. Dołącz do nas!" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --bg2:#111119;
+    --card:#16161f;
+    --border:#23232e;
+    --red:#ff3b3b;
+    --orange:#ff8a3b;
+    --text:#e8e8ef;
+    --muted:#8a8a9a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:16px 32px;
+    display:flex;justify-content:space-between;align-items:center;
+    background:rgba(10,10,15,.75);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+  }
+  .logo{
+    font-weight:900;font-size:22px;letter-spacing:-.5px;
+    background:linear-gradient(135deg,var(--red),var(--orange));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  nav ul{display:flex;gap:28px;list-style:none}
+  nav a{color:var(--muted);text-decoration:none;font-weight:600;font-size:14px;transition:.2s}
+  nav a:hover{color:var(--text)}
+  @media(max-width:700px){nav ul{display:none}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;padding:120px 20px 60px;
+    position:relative;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255,59,59,.15), transparent 45%),
+      radial-gradient(circle at 80% 70%, rgba(255,138,59,.12), transparent 45%),
+      var(--bg);
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:60px 60px;
+    mask-image:radial-gradient(circle at center, black 30%, transparent 75%);
+    -webkit-mask-image:radial-gradient(circle at center, black 30%, transparent 75%);
+    pointer-events:none;
+  }
+  .hero > *{position:relative;z-index:1}
+  .badge{
+    display:inline-block;padding:6px 14px;border-radius:99px;
+    background:rgba(255,59,59,.12);border:1px solid rgba(255,59,59,.3);
+    color:var(--red);font-size:13px;font-weight:700;
+    margin-bottom:24px;letter-spacing:.5px;
+  }
+  .hero h1{
+    font-size:clamp(48px,9vw,110px);
+    font-weight:900;letter-spacing:-3px;line-height:1;
+    background:linear-gradient(180deg,#fff 30%, #b0b0c0 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    margin-bottom:20px;
+  }
+  .hero p.sub{
+    font-size:clamp(16px,2vw,20px);color:var(--muted);
+    max-width:600px;margin-bottom:40px;
+  }
+
+  .ip-box{
+    display:inline-flex;align-items:center;gap:14px;
+    padding:16px 20px;border-radius:14px;
+    background:var(--card);border:1px solid var(--border);
+    margin-bottom:36px;
+    transition:.2s;
+  }
+  .ip-box:hover{border-color:rgba(255,59,59,.5)}
+  .ip-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+  .ip-value{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .copy-btn{
+    background:linear-gradient(135deg,var(--red),var(--orange));
+    border:none;color:#fff;padding:10px 18px;border-radius:10px;
+    font-weight:700;cursor:pointer;font-size:14px;transition:.2s;
+    font-family:inherit;
+  }
+  .copy-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,59,59,.35)}
+  .copy-btn:active{transform:translateY(0)}
+
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 26px;border-radius:12px;
+    text-decoration:none;font-weight:700;font-size:15px;
+    transition:.2s;border:1px solid transparent;
+  }
+  .btn-primary{background:#5865F2;color:#fff}
+  .btn-primary:hover{background:#4752c4;transform:translateY(-2px)}
+  .btn-ghost{background:transparent;color:var(--text);border-color:var(--border)}
+  .btn-ghost:hover{border-color:var(--text)}
+
+  /* ---------- SEKCJE ---------- */
+  section{padding:100px 24px;max-width:1200px;margin:0 auto}
+  .section-title{
+    font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-1.5px;
+    margin-bottom:12px;
+  }
+  .section-sub{color:var(--muted);font-size:17px;margin-bottom:56px;max-width:600px}
+
+  /* ---------- TRYBY ---------- */
+  .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+  .mode{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:20px;padding:32px;position:relative;overflow:hidden;
+    transition:.3s;
+  }
+  .mode::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--red),var(--orange));
+    transform:scaleX(0);transform-origin:left;transition:.4s;
+  }
+  .mode:hover{transform:translateY(-6px);border-color:rgba(255,59,59,.3)}
+  .mode:hover::before{transform:scaleX(1)}
+  .mode-icon{
+    width:56px;height:56px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;margin-bottom:20px;
+    background:rgba(255,59,59,.1);border:1px solid rgba(255,59,59,.2);
+  }
+  .mode h3{font-size:24px;font-weight:800;margin-bottom:10px;letter-spacing:-.5px}
+  .mode p{color:var(--muted);font-size:15px}
+  .mode .tag{
+    display:inline-block;margin-top:18px;padding:4px 12px;border-radius:99px;
+    font-size:12px;font-weight:700;letter-spacing:.5px;
+    background:rgba(255,138,59,.1);color:var(--orange);
+    border:1px solid rgba(255,138,59,.25);
+  }
+  .mode.coming{opacity:.6}
+  .mode.coming .tag{background:rgba(138,138,154,.1);color:var(--muted);border-color:var(--border)}
+
+  /* ---------- DISCORD ---------- */
+  .discord-card{
+    background:linear-gradient(135deg, rgba(88,101,242,.12), rgba(88,101,242,.03));
+    border:1px solid rgba(88,101,242,.3);
+    border-radius:24px;padding:56px 40px;text-align:center;
+  }
+  .discord-card h2{font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-1px;margin-bottom:14px}
+  .discord-card p{color:var(--muted);font-size:17px;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+
+  /* ---------- STOPKA ---------- */
+  footer{
+    border-top:1px solid var(--border);
+    padding:48px 24px 40px;
+    text-align:center;color:var(--muted);font-size:14px;
+  }
+  footer .logo{margin-bottom:16px;font-size:20px}
+  footer .credits{margin-top:20px;font-size:13px;opacity:.7}
+  footer .credits span{color:var(--text);font-weight:600}
+
+  /* ---------- TOAST ---------- */
+  .toast{
+    position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--card);border:1px solid var(--border);
+    padding:14px 24px;border-radius:12px;font-weight:600;font-size:14px;
+    opacity:0;transition:.3s;z-index:200;pointer-events:none;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">BOMISU.PL</div>
+  <ul>
+    <li><a href="#tryby">Tryby</a></li>
+    <li><a href="#discord">Discord</a></li>
+    <li><a href="#stopka">Kontakt</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="badge">🔥 SERWER OTWARTY</div>
+  <h1>BOMISU.PL</h1>
+  <p class="sub">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag i wkrótce Flag Hunt. Wbijaj i graj z nami!</p>
+
+  <div class="ip-box">
+    <div>
+      <div class="ip-label">IP Serwera</div>
+      <div class="ip-value" id="ip">bomisu.pl</div>
+    </div>
+    <button class="copy-btn" onclick="copyIP()">Kopiuj IP</button>
+  </div>
+
+  <div class="cta-row">
+    <a href="https://discord.gg/e549Sp9DG" target="_blank" rel="noopener" class="btn btn-primary">
+      💬 Dołącz na Discord
+    </a>
+    <a href="#tryby" class="btn btn-ghost">Zobacz tryby ↓</a>
+  </div>
+</header>
+
+<!-- TRYBY -->
+<section id="tryby">
+  <h2 class="section-title">Nasze tryby</h2>
+  <p class="section-sub">Każdy tryb to inna rozgrywka. Wybierz swój styl i baw się dobrze.</p>
+
+  <div class="modes">
+    <div class="mode">
+      <div class="mode-icon">🏰</div>
+      <h3>Castle</h3>
+      <p>Atak na zamek w dwóch drużynach. Bronisz swojej twierdzy albo ruszasz do szturmu. Kto przetrwa, ten wygrywa.</p>
+      <span class="tag">DRUŻYNOWY</span>
+    </div>
+
+    <div class="mode">
+      <div class="mode-icon">💣</div>
+      <h3>TNT Tag</h3>
+      <p>Berek w Minecraft z TNT. Uciekaj przed bombą, przekazuj ją dalej i nie daj się wysadzić. Chaos gwarantowany.</p>
+      <span class="tag">CHAOS</span>
+    </div>
+
+    <div class="mode coming">
+      <div class="mode-icon">🚩</div>
+      <h3>Flag Hunt</h3>
+      <p>5 vs 5, motyki jako pistolety, strzały zamiast kul. Kradniesz flagę wroga albo eliminujesz całą drużynę. Wkrótce!</p>
+      <span class="tag">WKRÓTCE</span>
+    </div>
+  </div>
+</section>
+
+<!-- DISCORD -->
+<section id="discord">
+  <div class="discord-card">
+    <h2>Dołącz do społeczności</h2>
+    <p>Wszystkie informacje, eventy i rozmowy dzieją się na naszym Discordzie. Wpadnij, poznaj ekipę i graj z nami.</p>
+    <a href="https://discord.gg/e549Sp9DG" target="_blank" rel="noopener" class="btn btn-primary">
+      💬 discord.gg/e549Sp9DG
+    </a>
+  </div>
+</section>
+
+<!-- STOPKA -->
+<footer id="stopka">
+  <div class="logo">BOMISU.PL</div>
+  <div>Polski serwer Minecraft • Wszystkie prawa zastrzeżone</div>
+  <div class="credits">
+    Strona: <span>Ty</span> • Kod: <span>jolti</span> • Marketing: <span>ziomek od TikToków</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast">IP skopiowane!</div>
+
+<script>
+  function copyIP(){
+    const ip = document.getElementById('ip').textContent.trim();
+    navigator.clipboard.writeText(ip).then(() => {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    });
+  }
+</script>
+</body>
+</html>
