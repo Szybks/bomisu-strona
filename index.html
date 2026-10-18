@@ -7,8 +7,7 @@
 <meta name="description" content="Bomisu.pl — polski serwer Minecraft. Tryby: Castle, TNT Tag i Flag Hunt. Dołącz do nas!" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Dodane czcionki w klimacie Minecrafta -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#07090f;
@@ -17,6 +16,7 @@
     --blue:#4f8dff;
     --cyan:#22d3ee;
     --green:#10b981;
+    --green-dark:#059669;
     --text:#e8eaf2;
     --muted:#8a92a8;
   }
@@ -30,14 +30,12 @@
     overflow-x:hidden;
   }
 
-  /* Czcionki Minecraftowe */
-  .mc-font {
-    font-family: 'Press Start 2P', cursive;
-    line-height: 1.4;
-  }
-  .mc-num {
-    font-family: 'VT323', monospace;
-    font-size: 1.2em;
+  /* Stylizacja sekcji na styl Minecrafta (Ekwipunek) */
+  .mc-panel {
+    background: #1a202c;
+    border: 4px solid #0f141e;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.1);
+    border-radius: 8px;
   }
 
   /* NAV */
@@ -47,11 +45,10 @@
     display:flex;justify-content:space-between;align-items:center;
     background:rgba(7,9,15,.85);
     backdrop-filter:blur(12px);
-    border-bottom:1px solid var(--border);
+    border-bottom:2px solid var(--border);
   }
   .logo{
-    font-family: 'Press Start 2P', cursive;
-    font-size:18px;
+    font-weight:900;font-size:24px;letter-spacing:-.5px;
     background:linear-gradient(135deg,var(--blue),var(--cyan));
     -webkit-background-clip:text;background-clip:text;color:transparent;
     text-decoration: none;
@@ -84,12 +81,11 @@
   }
   .hero > *{position:relative;z-index:1}
   .hero h1{
-    font-family: 'Press Start 2P', cursive;
-    font-size:clamp(32px,6vw,64px);
-    margin-bottom:24px;
+    font-size:clamp(48px,9vw,110px);
+    font-weight:900;letter-spacing:-3px;line-height:1;
     background:linear-gradient(180deg,#fff 30%, #a8b4d0 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-shadow: 0 4px 20px rgba(79,141,255,0.3);
+    margin-bottom:20px;
   }
   .hero p.sub{
     font-size:clamp(16px,2vw,20px);color:var(--muted);
@@ -101,15 +97,13 @@
     display:flex;gap:12px;margin-bottom:40px;flex-wrap:wrap;justify-content:center;
   }
   .cd-box{
-    background:var(--card);border:1px solid var(--border);
-    border-radius:12px;padding:14px 18px;min-width:82px;
+    background:var(--card);border:2px solid var(--border);
+    border-radius:8px;padding:14px 18px;min-width:82px;
     text-align:center;
   }
   .cd-num{
-    font-family: 'VT323', monospace;
-    font-size:38px;
+    font-size:32px;font-weight:900;letter-spacing:-1px;line-height:1;
     color:var(--cyan);
-    line-height:1;
   }
   .cd-lbl{
     font-size:11px;color:var(--muted);text-transform:uppercase;
@@ -122,7 +116,7 @@
 
   .ip-box{
     display:inline-flex;align-items:center;gap:14px;
-    padding:16px 20px;border-radius:12px;
+    padding:16px 20px;border-radius:8px;
     background:var(--card);border:2px solid var(--border);
     margin-bottom:36px; transition:.2s;
   }
@@ -131,7 +125,7 @@
   .ip-value{font-size:20px;font-weight:800;letter-spacing:-.5px}
   .copy-btn{
     background:linear-gradient(135deg,var(--blue),var(--cyan));
-    border:none;color:#fff;padding:10px 18px;border-radius:8px;
+    border:none;color:#fff;padding:10px 18px;border-radius:6px;
     font-weight:700;cursor:pointer;font-size:14px;transition:.2s;
     font-family:inherit;
   }
@@ -140,7 +134,7 @@
   .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
   .btn{
     display:inline-flex;align-items:center;gap:10px;
-    padding:14px 26px;border-radius:8px;
+    padding:14px 26px;border-radius:6px;
     text-decoration:none;font-weight:700;font-size:15px;
     transition:.2s;border:1px solid transparent;
   }
@@ -152,26 +146,25 @@
   /* SECTIONS */
   section{padding:100px 24px;max-width:1200px;margin:0 auto}
   .section-title{
-    font-family: 'Press Start 2P', cursive;
-    font-size:clamp(20px,4vw,32px);
-    margin-bottom:16px;
-    color: #fff;
+    font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-1.5px;
+    margin-bottom:12px;
   }
   .section-sub{color:var(--muted);font-size:17px;margin-bottom:56px;max-width:600px}
 
-  /* MODES */
+  /* MODES (Klimat ekwipunku) */
   .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
   .mode{
     background:var(--card);border:2px solid var(--border);
-    border-radius:12px;padding:32px;position:relative;overflow:hidden;
+    border-radius:8px;padding:32px;position:relative;overflow:hidden;
     transition:.3s;
   }
   .mode:hover{transform:translateY(-6px);border-color:var(--blue)}
   .mode-icon{
-    width:56px;height:56px;border-radius:8px;
+    width:56px;height:56px;border-radius:6px;
     display:flex;align-items:center;justify-content:center;
     font-size:28px;margin-bottom:20px;
-    background:rgba(79,141,255,.1);border:1px solid rgba(79,141,255,.25);
+    background:#1a202c;
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.1);
   }
   .mode h3{font-size:24px;font-weight:800;margin-bottom:10px;}
   .mode p{color:var(--muted);font-size:15px}
@@ -184,15 +177,17 @@
   .mode.coming{opacity:.6}
   .mode.coming .tag{background:rgba(138,146,168,.1);color:var(--muted);border-color:var(--border)}
 
-  /* SKLEP - GEMY */
+  /* SKLEP - SUWAK GEMÓW */
   .shop-box {
-    background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: 16px;
+    background: #1a202c;
+    border: 4px solid #0f141e;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.1);
+    border-radius: 12px;
     padding: 40px;
-    max-width: 800px;
+    max-width: 700px;
     margin: 0 auto;
   }
+  
   .shop-box h3 {
     font-size: 24px;
     text-align: center;
@@ -208,14 +203,15 @@
   .nick-input {
     width: 100%;
     padding: 16px;
-    background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 8px;
+    background: #0f141e;
+    border: 2px solid #2d3748;
+    border-radius: 4px;
     color: #fff;
     font-size: 16px;
     font-family: 'Inter', sans-serif;
     margin-bottom: 30px;
     transition: .2s;
+    text-align: center;
   }
   .nick-input:focus {
     outline: none;
@@ -223,86 +219,145 @@
     box-shadow: 0 0 0 3px rgba(79,141,255,0.2);
   }
 
-  .gem-packs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+  /* Slider i Input Kwoty */
+  .slider-container {
+    background: #0f141e;
+    padding: 30px 20px;
+    border-radius: 8px;
+    border: 2px solid #2d3748;
     margin-bottom: 30px;
+    text-align: center;
   }
 
-  .gem-card {
-    background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: .2s;
-    position: relative;
+  .amount-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
   }
-  .gem-card:hover {
-    border-color: var(--cyan);
-    transform: translateY(-4px);
-  }
-  .gem-card.selected {
-    border-color: var(--green);
-    background: rgba(16, 185, 129, 0.05);
-  }
-  .gem-card .price {
-    font-family: 'VT323', monospace;
-    font-size: 32px;
+
+  .amount-input {
+    width: 120px;
+    font-size: 42px;
+    font-weight: 900;
+    background: transparent;
+    border: none;
     color: #fff;
-    margin-bottom: 8px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    border-bottom: 2px dashed var(--border);
   }
-  .gem-card .amount {
-    font-size: 18px;
+  .amount-input:focus {
+    outline: none;
+    border-bottom-color: var(--cyan);
+  }
+
+  .amount-currency {
+    font-size: 32px;
     font-weight: 800;
-    color: var(--cyan);
-    margin-bottom: 4px;
+    color: var(--muted);
   }
-  .gem-card .bonus {
-    font-size: 13px;
-    color: var(--green);
-    font-weight: 700;
-    background: rgba(16,185,129,.1);
-    padding: 2px 8px;
+
+  /* Stylizacja suwaka (Range) */
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+    margin: 20px 0;
+  }
+  input[type=range]:focus {
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    background: #2d3748;
+    border-radius: 6px;
+    border: 2px solid #0f141e;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    height: 28px;
+    width: 16px;
     border-radius: 4px;
-    display: inline-block;
+    background: var(--cyan);
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -10px;
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.3);
+  }
+  input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    background: #2d3748;
+    border-radius: 6px;
+    border: 2px solid #0f141e;
+  }
+  input[type=range]::-moz-range-thumb {
+    height: 28px;
+    width: 16px;
+    border-radius: 4px;
+    background: var(--cyan);
+    cursor: pointer;
+    border: none;
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.3);
+  }
+
+  .gem-result {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--green);
+    margin-top: 15px;
+  }
+  .gem-result span {
+    font-size: 28px;
+    color: #fff;
+  }
+  .bonus-info {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 5px;
   }
 
   .checkout-btn {
     width: 100%;
     padding: 18px;
-    background: linear-gradient(135deg, var(--green), #059669);
+    background: var(--green);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 18px;
     font-weight: 800;
     cursor: pointer;
-    transition: .2s;
+    transition: .1s;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.3), inset 4px 4px 0px rgba(255,255,255,0.2);
   }
   .checkout-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(16,185,129,.4);
+    background: #0ea5e9;
+  }
+  .checkout-btn:active {
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.3), inset -4px -4px 0px rgba(255,255,255,0.2);
+    transform: translateY(2px);
   }
   .checkout-btn:disabled {
-    background: var(--border);
+    background: #2d3748;
     color: var(--muted);
     cursor: not-allowed;
-    transform: none;
     box-shadow: none;
+    transform: none;
   }
 
   /* DISCORD */
   .discord-card{
     background:linear-gradient(135deg, rgba(88,101,242,.12), rgba(88,101,242,.03));
     border:2px solid rgba(88,101,242,.3);
-    border-radius:16px;padding:56px 40px;text-align:center;
+    border-radius:12px;padding:56px 40px;text-align:center;
   }
   .discord-card h2{font-size:clamp(24px,4vw,36px);margin-bottom:14px}
   .discord-card p{color:var(--muted);font-size:17px;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
@@ -313,7 +368,7 @@
     padding:48px 24px 40px;
     text-align:center;color:var(--muted);font-size:14px;
   }
-  footer .logo{display:inline-block;margin-bottom:16px;font-size:18px}
+  footer .logo{display:inline-block;margin-bottom:16px;font-size:20px}
 </style>
 </head>
 <body>
@@ -391,37 +446,30 @@
   <p class="section-sub">Gemy to nasza waluta. Wymieniasz je w grze na rangi, ulepszenia i przedmioty. 1 Gem = 1 grosz.</p>
 
   <div class="shop-box">
-    <h3>Wybierz pakiet</h3>
+    <h3>Wybierz ilość</h3>
     <p class="desc">Za każde wydane 10 zł otrzymujesz dodatkowe <b>+5% Gemów</b>!</p>
 
-    <input type="text" id="mc-nick" class="nick-input" placeholder="Wpisz swój nick z Minecrafta (lub nick znajomego)" required>
+    <input type="text" id="mc-nick" class="nick-input" placeholder="Wpisz swój nick z Minecrafta" required>
 
-    <div class="gem-packs">
-      <!-- Pakiet 10 zł -->
-      <div class="gem-card" onclick="selectPack(1000, '10', this)">
-        <div class="price">10 zł</div>
-        <div class="amount">1000 Gemów</div>
-        <div class="bonus">+50 Gemów (5%)</div>
+    <div class="slider-container">
+      <div class="amount-wrapper">
+        <input type="number" id="amount-input" class="amount-input" value="10" min="5" max="100" step="1">
+        <span class="amount-currency">zł</span>
       </div>
-
-      <!-- Pakiet 20 zł -->
-      <div class="gem-card" onclick="selectPack(2000, '20', this)">
-        <div class="price">20 zł</div>
-        <div class="amount">2000 Gemów</div>
-        <div class="bonus">+200 Gemów (10%)</div>
+      
+      <!-- SUWAK -->
+      <input type="range" id="amount-slider" min="5" max="100" value="10" step="1">
+      
+      <div class="gem-result">
+        Otrzymasz: <span id="total-gems">1050</span> 💎
       </div>
-
-      <!-- Pakiet 50 zł -->
-      <div class="gem-card" onclick="selectPack(5000, '50', this)">
-        <div class="price">50 zł</div>
-        <div class="amount">5000 Gemów</div>
-        <div class="bonus">+1250 Gemów (25%)</div>
+      <div class="bonus-info" id="bonus-info">
+        (1000 bazowych + 50 bonusu)
       </div>
     </div>
 
-    <!-- Przycisk, który docelowo odpali Tebex.js -->
     <button class="checkout-btn" id="buy-btn" onclick="initCheckout()" disabled>
-      Wpisz nick i wybierz pakiet
+      Wpisz nick, aby przejść dalej
     </button>
   </div>
 </section>
@@ -448,7 +496,6 @@
   function copyIP(){
     const ip = document.getElementById('ip').textContent.trim();
     navigator.clipboard.writeText(ip).then(() => {
-      // Prosta zmiana tekstu przycisku
       const btn = document.querySelector('.copy-btn');
       const oldText = btn.textContent;
       btn.textContent = 'Skopiowano!';
@@ -457,17 +504,14 @@
   }
 
   // ====== COUNTDOWN ======
-  const betaEnd = new Date(2026, 9, 30, 23, 59, 59); // 30 października 2026
-
+  const betaEnd = new Date(2026, 9, 30, 23, 59, 59); 
   function updateCountdown(){
     const now = new Date().getTime();
     const distance = betaEnd.getTime() - now;
-
     if (distance < 0){
       document.getElementById('countdown').innerHTML = '<div class="cd-caption">✅ BETA ZAKOŃCZONA!</div>';
       return;
     }
-
     document.getElementById('cd-days').textContent = Math.floor(distance / (1000 * 60 * 60 * 24));
     document.getElementById('cd-hours').textContent = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     document.getElementById('cd-mins').textContent = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -476,68 +520,84 @@
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // ====== LOGIKA SKLEPU ======
-  let selectedPackId = null; // Tutaj będzie ID pakietu z Tebexa
+  // ====== LOGIKA SKLEPU (SUWAK) ======
+  const amountSlider = document.getElementById('amount-slider');
+  const amountInput = document.getElementById('amount-input');
+  const totalGemsEl = document.getElementById('total-gems');
+  const bonusInfoEl = document.getElementById('bonus-info');
+  const buyBtn = document.getElementById('buy-btn');
+  const nickInput = document.getElementById('mc-nick');
 
-  function selectPack(packageId, price, element) {
-    // Reset styles
-    document.querySelectorAll('.gem-card').forEach(c => c.classList.remove('selected'));
-    // Add style to clicked
-    element.classList.add('selected');
+  // Funkcja przeliczająca gemy
+  function calculateGems(pln) {
+    // 1 zł = 100 groszy = 100 gemów
+    const baseGems = pln * 100;
+    // Bonus: 5% za każde pełne 10 zł
+    const bonusPercent = Math.floor(pln / 10) * 5; 
+    const bonusGems = Math.floor(baseGems * (bonusPercent / 100));
+    const total = baseGems + bonusGems;
     
-    // Save pack ID
-    selectedPackId = packageId; // To jest ID pakietu (np. 1000, 2000, 5000), które przekażemy do Tebexa
+    // Aktualizacja UI
+    totalGemsEl.textContent = total.toLocaleString('pl-PL');
     
-    checkForm();
-  }
-
-  // Sprawdzanie czy nick jest wpisany i pakiet wybrany
-  document.getElementById('mc-nick').addEventListener('input', checkForm);
-
-  function checkForm() {
-    const nick = document.getElementById('mc-nick').value.trim();
-    const btn = document.getElementById('buy-btn');
-    
-    if(nick.length >= 3 && selectedPackId !== null) {
-      btn.disabled = false;
-      btn.textContent = "Przejdź do płatności";
-      btn.style.background = "linear-gradient(135deg, #10b981, #059669)";
+    if (bonusGems > 0) {
+      bonusInfoEl.textContent = `(${baseGems.toLocaleString('pl-PL')} bazowych + ${bonusGems.toLocaleString('pl-PL')} bonusu)`;
+      bonusInfoEl.style.color = 'var(--green)';
     } else {
-      btn.disabled = true;
-      btn.textContent = "Wpisz nick i wybierz pakiet";
-      btn.style.background = "var(--border)";
+      bonusInfoEl.textContent = `(Bez bonusu - doładuj min. 10 zł)`;
+      bonusInfoEl.style.color = 'var(--muted)';
     }
   }
 
-  // ====== INTEGRACJA Z TEBEX (TUTAJ JOLTI BĘDZIE DOPINAŁ) ======
-  function initCheckout() {
-    const nick = document.getElementById('mc-nick').value.trim();
+  // Synchronizacja suwaka i pola tekstowego
+  amountSlider.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value);
+    amountInput.value = val;
+    calculateGems(val);
+  });
+
+  amountInput.addEventListener('input', (e) => {
+    let val = parseInt(e.target.value);
+    if (isNaN(val)) val = 0;
+    if (val < 5) val = 5;
+    if (val > 100) val = 100;
     
-    if(!nick || !selectedPackId) return;
+    amountSlider.value = val;
+    calculateGems(val);
+  });
 
-    /* 
-      TUTAJ WKLEJEMY KOD TEBEXA (Tebex.js), ALE POTRZEBUJEMY DO NIEGO:
-      1. "ident" koszyka (wygenerowany w panelu Tebex / API)
-      2. Ustawienia, że kupujący ma nick "nick" (Tebex pozwala przekazać username w metadanych).
-      
-      Na razie, żeby to zadziałało, zrobimy przekierowanie z parametrem nicku.
-      Jolti będzie musiał to obsłużyć po stronie serwera, że jeśli ktoś kupi pakiet, 
-      to system sprawdza kto kupił i nadaje gemy dla tego nicku.
-    */
+  amountInput.addEventListener('blur', (e) => {
+    // Wyrównanie wartości po opuszczeniu pola (np. jak wpisał 3, to wskoczy 5)
+    let val = parseInt(e.target.value);
+    if (isNaN(val) || val < 5) { amountInput.value = 5; calculateGems(5); amountSlider.value = 5; }
+    if (val > 100) { amountInput.value = 100; calculateGems(100); amountSlider.value = 100; }
+  });
 
-    alert(`Zaraz zostaniesz przekierowany do płatności.\n\nKupujesz pakiet za ${selectedPackId/100} zł.\nOdbiorca: ${nick}\n\n(Tutaj docelowo otworzy się okienko Tebex.js)`);
+  // Sprawdzanie formularza (czy nick wpisany)
+  nickInput.addEventListener('input', checkForm);
+  function checkForm() {
+    const nick = nickInput.value.trim();
+    if(nick.length >= 3) {
+      buyBtn.disabled = false;
+      buyBtn.textContent = "Przejdź do płatności";
+    } else {
+      buyBtn.disabled = true;
+      buyBtn.textContent = "Wpisz nick, aby przejść dalej";
+    }
+  }
 
-    // Przykład jak to będzie wyglądać, gdy Tebex.js będzie gotowy:
-    /*
-    Tebex.checkout.init({
-      ident: "TWOJ_IDENT",
-      theme: "dark",
-      colors: [{ name: "primary", color: "#4f8dff" }],
-      packages: [selectedPackId],
-      username: nick // Przekazujemy nick do Tebexa
-    });
-    Tebex.checkout.launch();
-    */
+  // Inicjalizacja przy starcie
+  calculateGems(10);
+
+  // ====== INTEGRACJA Z TEBEX ======
+  function initCheckout() {
+    const nick = nickInput.value.trim();
+    const amount = parseInt(amountInput.value);
+
+    if(!nick || isNaN(amount)) return;
+
+    // TUTAJ BĘDZIE KOD TEBEXA
+    alert(`Zaraz zostaniesz przekierowany do płatności.\n\nKwota: ${amount} zł\nOdbiorca: ${nick}\n\n(Tutaj w przyszłości otworzy się okienko Tebex.js)`);
   }
 </script>
 </body>
