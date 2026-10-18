@@ -94,10 +94,8 @@
   /* --- KSIĘŻYC Z FIZYKĄ --- */
   .moon-container {
     position: fixed;
-    top: 0; 
-    left: 0; 
-    width: 180px;
-    height: 180px;
+    top: 0; left: 0; 
+    width: 180px; height: 180px;
     cursor: grab;
     z-index: 1;
     touch-action: none; 
@@ -109,16 +107,17 @@
   }
 
   .moon-img {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     background-image: url('moon.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
     animation: moonGlow 4s infinite alternate;
+    will-change: transform;
   }
 
+  /* Uruchamia płynne pływanie dopiero gdy księżyc się zatrzyma */
   .moon-container.idle .moon-img {
     animation: moonGlow 4s infinite alternate, floatAround 6s ease-in-out infinite;
   }
@@ -128,12 +127,31 @@
     100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)) drop-shadow(0 0 80px rgba(79, 141, 255, 0.6)); }
   }
 
-  /* POPRAWIONA ANIMACJA: Zaczyna i kończy w 0,0. Tylko 3 klatki = proste wahadło. */
+  /* Płynne falowanie (zawsze zaczyna i kończy w 0,0 - brak teleportacji) */
   @keyframes floatAround {
     0%   { transform: translate(0, 0); }
-    50%  { transform: translate(-12px, -26px); }
+    50%  { transform: translate(-10px, -22px); }
     100% { transform: translate(0, 0); }
   }
+
+  /* --- EFEKT PODŚWIETLENIA GUI (Aura księżyca) --- */
+  .glow-target {
+    transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+
+  /* Gdy księżyc jest blisko, elementy dostają niebieską poświatę */
+  .glow-target.near-moon {
+    filter: drop-shadow(0 0 15px rgba(79, 141, 255, 0.7)) drop-shadow(0 0 30px rgba(147, 197, 253, 0.5));
+  }
+
+  /* Specyficzne podświetlenie dla "pudełek" (odliczanie, IP, Hotbar) */
+  .cd-box.near-moon, 
+  .ip-box.near-moon, 
+  .hotbar.near-moon {
+    border-color: rgba(147, 197, 253, 0.8);
+    box-shadow: 0 0 30px rgba(79, 141, 255, 0.5), inset 0 0 15px rgba(79, 141, 255, 0.2);
+  }
+
 
   /* --- SEKCJA GÓRNA (Hero) --- */
   .hero {
@@ -166,7 +184,7 @@
     color: transparent;
     animation: textFlow 5s linear infinite;
     margin-bottom: 20px;
-    text-shadow: 0 4px 30px rgba(79,141,255,0.4);
+    filter: drop-shadow(0 4px 20px rgba(79,141,255,0.2));
   }
 
   @keyframes textFlow {
@@ -241,12 +259,6 @@
     background: var(--panel-bg);
     border: 2px solid var(--panel-border);
     box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.05);
-    transition: .2s;
-  }
-
-  .ip-box:hover {
-    border-color: var(--blue);
-    box-shadow: 0 0 20px rgba(79, 141, 255, 0.2);
   }
 
   .ip-text { text-align: left; }
@@ -305,7 +317,7 @@
     border-left: 2px solid var(--slot-border-light);
     border-bottom: 2px solid var(--slot-border-dark);
     border-right: 2px solid var(--slot-border-dark);
-    transition: background-color 0.1s;
+    transition: background-color 0.2s;
     cursor: pointer;
   }
 
@@ -339,29 +351,29 @@
 
   <!-- GÓRNA CZĘŚĆ -->
   <header class="hero">
-    <h1>BOMISU.PL</h1>
-    <p class="sub">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag i wkrótce Flag Hunt. Wbijaj i graj z nami!</p>
+    <h1 class="glow-target" id="main-title">BOMISU.PL</h1>
+    <p class="sub glow-target">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag i wkrótce Flag Hunt. Wbijaj i graj z nami!</p>
 
-    <div class="countdown" id="countdown">
-      <div class="cd-box"><div class="cd-num" id="cd-days">0</div><div class="cd-lbl">Dni</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-hours">0</div><div class="cd-lbl">Godzin</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-mins">0</div><div class="cd-lbl">Minut</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-secs">0</div><div class="cd-lbl">Sekund</div></div>
+    <div class="countdown glow-target" id="countdown">
+      <div class="cd-box glow-target"><div class="cd-num" id="cd-days">0</div><div class="cd-lbl">Dni</div></div>
+      <div class="cd-box glow-target"><div class="cd-num" id="cd-hours">0</div><div class="cd-lbl">Godzin</div></div>
+      <div class="cd-box glow-target"><div class="cd-num" id="cd-mins">0</div><div class="cd-lbl">Minut</div></div>
+      <div class="cd-box glow-target"><div class="cd-num" id="cd-secs">0</div><div class="cd-lbl">Sekund</div></div>
     </div>
     <div class="cd-caption">⏳ Do końca beta testów</div>
 
-    <div class="ip-box">
+    <div class="ip-box glow-target">
       <div class="ip-text">
         <div class="ip-label">IP Serwera</div>
         <div class="ip-value" id="ip">bomisu.pl</div>
       </div>
-      <button class="copy-btn" onclick="copyIP()" id="copy-btn">Kopiuj IP</button>
+      <button class="copy-btn glow-target" onclick="copyIP()" id="copy-btn">Kopiuj IP</button>
     </div>
   </header>
 
   <!-- DOLNA CZĘŚĆ -->
   <div class="bottom-bar">
-    <div class="hotbar">
+    <div class="hotbar glow-target" id="hotbar">
       <div class="slot"></div><div class="slot"></div><div class="slot"></div>
       <div class="slot"></div><div class="slot"></div><div class="slot"></div>
       <div class="slot"></div><div class="slot"></div><div class="slot"></div>
@@ -491,6 +503,41 @@
     if (posY > maxY) posY = maxY;
     moon.style.transform = `translate(${posX}px, ${posY}px)`;
   });
+
+  // ====== EFEKT PODŚWIETLENIA (RADAR) ======
+  const glowTargets = document.querySelectorAll('.glow-target');
+  const glowRadius = 100; // Promień aury (w pikselach). Im większy, tym szybciej zaczyna świecić.
+
+  function checkProximity() {
+    // Pobieramy środek księżyca
+    const moonRect = moon.getBoundingClientRect();
+    const moonCenterX = moonRect.left + moonRect.width / 2;
+    const moonCenterY = moonRect.top + moonRect.height / 2;
+
+    glowTargets.forEach(target => {
+      const rect = target.getBoundingClientRect();
+      
+      // Znajdujemy najbliższy punkt na elemencie GUI względem środka księżyca
+      const closestX = Math.max(rect.left, Math.min(moonCenterX, rect.right));
+      const closestY = Math.max(rect.top, Math.min(moonCenterY, rect.bottom));
+      
+      // Obliczamy dystans
+      const distance = Math.hypot(moonCenterX - closestX, moonCenterY - closestY);
+
+      // Jeśli księżyc jest bliżej niż glowRadius, dodajemy klasę
+      if (distance < glowRadius) {
+        target.classList.add('near-moon');
+      } else {
+        target.classList.remove('near-moon');
+      }
+    });
+
+    // Pętla sprawdza to bez przerwy
+    requestAnimationFrame(checkProximity);
+  }
+
+  // Uruchomienie radaru
+  requestAnimationFrame(checkProximity);
 
   // ====== KOPIUJ IP ======
   function copyIP(){
