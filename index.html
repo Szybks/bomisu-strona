@@ -120,7 +120,7 @@
   }
 
   .moon-container.idle .moon-img {
-    animation: moonGlow 4s infinite alternate, floatAround 8s ease-in-out infinite;
+    animation: moonGlow 4s infinite alternate, floatAround 6s ease-in-out infinite;
   }
 
   @keyframes moonGlow {
@@ -128,12 +128,11 @@
     100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)) drop-shadow(0 0 80px rgba(79, 141, 255, 0.6)); }
   }
 
-  /* ZMIENIONA ANIMACJA: Większy ruch w bok (-25px), mniejszy w pionie (-12px) = Kąt ok. 25-30 stopni */
-  /* POPRAWIONA ANIMACJA */
+  /* POPRAWIONA ANIMACJA: Zaczyna i kończy w 0,0. Tylko 3 klatki = proste wahadło. */
   @keyframes floatAround {
-    0% { transform: translate(18px, 38px); }
-    50% { transform: translate(-18px, -38px); }
-    100% { transform: translate(18px, 38px); }
+    0%   { transform: translate(0, 0); }
+    50%  { transform: translate(-12px, -26px); }
+    100% { transform: translate(0, 0); }
   }
 
   /* --- SEKCJA GÓRNA (Hero) --- */
@@ -374,7 +373,7 @@
   const moon = document.getElementById('moon');
   let isDragging = false;
   
-  // Pozycja startowa (bardziej wycentrowana w prawej części ekranu)
+  // Pozycja startowa
   let posX = window.innerWidth > 600 ? window.innerWidth - 350 : window.innerWidth - 180;
   let posY = 80;
   
