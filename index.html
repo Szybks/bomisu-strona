@@ -4,601 +4,329 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Bomisu.pl — Serwer Minecraft</title>
-<meta name="description" content="Bomisu.pl — polski serwer Minecraft. Tryby: Castle, TNT Tag i Flag Hunt. Dołącz do nas!" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#07090f;
-    --card:#111622;
-    --border:#1e2536;
-    --blue:#4f8dff;
-    --cyan:#22d3ee;
-    --green:#10b981;
-    --green-dark:#059669;
-    --text:#e8eaf2;
-    --muted:#8a92a8;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:'Inter',system-ui,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    line-height:1.6;
-    overflow-x:hidden;
+  :root {
+    --bg: #0a0c10;
+    --panel-bg: #1a202c;
+    --panel-border: #0f141e;
+    --blue: #4f8dff;
+    --cyan: #22d3ee;
+    --green: #10b981;
+    --text: #e8eaf2;
+    --muted: #8a92a8;
+    
+    /* Kolory slotów Minecrafta */
+    --slot-bg: #1c1c21;
+    --slot-border-light: #111115;
+    --slot-border-dark: #3a3a45;
   }
 
-  /* Stylizacja sekcji na styl Minecrafta (Ekwipunek) */
-  .mc-panel {
-    background: #1a202c;
-    border: 4px solid #0f141e;
-    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.1);
-    border-radius: 8px;
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  /* NAV */
-  nav{
-    position:fixed;top:0;left:0;right:0;z-index:100;
-    padding:16px 32px;
-    display:flex;justify-content:space-between;align-items:center;
-    background:rgba(7,9,15,.85);
-    backdrop-filter:blur(12px);
-    border-bottom:2px solid var(--border);
-  }
-  .logo{
-    font-weight:900;font-size:24px;letter-spacing:-.5px;
-    background:linear-gradient(135deg,var(--blue),var(--cyan));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-decoration: none;
-  }
-  nav ul{display:flex;gap:28px;list-style:none}
-  nav a{color:var(--muted);text-decoration:none;font-weight:600;font-size:14px;transition:.2s}
-  nav a:hover{color:var(--text)}
-  @media(max-width:700px){nav ul{display:none}}
-
-  /* HERO */
-  .hero{
-    min-height:100vh;
-    display:flex;flex-direction:column;justify-content:center;align-items:center;
-    text-align:center;padding:120px 20px 60px;
-    position:relative;
-    background:
-      radial-gradient(circle at 20% 30%, rgba(79,141,255,.15), transparent 45%),
-      radial-gradient(circle at 80% 70%, rgba(34,211,238,.1), transparent 45%),
-      var(--bg);
-  }
-  .hero::before{
-    content:"";position:absolute;inset:0;
-    background-image:
-      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-    background-size:40px 40px;
-    mask-image:radial-gradient(circle at center, black 30%, transparent 75%);
-    -webkit-mask-image:radial-gradient(circle at center, black 30%, transparent 75%);
-    pointer-events:none;
-  }
-  .hero > *{position:relative;z-index:1}
-  .hero h1{
-    font-size:clamp(48px,9vw,110px);
-    font-weight:900;letter-spacing:-3px;line-height:1;
-    background:linear-gradient(180deg,#fff 30%, #a8b4d0 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    margin-bottom:20px;
-  }
-  .hero p.sub{
-    font-size:clamp(16px,2vw,20px);color:var(--muted);
-    max-width:600px;margin-bottom:36px;
+  html, body {
+    height: 100%;
   }
 
-  /* COUNTDOWN */
-  .countdown{
-    display:flex;gap:12px;margin-bottom:40px;flex-wrap:wrap;justify-content:center;
-  }
-  .cd-box{
-    background:var(--card);border:2px solid var(--border);
-    border-radius:8px;padding:14px 18px;min-width:82px;
-    text-align:center;
-  }
-  .cd-num{
-    font-size:32px;font-weight:900;letter-spacing:-1px;line-height:1;
-    color:var(--cyan);
-  }
-  .cd-lbl{
-    font-size:11px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:1.5px;font-weight:700;margin-top:6px;
-  }
-  .cd-caption{
-    width:100%;font-size:13px;color:var(--muted);margin-top:8px;
-    text-transform:uppercase;letter-spacing:1px;font-weight:600;
-  }
-
-  .ip-box{
-    display:inline-flex;align-items:center;gap:14px;
-    padding:16px 20px;border-radius:8px;
-    background:var(--card);border:2px solid var(--border);
-    margin-bottom:36px; transition:.2s;
-  }
-  .ip-box:hover{border-color:var(--blue)}
-  .ip-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
-  .ip-value{font-size:20px;font-weight:800;letter-spacing:-.5px}
-  .copy-btn{
-    background:linear-gradient(135deg,var(--blue),var(--cyan));
-    border:none;color:#fff;padding:10px 18px;border-radius:6px;
-    font-weight:700;cursor:pointer;font-size:14px;transition:.2s;
-    font-family:inherit;
-  }
-  .copy-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,141,255,.4)}
-
-  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-  .btn{
-    display:inline-flex;align-items:center;gap:10px;
-    padding:14px 26px;border-radius:6px;
-    text-decoration:none;font-weight:700;font-size:15px;
-    transition:.2s;border:1px solid transparent;
-  }
-  .btn-primary{background:#5865F2;color:#fff}
-  .btn-primary:hover{background:#4752c4;transform:translateY(-2px)}
-  .btn-shop{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff}
-  .btn-shop:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,141,255,.4)}
-
-  /* SECTIONS */
-  section{padding:100px 24px;max-width:1200px;margin:0 auto}
-  .section-title{
-    font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-1.5px;
-    margin-bottom:12px;
-  }
-  .section-sub{color:var(--muted);font-size:17px;margin-bottom:56px;max-width:600px}
-
-  /* MODES (Klimat ekwipunku) */
-  .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
-  .mode{
-    background:var(--card);border:2px solid var(--border);
-    border-radius:8px;padding:32px;position:relative;overflow:hidden;
-    transition:.3s;
-  }
-  .mode:hover{transform:translateY(-6px);border-color:var(--blue)}
-  .mode-icon{
-    width:56px;height:56px;border-radius:6px;
-    display:flex;align-items:center;justify-content:center;
-    font-size:28px;margin-bottom:20px;
-    background:#1a202c;
-    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.1);
-  }
-  .mode h3{font-size:24px;font-weight:800;margin-bottom:10px;}
-  .mode p{color:var(--muted);font-size:15px}
-  .mode .tag{
-    display:inline-block;margin-top:18px;padding:4px 12px;border-radius:4px;
-    font-size:12px;font-weight:700;letter-spacing:.5px;
-    background:rgba(34,211,238,.1);color:var(--cyan);
-    border:1px solid rgba(34,211,238,.25);
-  }
-  .mode.coming{opacity:.6}
-  .mode.coming .tag{background:rgba(138,146,168,.1);color:var(--muted);border-color:var(--border)}
-
-  /* SKLEP - SUWAK GEMÓW */
-  .shop-box {
-    background: #1a202c;
-    border: 4px solid #0f141e;
-    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 40px;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  
-  .shop-box h3 {
-    font-size: 24px;
-    text-align: center;
-    margin-bottom: 8px;
-  }
-  .shop-box p.desc {
-    text-align: center;
-    color: var(--muted);
-    margin-bottom: 30px;
-    font-size: 15px;
-  }
-
-  .nick-input {
-    width: 100%;
-    padding: 16px;
-    background: #0f141e;
-    border: 2px solid #2d3748;
-    border-radius: 4px;
-    color: #fff;
-    font-size: 16px;
-    font-family: 'Inter', sans-serif;
-    margin-bottom: 30px;
-    transition: .2s;
-    text-align: center;
-  }
-  .nick-input:focus {
-    outline: none;
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(79,141,255,0.2);
-  }
-
-  /* Slider i Input Kwoty */
-  .slider-container {
-    background: #0f141e;
-    padding: 30px 20px;
-    border-radius: 8px;
-    border: 2px solid #2d3748;
-    margin-bottom: 30px;
-    text-align: center;
-  }
-
-  .amount-wrapper {
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--bg);
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(79,141,255,.15), transparent 50%),
+      linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    color: var(--text);
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    padding: 40px 20px;
+    overflow-x: hidden;
+  }
+
+  /* --- SEKCJA GÓRNA (Hero) --- */
+  .hero {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .amount-input {
-    width: 120px;
-    font-size: 42px;
-    font-weight: 900;
-    background: transparent;
-    border: none;
-    color: #fff;
+    align-items: center;
     text-align: center;
-    font-family: 'Inter', sans-serif;
-    border-bottom: 2px dashed var(--border);
-  }
-  .amount-input:focus {
-    outline: none;
-    border-bottom-color: var(--cyan);
+    flex-grow: 1;
+    width: 100%;
+    max-width: 800px;
   }
 
-  .amount-currency {
+  .hero h1 {
+    font-size: clamp(50px, 10vw, 110px);
+    font-weight: 900;
+    letter-spacing: -3px;
+    line-height: 1;
+    background: linear-gradient(180deg, #fff 30%, #a8b4d0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 20px rgba(79,141,255,0.2);
+  }
+
+  .hero p.sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  /* Countdown */
+  .countdown {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cd-box {
+    background: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.05);
+    border-radius: 6px;
+    padding: 14px 18px;
+    min-width: 82px;
+    text-align: center;
+  }
+
+  .cd-num {
     font-size: 32px;
-    font-weight: 800;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+    color: var(--cyan);
+  }
+
+  .cd-lbl {
+    font-size: 11px;
     color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-top: 6px;
   }
 
-  /* Stylizacja suwaka (Range) */
-  input[type=range] {
-    -webkit-appearance: none;
+  .cd-caption {
     width: 100%;
-    background: transparent;
-    margin: 20px 0;
-  }
-  input[type=range]:focus {
-    outline: none;
-  }
-  input[type=range]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 12px;
-    cursor: pointer;
-    background: #2d3748;
-    border-radius: 6px;
-    border: 2px solid #0f141e;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    height: 28px;
-    width: 16px;
-    border-radius: 4px;
-    background: var(--cyan);
-    cursor: pointer;
-    -webkit-appearance: none;
-    margin-top: -10px;
-    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.3);
-  }
-  input[type=range]::-moz-range-track {
-    width: 100%;
-    height: 12px;
-    cursor: pointer;
-    background: #2d3748;
-    border-radius: 6px;
-    border: 2px solid #0f141e;
-  }
-  input[type=range]::-moz-range-thumb {
-    height: 28px;
-    width: 16px;
-    border-radius: 4px;
-    background: var(--cyan);
-    cursor: pointer;
-    border: none;
-    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.3);
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-bottom: 40px;
   }
 
-  .gem-result {
-    font-size: 20px;
+  /* IP Box */
+  .ip-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 24px;
+    border-radius: 8px;
+    background: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.05);
+    transition: .2s;
+  }
+
+  .ip-box:hover {
+    border-color: var(--blue);
+  }
+
+  .ip-text {
+    text-align: left;
+  }
+
+  .ip-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  .ip-value {
+    font-size: 22px;
     font-weight: 800;
-    color: var(--green);
-    margin-top: 15px;
+    letter-spacing: -.5px;
   }
-  .gem-result span {
-    font-size: 28px;
+
+  .copy-btn {
+    background: var(--blue);
+    border: none;
     color: #fff;
-  }
-  .bonus-info {
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 800;
     font-size: 14px;
-    color: var(--muted);
-    margin-top: 5px;
-  }
-
-  .checkout-btn {
-    width: 100%;
-    padding: 18px;
-    background: var(--green);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 18px;
-    font-weight: 800;
+    text-transform: uppercase;
     cursor: pointer;
     transition: .1s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.3), inset 4px 4px 0px rgba(255,255,255,0.2);
+    box-shadow: inset -3px -3px 0px rgba(0,0,0,0.3), inset 3px 3px 0px rgba(255,255,255,0.2);
   }
-  .checkout-btn:hover {
-    background: #0ea5e9;
+
+  .copy-btn:hover {
+    filter: brightness(1.1);
   }
-  .checkout-btn:active {
-    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.3), inset -4px -4px 0px rgba(255,255,255,0.2);
+
+  .copy-btn:active {
+    box-shadow: inset 3px 3px 0px rgba(0,0,0,0.3), inset -3px -3px 0px rgba(255,255,255,0.2);
     transform: translateY(2px);
   }
-  .checkout-btn:disabled {
-    background: #2d3748;
-    color: var(--muted);
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
+
+  /* --- DOLNA SEKCJA (Hotbar) --- */
+  .bottom-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 30px;
+    margin-top: 50px;
   }
 
-  /* DISCORD */
-  .discord-card{
-    background:linear-gradient(135deg, rgba(88,101,242,.12), rgba(88,101,242,.03));
-    border:2px solid rgba(88,101,242,.3);
-    border-radius:12px;padding:56px 40px;text-align:center;
+  .hotbar {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 5px; /* Zmniejszony odstęp */
+    background-color: var(--panel-bg);
+    /* Troszkę cieńsze obramowanie */
+    border-top: 4px solid #2d3748;
+    border-left: 4px solid #2d3748;
+    border-bottom: 4px solid var(--panel-border);
+    border-right: 4px solid var(--panel-border);
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
   }
-  .discord-card h2{font-size:clamp(24px,4vw,36px);margin-bottom:14px}
-  .discord-card p{color:var(--muted);font-size:17px;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
 
-  /* FOOTER */
-  footer{
-    border-top:1px solid var(--border);
-    padding:48px 24px 40px;
-    text-align:center;color:var(--muted);font-size:14px;
+  .slot {
+    width: 56px; /* Zmniejszone z 64px */
+    height: 56px;
+    background-color: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-light);
+    border-left: 2px solid var(--slot-border-light);
+    border-bottom: 2px solid var(--slot-border-dark);
+    border-right: 2px solid var(--slot-border-dark);
+    transition: background-color 0.1s;
+    cursor: pointer;
   }
-  footer .logo{display:inline-block;margin-bottom:16px;font-size:20px}
+
+  .slot:hover {
+    background-color: #3a3a45;
+  }
+
+  /* Responsywność dla małych ekranów */
+  @media (max-width: 600px) {
+    .slot {
+      width: 34px; /* Na telefonach jeszcze mniejsze */
+      height: 34px;
+      border-width: 2px;
+    }
+    .hotbar {
+      padding: 6px;
+      gap: 3px;
+      border-width: 3px;
+    }
+    .ip-box {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+    .ip-text {
+      text-align: center;
+    }
+  }
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="#" class="logo">BOMISU.PL</a>
-  <ul>
-    <li><a href="#tryby">Tryby</a></li>
-    <li><a href="#sklep">Sklep</a></li>
-    <li><a href="#discord">Discord</a></li>
-  </ul>
-</nav>
+  <!-- GÓRNA CZĘŚĆ -->
+  <header class="hero">
+    <h1>BOMISU.PL</h1>
+    <p class="sub">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag i wkrótce Flag Hunt. Wbijaj i graj z nami!</p>
 
-<!-- HERO -->
-<header class="hero">
-  <h1>BOMISU.PL</h1>
-  <p class="sub">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag i wkrótce Flag Hunt. Wbijaj i graj z nami!</p>
-
-  <div class="countdown" id="countdown">
-    <div class="cd-box"><div class="cd-num" id="cd-days">0</div><div class="cd-lbl">Dni</div></div>
-    <div class="cd-box"><div class="cd-num" id="cd-hours">0</div><div class="cd-lbl">Godzin</div></div>
-    <div class="cd-box"><div class="cd-num" id="cd-mins">0</div><div class="cd-lbl">Minut</div></div>
-    <div class="cd-box"><div class="cd-num" id="cd-secs">0</div><div class="cd-lbl">Sekund</div></div>
+    <div class="countdown" id="countdown">
+      <div class="cd-box"><div class="cd-num" id="cd-days">0</div><div class="cd-lbl">Dni</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-hours">0</div><div class="cd-lbl">Godzin</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-mins">0</div><div class="cd-lbl">Minut</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-secs">0</div><div class="cd-lbl">Sekund</div></div>
+    </div>
     <div class="cd-caption">⏳ Do końca beta testów</div>
-  </div>
 
-  <div class="ip-box">
-    <div>
-      <div class="ip-label">IP Serwera</div>
-      <div class="ip-value" id="ip">bomisu.pl</div>
-    </div>
-    <button class="copy-btn" onclick="copyIP()">Kopiuj IP</button>
-  </div>
-
-  <div class="cta-row">
-    <a href="https://discord.gg/e549Sp9DG" target="_blank" rel="noopener" class="btn btn-primary">
-      💬 Dołącz na Discord
-    </a>
-    <a href="#sklep" class="btn btn-shop">💎 Doładuj Gemy</a>
-  </div>
-</header>
-
-<!-- TRYBY -->
-<section id="tryby">
-  <h2 class="section-title">Nasze tryby</h2>
-  <p class="section-sub">Każdy tryb to inna rozgrywka. Wybierz swój styl i baw się dobrze.</p>
-
-  <div class="modes">
-    <div class="mode">
-      <div class="mode-icon">🏰</div>
-      <h3>Castle</h3>
-      <p>Atak na zamek w dwóch drużynach. Bronisz swojej twierdzy albo ruszasz do szturmu. Kto przetrwa, ten wygrywa.</p>
-      <span class="tag">DRUŻYNOWY</span>
-    </div>
-
-    <div class="mode">
-      <div class="mode-icon">💣</div>
-      <h3>TNT Tag</h3>
-      <p>Berek w Minecraft z TNT. Uciekaj przed bombą, przekazuj ją dalej i nie daj się wysadzić. Chaos gwarantowany.</p>
-      <span class="tag">CHAOS</span>
-    </div>
-
-    <div class="mode coming">
-      <div class="mode-icon">🚩</div>
-      <h3>Flag Hunt</h3>
-      <p>5 vs 5, motyki jako pistolety, strzały zamiast kul. Kradniesz flagę wroga albo eliminujesz całą drużynę. Wkrótce!</p>
-      <span class="tag">WKRÓTCE</span>
-    </div>
-  </div>
-</section>
-
-<!-- SKLEP -->
-<section id="sklep">
-  <h2 class="section-title">Doładuj Gemy</h2>
-  <p class="section-sub">Gemy to nasza waluta. Wymieniasz je w grze na rangi, ulepszenia i przedmioty. 1 Gem = 1 grosz.</p>
-
-  <div class="shop-box">
-    <h3>Wybierz ilość</h3>
-    <p class="desc">Za każde wydane 10 zł otrzymujesz dodatkowe <b>+5% Gemów</b>!</p>
-
-    <input type="text" id="mc-nick" class="nick-input" placeholder="Wpisz swój nick z Minecrafta" required>
-
-    <div class="slider-container">
-      <div class="amount-wrapper">
-        <input type="number" id="amount-input" class="amount-input" value="10" min="5" max="100" step="1">
-        <span class="amount-currency">zł</span>
+    <div class="ip-box">
+      <div class="ip-text">
+        <div class="ip-label">IP Serwera</div>
+        <div class="ip-value" id="ip">bomisu.pl</div>
       </div>
-      
-      <!-- SUWAK -->
-      <input type="range" id="amount-slider" min="5" max="100" value="10" step="1">
-      
-      <div class="gem-result">
-        Otrzymasz: <span id="total-gems">1050</span> 💎
-      </div>
-      <div class="bonus-info" id="bonus-info">
-        (1000 bazowych + 50 bonusu)
-      </div>
+      <button class="copy-btn" onclick="copyIP()" id="copy-btn">Kopiuj IP</button>
     </div>
+  </header>
 
-    <button class="checkout-btn" id="buy-btn" onclick="initCheckout()" disabled>
-      Wpisz nick, aby przejść dalej
-    </button>
+  <!-- DOLNA CZĘŚĆ -->
+  <div class="bottom-bar">
+    <div class="hotbar">
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+    </div>
   </div>
-</section>
-
-<!-- DISCORD -->
-<section id="discord">
-  <div class="discord-card">
-    <h2>Dołącz do społeczności</h2>
-    <p>Wszystkie informacje, eventy i rozmowy dzieją się na naszym Discordzie. Wpadnij, poznaj ekipę i graj z nami.</p>
-    <a href="https://discord.gg/e549Sp9DG" target="_blank" rel="noopener" class="btn btn-primary">
-      💬 Dołącz na Discord
-    </a>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer id="stopka">
-  <a href="#" class="logo">BOMISU.PL</a>
-  <div>Polski serwer Minecraft • Wszelkie prawa zastrzeżone</div>
-</footer>
 
 <script>
   // ====== KOPIUJ IP ======
   function copyIP(){
     const ip = document.getElementById('ip').textContent.trim();
+    const btn = document.getElementById('copy-btn');
+    
     navigator.clipboard.writeText(ip).then(() => {
-      const btn = document.querySelector('.copy-btn');
       const oldText = btn.textContent;
       btn.textContent = 'Skopiowano!';
-      setTimeout(() => btn.textContent = oldText, 2000);
+      btn.style.background = 'var(--green)';
+      
+      setTimeout(() => {
+        btn.textContent = oldText;
+        btn.style.background = 'var(--blue)';
+      }, 2000);
     });
   }
 
   // ====== COUNTDOWN ======
   const betaEnd = new Date(2026, 9, 30, 23, 59, 59); 
+
   function updateCountdown(){
     const now = new Date().getTime();
     const distance = betaEnd.getTime() - now;
+    
     if (distance < 0){
-      document.getElementById('countdown').innerHTML = '<div class="cd-caption">✅ BETA ZAKOŃCZONA!</div>';
+      document.getElementById('countdown').innerHTML = '<div class="cd-caption" style="font-size:20px; color:var(--green);">✅ BETA ZAKOŃCZONA!</div>';
       return;
     }
+    
     document.getElementById('cd-days').textContent = Math.floor(distance / (1000 * 60 * 60 * 24));
     document.getElementById('cd-hours').textContent = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     document.getElementById('cd-mins').textContent = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     document.getElementById('cd-secs').textContent = Math.floor((distance % (1000 * 60)) / 1000);
   }
+  
   updateCountdown();
   setInterval(updateCountdown, 1000);
-
-  // ====== LOGIKA SKLEPU (SUWAK) ======
-  const amountSlider = document.getElementById('amount-slider');
-  const amountInput = document.getElementById('amount-input');
-  const totalGemsEl = document.getElementById('total-gems');
-  const bonusInfoEl = document.getElementById('bonus-info');
-  const buyBtn = document.getElementById('buy-btn');
-  const nickInput = document.getElementById('mc-nick');
-
-  // Funkcja przeliczająca gemy
-  function calculateGems(pln) {
-    // 1 zł = 100 groszy = 100 gemów
-    const baseGems = pln * 100;
-    // Bonus: 5% za każde pełne 10 zł
-    const bonusPercent = Math.floor(pln / 10) * 5; 
-    const bonusGems = Math.floor(baseGems * (bonusPercent / 100));
-    const total = baseGems + bonusGems;
-    
-    // Aktualizacja UI
-    totalGemsEl.textContent = total.toLocaleString('pl-PL');
-    
-    if (bonusGems > 0) {
-      bonusInfoEl.textContent = `(${baseGems.toLocaleString('pl-PL')} bazowych + ${bonusGems.toLocaleString('pl-PL')} bonusu)`;
-      bonusInfoEl.style.color = 'var(--green)';
-    } else {
-      bonusInfoEl.textContent = `(Bez bonusu - doładuj min. 10 zł)`;
-      bonusInfoEl.style.color = 'var(--muted)';
-    }
-  }
-
-  // Synchronizacja suwaka i pola tekstowego
-  amountSlider.addEventListener('input', (e) => {
-    const val = parseInt(e.target.value);
-    amountInput.value = val;
-    calculateGems(val);
-  });
-
-  amountInput.addEventListener('input', (e) => {
-    let val = parseInt(e.target.value);
-    if (isNaN(val)) val = 0;
-    if (val < 5) val = 5;
-    if (val > 100) val = 100;
-    
-    amountSlider.value = val;
-    calculateGems(val);
-  });
-
-  amountInput.addEventListener('blur', (e) => {
-    // Wyrównanie wartości po opuszczeniu pola (np. jak wpisał 3, to wskoczy 5)
-    let val = parseInt(e.target.value);
-    if (isNaN(val) || val < 5) { amountInput.value = 5; calculateGems(5); amountSlider.value = 5; }
-    if (val > 100) { amountInput.value = 100; calculateGems(100); amountSlider.value = 100; }
-  });
-
-  // Sprawdzanie formularza (czy nick wpisany)
-  nickInput.addEventListener('input', checkForm);
-  function checkForm() {
-    const nick = nickInput.value.trim();
-    if(nick.length >= 3) {
-      buyBtn.disabled = false;
-      buyBtn.textContent = "Przejdź do płatności";
-    } else {
-      buyBtn.disabled = true;
-      buyBtn.textContent = "Wpisz nick, aby przejść dalej";
-    }
-  }
-
-  // Inicjalizacja przy starcie
-  calculateGems(10);
-
-  // ====== INTEGRACJA Z TEBEX ======
-  function initCheckout() {
-    const nick = nickInput.value.trim();
-    const amount = parseInt(amountInput.value);
-
-    if(!nick || isNaN(amount)) return;
-
-    // TUTAJ BĘDZIE KOD TEBEXA
-    alert(`Zaraz zostaniesz przekierowany do płatności.\n\nKwota: ${amount} zł\nOdbiorca: ${nick}\n\n(Tutaj w przyszłości otworzy się okienko Tebex.js)`);
-  }
 </script>
 </body>
 </html>
