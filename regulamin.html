@@ -42,12 +42,16 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 40px 20px;
     position: relative;
     overflow: hidden;
     
     height: 100vh; 
     height: 100dvh; 
+    
+    /* BLOKUJE ZAZNACZANIE TEKSTU PODCZAS PRZECIĄGANIA KSIĘŻYCA */
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   /* --- KOSMICZNE TŁO Z GWIAZDKAMI --- */
@@ -116,7 +120,6 @@
     transform-origin: left center;
   }
 
-  /* Główka gwiazdy */
   .shooting-star::after {
     content: '';
     position: absolute;
@@ -130,7 +133,6 @@
     box-shadow: 0 0 10px 2px #fff, 0 0 20px #fff;
   }
 
-  /* Kolorowe warianty */
   .star-blue {
     background: linear-gradient(to right, rgba(79,141,255,0), rgba(79,141,255,1));
   }
@@ -147,7 +149,6 @@
     box-shadow: 0 0 10px 2px #fde047, 0 0 20px #fde047;
   }
 
-  /* Animacja lotu */
   @keyframes shoot {
     0% { transform: translateX(0); opacity: 0; }
     10% { opacity: 1; }
@@ -192,9 +193,10 @@
     align-items: center;
     flex-grow: 1;
     width: 100%;
-    max-width: 650px;
+    max-width: 550px; /* 550px - trochę szersze niż hotbar */
     z-index: 10;
-    padding: 15px 0;
+    padding: 10px 0;
+    overflow: hidden; 
   }
 
   /* Okienko w stylu Minecrafta */
@@ -205,8 +207,8 @@
     border-radius: 8px;
     padding: 30px;
     width: 100%;
-    height: 85vh; 
-    max-height: 85vh;
+    height: 75vh; 
+    max-height: 75vh;
     display: flex;
     flex-direction: column;
   }
@@ -326,7 +328,6 @@
   .tiktok-icon { width: 65%; height: 65%; transition: transform 0.2s; }
   .tiktok-slot:hover .tiktok-icon { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(254, 44, 85, 0.6)); }
 
-  /* ZWIĘKSZONA IKONA REGULAMINU */
   .rules-icon { width: 80%; height: 80%; fill: var(--yellow); transition: transform 0.2s; filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); }
   .rules-slot:hover .rules-icon { transform: scale(1.15); }
 
@@ -385,9 +386,11 @@
   .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
   .home-slot:hover .tooltip { transform: translate(-50%, 0); }
 
+  /* Telefony */
   @media (max-width: 600px) {
-    .rules-wrapper { max-width: 100%; padding: 10px 0; }
-    .mc-panel { height: 75vh; max-height: 75vh; padding: 15px; }
+    body { padding: 20px 10px; }
+    .rules-wrapper { max-width: 100%; padding: 5px 0; }
+    .mc-panel { height: 65vh; max-height: 65vh; padding: 15px; }
     .mc-panel h1 { font-size: 24px; }
     .rules-text { font-size: 13px; }
     .slot { width: 32px; height: 32px; }
