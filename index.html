@@ -29,9 +29,8 @@
     box-sizing: border-box;
   }
 
-  html, body {
+  html {
     height: 100%;
-    overflow: hidden;
   }
 
   body {
@@ -44,6 +43,11 @@
     align-items: center;
     padding: 40px 20px;
     position: relative;
+    overflow: hidden;
+    
+    /* DYNAMICZNA WYSOKOŚĆ (uwzględnia paski przeglądarki na telefonie) */
+    height: 100vh; /* Fallback */
+    height: 100dvh; 
   }
 
   /* --- KOSMICZNE TŁO Z GWIAZDKAMI --- */
@@ -117,7 +121,6 @@
     will-change: transform;
   }
 
-  /* Uruchamia płynne pływanie dopiero gdy księżyc się zatrzyma */
   .moon-container.idle .moon-img {
     animation: moonGlow 4s infinite alternate, floatAround 6s ease-in-out infinite;
   }
@@ -127,31 +130,27 @@
     100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)) drop-shadow(0 0 80px rgba(79, 141, 255, 0.6)); }
   }
 
-  /* Płynne falowanie (zawsze zaczyna i kończy w 0,0 - brak teleportacji) */
   @keyframes floatAround {
     0%   { transform: translate(0, 0); }
     50%  { transform: translate(-10px, -22px); }
     100% { transform: translate(0, 0); }
   }
 
-  /* --- EFEKT PODŚWIETLENIA GUI (Aura księżyca) --- */
+  /* --- EFEKT PODŚWIETLENIA GUI --- */
   .glow-target {
     transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
   }
 
-  /* Gdy księżyc jest blisko, elementy dostają niebieską poświatę */
   .glow-target.near-moon {
     filter: drop-shadow(0 0 15px rgba(79, 141, 255, 0.7)) drop-shadow(0 0 30px rgba(147, 197, 253, 0.5));
   }
 
-  /* Specyficzne podświetlenie dla "pudełek" (odliczanie, IP, Hotbar) */
   .cd-box.near-moon, 
   .ip-box.near-moon, 
   .hotbar.near-moon {
     border-color: rgba(147, 197, 253, 0.8);
     box-shadow: 0 0 30px rgba(79, 141, 255, 0.5), inset 0 0 15px rgba(79, 141, 255, 0.2);
   }
-
 
   /* --- SEKCJA GÓRNA (Hero) --- */
   .hero {
@@ -166,14 +165,20 @@
     margin-top: 20px;
     z-index: 10; 
     pointer-events: none;
+    overflow-y: auto; /* Pozwala na delikatne przewinięcie, jeśli ekran jest mały */
+    padding-bottom: 10px;
   }
+
+  /* Ukrycie paska przewijania w hero */
+  .hero::-webkit-scrollbar { display: none; }
+  .hero { -ms-overflow-style: none; scrollbar-width: none; }
 
   .hero h1, .hero p, .countdown, .ip-box {
     pointer-events: auto;
   }
 
   .hero h1 {
-    font-size: clamp(50px, 10vw, 110px);
+    font-size: clamp(40px, 10vw, 110px); /* Zmniejszone minimum dla małych ekranów */
     font-weight: 900;
     letter-spacing: -3px;
     line-height: 1;
@@ -193,16 +198,16 @@
   }
 
   .hero p.sub {
-    font-size: clamp(16px, 2vw, 20px);
+    font-size: clamp(14px, 2vw, 20px);
     color: var(--muted);
     max-width: 600px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
   }
 
   /* Countdown */
   .countdown {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 12px;
     flex-wrap: wrap;
     justify-content: center;
@@ -213,13 +218,13 @@
     border: 2px solid var(--panel-border);
     box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.05);
     border-radius: 6px;
-    padding: 14px 18px;
-    min-width: 82px;
+    padding: 12px 14px;
+    min-width: 70px;
     text-align: center;
   }
 
   .cd-num {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 900;
     letter-spacing: -1px;
     line-height: 1;
@@ -231,7 +236,7 @@
   }
 
   .cd-lbl {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -241,20 +246,20 @@
 
   .cd-caption {
     width: 100%;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
   }
 
   /* IP Box */
   .ip-box {
     display: inline-flex;
     align-items: center;
-    gap: 20px;
-    padding: 16px 24px;
+    gap: 15px;
+    padding: 14px 20px;
     border-radius: 8px;
     background: var(--panel-bg);
     border: 2px solid var(--panel-border);
@@ -262,17 +267,17 @@
   }
 
   .ip-text { text-align: left; }
-  .ip-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-  .ip-value { font-size: 22px; font-weight: 800; letter-spacing: -.5px; }
+  .ip-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  .ip-value { font-size: 20px; font-weight: 800; letter-spacing: -.5px; }
 
   .copy-btn {
     background: var(--blue);
     border: none;
     color: #fff;
-    padding: 12px 20px;
+    padding: 10px 18px;
     border-radius: 6px;
     font-weight: 800;
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
     cursor: pointer;
     transition: .1s;
@@ -290,28 +295,28 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    padding-bottom: 20px;
-    margin-top: 40px;
+    padding-bottom: 10px;
     z-index: 10;
+    flex-shrink: 0; /* Zapewnia, że hotbar nigdy nie zniknie */
   }
 
   .hotbar {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    gap: 5px;
+    gap: 4px;
     background-color: var(--panel-bg);
     border-top: 4px solid #2d3748;
     border-left: 4px solid #2d3748;
     border-bottom: 4px solid var(--panel-border);
     border-right: 4px solid var(--panel-border);
-    padding: 8px;
+    padding: 6px;
     border-radius: 6px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
   }
 
   .slot {
-    width: 56px;
-    height: 56px;
+    width: 50px;
+    height: 50px;
     background-color: var(--slot-bg);
     border-top: 2px solid var(--slot-border-light);
     border-left: 2px solid var(--slot-border-light);
@@ -326,12 +331,25 @@
     box-shadow: inset 0 0 10px rgba(79, 141, 255, 0.5);
   }
 
+  /* --- DOSTOSOWANIE DO MAŁYCH EKRANÓW (Telefony) --- */
   @media (max-width: 600px) {
-    .slot { width: 34px; height: 34px; border-width: 2px; }
-    .hotbar { padding: 6px; gap: 3px; border-width: 3px; }
-    .ip-box { flex-direction: column; gap: 12px; text-align: center; }
-    .ip-text { text-align: center; }
-    .moon-container { width: 120px; height: 120px; }
+    body { padding: 20px 10px; }
+    
+    .hero h1 { font-size: 42px; margin-bottom: 10px; }
+    .hero p.sub { font-size: 13px; margin-bottom: 20px; }
+    
+    .countdown { gap: 6px; margin-bottom: 8px; }
+    .cd-box { padding: 10px 12px; min-width: 60px; }
+    .cd-num { font-size: 24px; }
+    .cd-caption { margin-bottom: 20px; }
+    
+    .ip-box { flex-direction: row; gap: 10px; padding: 10px 14px; }
+    .ip-value { font-size: 18px; }
+    
+    .slot { width: 32px; height: 32px; border-width: 1px; }
+    .hotbar { padding: 4px; gap: 2px; border-width: 3px; }
+    
+    .moon-container { width: 100px; height: 100px; }
   }
 </style>
 </head>
@@ -360,7 +378,7 @@
       <div class="cd-box glow-target"><div class="cd-num" id="cd-mins">0</div><div class="cd-lbl">Minut</div></div>
       <div class="cd-box glow-target"><div class="cd-num" id="cd-secs">0</div><div class="cd-lbl">Sekund</div></div>
     </div>
-    <div class="cd-caption">⏳ Do końca beta testów</div>
+    <div class="cd-caption glow-target">⏳ Do końca beta testów</div>
 
     <div class="ip-box glow-target">
       <div class="ip-text">
@@ -386,8 +404,8 @@
   let isDragging = false;
   
   // Pozycja startowa
-  let posX = window.innerWidth > 600 ? window.innerWidth - 350 : window.innerWidth - 180;
-  let posY = 80;
+  let posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
+  let posY = 60;
   
   let velX = 0;
   let velY = 0;
@@ -506,10 +524,9 @@
 
   // ====== EFEKT PODŚWIETLENIA (RADAR) ======
   const glowTargets = document.querySelectorAll('.glow-target');
-  const glowRadius = 100; // Promień aury (w pikselach). Im większy, tym szybciej zaczyna świecić.
+  const glowRadius = 90; 
 
   function checkProximity() {
-    // Pobieramy środek księżyca
     const moonRect = moon.getBoundingClientRect();
     const moonCenterX = moonRect.left + moonRect.width / 2;
     const moonCenterY = moonRect.top + moonRect.height / 2;
@@ -517,14 +534,11 @@
     glowTargets.forEach(target => {
       const rect = target.getBoundingClientRect();
       
-      // Znajdujemy najbliższy punkt na elemencie GUI względem środka księżyca
       const closestX = Math.max(rect.left, Math.min(moonCenterX, rect.right));
       const closestY = Math.max(rect.top, Math.min(moonCenterY, rect.bottom));
       
-      // Obliczamy dystans
       const distance = Math.hypot(moonCenterX - closestX, moonCenterY - closestY);
 
-      // Jeśli księżyc jest bliżej niż glowRadius, dodajemy klasę
       if (distance < glowRadius) {
         target.classList.add('near-moon');
       } else {
@@ -532,11 +546,9 @@
       }
     });
 
-    // Pętla sprawdza to bez przerwy
     requestAnimationFrame(checkProximity);
   }
 
-  // Uruchomienie radaru
   requestAnimationFrame(checkProximity);
 
   // ====== KOPIUJ IP ======
