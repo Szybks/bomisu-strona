@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Regulamin — Bomisu.pl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-void: #07040d;
+    --bg-purple: #150b26;
+    --panel-bg: #1a202c;
+    --panel-border: #0f141e;
+    --blue: #4f8dff;
+    --yellow: #fde047;
+    --green: #10b981;
+    --text: #e8eaf2;
+    --muted: #8a92a8;
+    
+    --slot-bg: #1c1c21;
+    --slot-border-light: #111115;
+    --slot-border-dark: #3a3a45;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    height: 100%;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: radial-gradient(circle at 50% 0%, var(--bg-purple) 0%, var(--bg-void) 100%);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    
+    height: 100vh; 
+    height: 100dvh; 
+  }
+
+  /* --- KOSMICZNE TŁO Z GWIAZDKAMI --- */
+  .space-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden; 
+  }
+
+  .stars-small {
+    position: absolute; top: 0; left: 0; width: 200%; height: 200%;
+    background-image: 
+      radial-gradient(1px 1px at 10% 10%, #fff, transparent),
+      radial-gradient(1px 1px at 30% 40%, #fff, transparent),
+      radial-gradient(1px 1px at 60% 20%, #fff, transparent),
+      radial-gradient(1px 1px at 80% 70%, #fff, transparent),
+      radial-gradient(1px 1px at 20% 80%, #fff, transparent),
+      radial-gradient(1px 1px at 50% 50%, #fff, transparent);
+    background-size: 200px 200px;
+    animation: drift 60s linear infinite, twinkle 3s infinite alternate;
+  }
+
+  .stars-medium {
+    position: absolute; top: 0; left: 0; width: 200%; height: 200%;
+    background-image: 
+      radial-gradient(2px 2px at 40% 10%, #fff, transparent),
+      radial-gradient(2px 2px at 70% 40%, #fff, transparent),
+      radial-gradient(2px 2px at 15% 60%, #fff, transparent),
+      radial-gradient(2px 2px at 90% 90%, #fff, transparent);
+    background-size: 300px 300px;
+    animation: drift 120s linear infinite, twinkle 5s infinite alternate-reverse;
+  }
+
+  .stars-large {
+    position: absolute; top: 0; left: 0; width: 200%; height: 200%;
+    background-image: 
+      radial-gradient(3px 3px at 25% 15%, #fde047, transparent),
+      radial-gradient(3px 3px at 75% 65%, #60a5fa, transparent),
+      radial-gradient(3px 3px at 50% 85%, #fde047, transparent);
+    background-size: 400px 400px;
+    animation: drift 180s linear infinite, twinkle 7s infinite alternate;
+  }
+
+  @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-50%, -50%); } }
+  @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
+
+  /* --- SPADAJĄCE GWIAZDY --- */
+  .star-wrapper {
+    position: absolute;
+    top: 0; left: 0;
+    transform-origin: top left;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .shooting-star {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 180px;
+    height: 2px;
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
+    opacity: 0;
+    transform-origin: left center;
+  }
+
+  /* Główka gwiazdy */
+  .shooting-star::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px 2px #fff, 0 0 20px #fff;
+  }
+
+  /* Kolorowe warianty */
+  .star-blue {
+    background: linear-gradient(to right, rgba(79,141,255,0), rgba(79,141,255,1));
+  }
+  .star-blue::after {
+    background: var(--blue);
+    box-shadow: 0 0 10px 2px var(--blue), 0 0 20px var(--blue);
+  }
+
+  .star-yellow {
+    background: linear-gradient(to right, rgba(253,224,71,0), rgba(253,224,71,1));
+  }
+  .star-yellow::after {
+    background: #fde047;
+    box-shadow: 0 0 10px 2px #fde047, 0 0 20px #fde047;
+  }
+
+  /* Animacja lotu */
+  @keyframes shoot {
+    0% { transform: translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(200vmax); opacity: 0; }
+  }
+
+  /* --- KSIĘŻYC --- */
+  .moon-container {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 180px; height: 180px;
+    cursor: grab;
+    z-index: 2; 
+    touch-action: none; 
+    will-change: transform;
+  }
+
+  .moon-container:active {
+    cursor: grabbing;
+  }
+
+  .moon-img {
+    width: 100%; height: 100%;
+    background-image: url('assets/moon.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
+    animation: moonGlow 4s infinite alternate;
+  }
+
+  @keyframes moonGlow {
+    0% { filter: drop-shadow(0 0 20px rgba(186, 230, 253, 0.7)); }
+    100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)); }
+  }
+
+  /* --- GŁÓWNY KONTENER REGULAMINU --- */
+  .rules-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    width: 100%;
+    max-width: 650px;
+    z-index: 10;
+    padding: 15px 0;
+  }
+
+  /* Okienko w stylu Minecrafta */
+  .mc-panel {
+    background: var(--panel-bg);
+    border: 4px solid var(--panel-border);
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.8);
+    border-radius: 8px;
+    padding: 30px;
+    width: 100%;
+    height: 85vh; 
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mc-panel h1 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #dbeafe, #60a5fa, #2563eb, #60a5fa, #dbeafe);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: textFlow 5s linear infinite;
+    border-bottom: 2px solid var(--panel-border);
+    padding-bottom: 15px;
+  }
+
+  @keyframes textFlow {
+    0% { background-position: 0% center; }
+    100% { background-position: -200% center; }
+  }
+
+  /* Sekcja z tekstem (przewijalna) */
+  .rules-text {
+    overflow-y: auto;
+    padding-right: 15px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    flex-grow: 1;
+  }
+
+  /* Pasek przewijania w stylu Minecrafta */
+  .rules-text::-webkit-scrollbar {
+    width: 8px;
+  }
+  .rules-text::-webkit-scrollbar-track {
+    background: var(--panel-border);
+    border-radius: 4px;
+  }
+  .rules-text::-webkit-scrollbar-thumb {
+    background: var(--blue);
+    border-radius: 4px;
+  }
+
+  .rules-text h2 {
+    color: var(--text);
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: 800;
+  }
+
+  .rules-text p {
+    margin-bottom: 10px;
+  }
+
+  .rules-text ul {
+    list-style-position: inside;
+    margin-bottom: 15px;
+    padding-left: 10px;
+  }
+
+  .rules-text li {
+    margin-bottom: 5px;
+  }
+
+  /* --- DOLNA SEKCJA (Hotbar) --- */
+  .bottom-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+
+  .hotbar {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+    background-color: var(--panel-bg);
+    border-top: 4px solid #2d3748;
+    border-left: 4px solid #2d3748;
+    border-bottom: 4px solid var(--panel-border);
+    border-right: 4px solid var(--panel-border);
+    padding: 6px;
+    border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  }
+
+  .slot {
+    width: 50px;
+    height: 50px;
+    background-color: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-light);
+    border-left: 2px solid var(--slot-border-light);
+    border-bottom: 2px solid var(--slot-border-dark);
+    border-right: 2px solid var(--slot-border-dark);
+    transition: background-color 0.2s;
+    cursor: pointer;
+    position: relative; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slot:hover {
+    background-color: #3a3a45;
+    box-shadow: inset 0 0 10px rgba(79, 141, 255, 0.5);
+  }
+
+  /* Ikony */
+  .tiktok-icon { width: 65%; height: 65%; transition: transform 0.2s; }
+  .tiktok-slot:hover .tiktok-icon { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(254, 44, 85, 0.6)); }
+
+  /* ZWIĘKSZONA IKONA REGULAMINU */
+  .rules-icon { width: 80%; height: 80%; fill: var(--yellow); transition: transform 0.2s; filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); }
+  .rules-slot:hover .rules-icon { transform: scale(1.15); }
+
+  .home-icon { width: 80%; height: 80%; fill: var(--text); transition: transform 0.2s, fill 0.2s; }
+  .home-slot:hover .home-icon { transform: scale(1.15); fill: var(--blue); filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); }
+
+  .discord-icon { width: 70%; height: 70%; fill: #5865F2; transition: transform 0.2s; }
+  .discord-slot:hover .discord-icon { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); }
+
+  /* Tooltipy */
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px); 
+    right: 0;
+    background-color: rgba(10, 12, 16, 0.95);
+    border: 2px solid #0f141e;
+    outline: 2px solid var(--blue);
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    width: max-content;
+    max-width: 220px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100;
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(79, 141, 255, 0.2);
+  }
+
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 15px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--blue) transparent transparent transparent;
+  }
+
+  .slot:hover .tooltip { opacity: 1; transform: translateY(0); }
+  .tooltip-title { color: var(--blue); font-weight: 800; margin-bottom: 4px; font-size: 14px; }
+  .tooltip-desc { color: var(--muted); line-height: 1.4; }
+
+  .tiktok-slot .tooltip { right: auto; left: 0; }
+  .tiktok-slot .tooltip::after { right: auto; left: 15px; }
+  .tiktok-slot .tooltip-title { color: #fe2c55; }
+
+  .rules-slot .tooltip { right: auto; left: 0; }
+  .rules-slot .tooltip::after { right: auto; left: 15px; }
+  .rules-slot .tooltip-title { color: var(--yellow); }
+
+  .home-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .home-slot:hover .tooltip { transform: translate(-50%, 0); }
+
+  @media (max-width: 600px) {
+    .rules-wrapper { max-width: 100%; padding: 10px 0; }
+    .mc-panel { height: 75vh; max-height: 75vh; padding: 15px; }
+    .mc-panel h1 { font-size: 24px; }
+    .rules-text { font-size: 13px; }
+    .slot { width: 32px; height: 32px; }
+    .tooltip { display: none; }
+    .moon-container { width: 100px; height: 100px; }
+    .shooting-star { width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Tło z gwiazdkami i smugami -->
+  <div class="space-bg" id="space-bg">
+    <div class="stars-small"></div>
+    <div class="stars-medium"></div>
+    <div class="stars-large"></div>
+  </div>
+
+  <!-- Księżyc -->
+  <div class="moon-container" id="moon">
+    <div class="moon-img"></div>
+  </div>
+
+  <!-- GŁÓWNA SEKCJA Z REGULAMINEM -->
+  <main class="rules-wrapper">
+    <div class="mc-panel">
+      <h1>Regulamin Serwera</h1>
+      
+      <div class="rules-text">
+        <p>Witaj na serwerze <strong>Bomisu.pl</strong>! Korzystając z naszego serwera, akceptujesz poniższe zasady. Prosimy o ich przestrzeganie, aby gra była przyjemna dla wszystkich.</p>
+
+        <h2>1. Zasady ogólne</h2>
+        <ul>
+          <li>Zakaz używania jakichkolwiek cheatów, modów ułatwiających rozgrywkę (X-Ray, KillAura itp.).</li>
+          <li>Zakaz wykorzystywania błędów gry (tzw. bugów) i pluginów. Znalezione błędy należy zgłaszać administracji.</li>
+          <li>Zakaz obrażania innych graczy, szerzenia mowy nienawiści i zachowań toksycznych.</li>
+          <li>Zakaz reklamowania innych serwerów, stron internetowych i usług bez zgody administracji.</li>
+        </ul>
+
+        <h2>2. Konto i Rozgrywka</h2>
+        <ul>
+          <li>Każdy gracz może posiadać jedno główne konto.</li>
+          <li>Zakaz podszywania się pod innych graczy oraz członków administracji.</li>
+          <li>Zakaz griefingu (niszczenia budowli innych graczy) na trybach, które tego nie zakładają.</li>
+          <li>Wykorzystywanie alt-kont do omijania banitów (banów) jest surowo zabronione.</li>
+        </ul>
+
+        <h2>3. Sklep i Płatności</h2>
+        <p>Wszelkie wpłaty dokonywane w sklepie serwera (za pośrednictwem systemu Tebex) są dobrowolne. Zakupione usługi (gemy, rangi) nie podlegają zwrotowi. W przypadku problemów z płatnościami lub brakiem otrzymania zakupionych przedmiotów, prosimy o kontakt na Discordzie.</p>
+
+        <h2>4. Administracja</h2>
+        <ul>
+          <li>Decyzje administracji są ostateczne.</li>
+          <li>Zakaz utrudniania pracy administracji.</li>
+          <li>W sprawach spornych, odwołań od banów i problemów technicznych, kontakt odbywa się wyłącznie przez serwer Discord.</li>
+        </ul>
+
+        <p style="margin-top: 20px; color: var(--blue); font-weight: bold; text-align: center;">Nieznajomość regulaminu nie zwalnia z jego przestrzegania. Miłej gry!</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- DOLNA CZĘŚĆ (Hotbar) -->
+  <div class="bottom-bar">
+    <div class="hotbar">
+      
+      <!-- 1. Slot z TikTokiem -->
+      <div class="slot tiktok-slot" onclick="window.open('https://www.tiktok.com/@bomisumc', '_blank')">
+        <svg class="tiktok-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#25F4EE" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(-8, -8)"/>
+          <path fill="#FE2C55" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(8, 8)"/>
+          <path fill="#FFFFFF" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">TikTok</div>
+          <div class="tooltip-desc">Zobacz naszego TikToka! Kliknij, aby wejść.</div>
+        </div>
+      </div>
+
+      <!-- 2. Slot z Regulaminem (Aktywny) -->
+      <div class="slot rules-slot" onclick="window.location.href='regulamin.html'">
+        <svg class="rules-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Regulamin</div>
+          <div class="tooltip-desc">Jesteś na tej stronie.</div>
+        </div>
+      </div>
+
+      <!-- Puste sloty 3, 4 -->
+      <div class="slot"></div><div class="slot"></div>
+
+      <!-- 5. Slot - Strona Główna (Dom) -->
+      <div class="slot home-slot" onclick="window.location.href='index.html'">
+        <svg class="home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Strona Główna</div>
+          <div class="tooltip-desc">Wróć do menu głównego.</div>
+        </div>
+      </div>
+
+      <!-- Puste sloty 6, 7, 8 -->
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      
+      <!-- 9. Slot z Discordem -->
+      <div class="slot discord-slot" onclick="window.open('https://dc.bomisu.pl/', '_blank')">
+        <svg class="discord-icon" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+          <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.2,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Discord</div>
+          <div class="tooltip-desc">Dołącz do naszej społeczności! Kliknij, aby wejść.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  // ====== FIZYKA KSIĘŻYCA ======
+  const moon = document.getElementById('moon');
+  let isDragging = false;
+  
+  let posX = window.innerWidth > 600 ? window.innerWidth - 250 : window.innerWidth - 120;
+  let posY = 40;
+  
+  let velX = 0;
+  let velY = 0;
+  
+  const friction = 0.995;
+  const bounce = 0.75;    
+  const maxSpeed = 22;    
+
+  let offsetX = 0, offsetY = 0;
+  let lastMouseX = 0, lastMouseY = 0;
+
+  moon.style.transform = `translate(${posX}px, ${posY}px)`;
+
+  moon.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    moon.style.cursor = 'grabbing';
+    
+    const rect = moon.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    
+    posX = rect.left;
+    posY = rect.top;
+    velX = 0;
+    velY = 0;
+    
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+  });
+
+  document.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    
+    posX = e.clientX - offsetX;
+    posY = e.clientY - offsetY;
+    
+    const maxX = window.innerWidth - moon.offsetWidth;
+    const maxY = window.innerHeight - moon.offsetHeight;
+    
+    if (posX < 0) posX = 0;
+    if (posX > maxX) posX = maxX;
+    if (posY < 0) posY = 0;
+    if (posY > maxY) posY = maxY;
+    
+    moon.style.transform = `translate(${posX}px, ${posY}px)`;
+    
+    velX = (e.clientX - lastMouseX) * 0.8;
+    velY = (e.clientY - lastMouseY) * 0.8;
+    
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+  });
+
+  document.addEventListener('pointerup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    moon.style.cursor = 'grab';
+    
+    if (velX > maxSpeed) velX = maxSpeed;
+    if (velX < -maxSpeed) velX = -maxSpeed;
+    if (velY > maxSpeed) velY = maxSpeed;
+    if (velY < -maxSpeed) velY = -maxSpeed;
+    
+    if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
+      requestAnimationFrame(updatePhysics);
+    }
+  });
+
+  function updatePhysics() {
+    if (isDragging) return;
+    
+    velX *= friction;
+    velY *= friction;
+    
+    posX += velX;
+    posY += velY;
+    
+    const maxX = window.innerWidth - moon.offsetWidth;
+    const maxY = window.innerHeight - moon.offsetHeight;
+    
+    if (posX <= 0) {
+      posX = 0;
+      velX = Math.abs(velX) * bounce;
+    } else if (posX >= maxX) {
+      posX = maxX;
+      velX = -Math.abs(velX) * bounce;
+    }
+    
+    if (posY <= 0) {
+      posY = 0;
+      velY = Math.abs(velY) * bounce;
+    } else if (posY >= maxY) {
+      posY = maxY;
+      velY = -Math.abs(velY) * bounce;
+    }
+    
+    moon.style.transform = `translate(${posX}px, ${posY}px)`;
+    
+    if (Math.abs(velX) > 0.15 || Math.abs(velY) > 0.15) {
+      requestAnimationFrame(updatePhysics);
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    const maxX = window.innerWidth - moon.offsetWidth;
+    const maxY = window.innerHeight - moon.offsetHeight;
+    if (posX > maxX) posX = maxX;
+    if (posY > maxY) posY = maxY;
+    moon.style.transform = `translate(${posX}px, ${posY}px)`;
+  });
+
+  // ====== DYNAMICZNE SPADAJĄCE GWIAZDY ======
+  const spaceBg = document.getElementById('space-bg');
+  let activeStars = 0;
+
+  function spawnStar(startX, startY, angle, duration) {
+    if (activeStars >= 2) return;
+    activeStars++;
+    
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('star-wrapper');
+    
+    const star = document.createElement('div');
+    star.classList.add('shooting-star');
+
+    const colorRoll = Math.random();
+    if (colorRoll > 0.7) star.classList.add('star-blue');
+    else if (colorRoll > 0.4) star.classList.add('star-yellow');
+
+    wrapper.style.transform = `translate(${startX}vw, ${startY}vh) rotate(${angle}deg)`;
+    star.style.animation = `shoot ${duration}s linear forwards`;
+
+    wrapper.appendChild(star);
+    spaceBg.appendChild(wrapper);
+
+    star.addEventListener('animationend', () => {
+      wrapper.remove();
+      activeStars--;
+    });
+  }
+
+  function scheduleNextStar() {
+    const delay = 1000 + Math.random() * 2500; 
+    
+    setTimeout(() => {
+      const baseX = 5 + Math.random() * 35; 
+      const baseY = -20 - Math.random() * 20; 
+      const baseAngle = 65 + Math.random() * 20;
+      const baseDuration = 3.5 + Math.random() * 2.5;
+
+      spawnStar(baseX, baseY, baseAngle, baseDuration);
+      
+      if (Math.random() < 0.4) {
+        const offsetX = 3 + Math.random() * 5; 
+        const offsetY = 2 + Math.random() * 3;
+        const offsetAngle = (Math.random() * 4) - 2; 
+        
+        spawnStar(
+          baseX + offsetX, 
+          baseY + offsetY, 
+          baseAngle + offsetAngle, 
+          baseDuration + (Math.random() * 0.4 - 0.2)
+        );
+      }
+      
+      scheduleNextStar(); 
+    }, delay);
+  }
+
+  scheduleNextStar();
+</script>
+</body>
+</html>
