@@ -49,7 +49,6 @@
     height: 100vh; 
     height: 100dvh; 
     
-    /* BLOKUJE ZAZNACZANIE TEKSTU */
     user-select: none;
     -webkit-user-select: none;
   }
@@ -386,19 +385,32 @@
   .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
   .home-slot:hover .tooltip { transform: translate(-50%, 0); }
 
-  /* --- DOSTOSOWANIE DO MAŁYCH EKRANÓW (Telefony) --- */
+  /* --- TELEFONY (Skalowanie hotbara) --- */
   @media (max-width: 600px) {
     body { padding: 20px 10px; }
     
-    /* Okno regulaminu */
     .rules-wrapper { max-width: 100%; padding: 5px 0; }
     .mc-panel { height: 65vh; max-height: 65vh; padding: 15px; }
     .mc-panel h1 { font-size: 24px; }
     .rules-text { font-size: 13px; }
     
-    /* POPRAWIONY HOTBAR (Identyczny jak w index.html) */
-    .slot { width: 32px; height: 32px; border-width: 1px; }
-    .hotbar { padding: 4px; gap: 2px; border-width: 3px; }
+    /* HOTBAR NA CAŁĄ SZEROKOŚĆ */
+    .bottom-bar {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    .hotbar {
+      width: 100%;
+      padding: 4px;
+      gap: 2px;
+      border-width: 3px;
+    }
+    .slot {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      border-width: 1px;
+    }
     
     .tooltip { display: none; }
     .moon-container { width: 100px; height: 100px; }
