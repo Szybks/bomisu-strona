@@ -49,7 +49,7 @@
     height: 100vh; 
     height: 100dvh; 
     
-    /* BLOKUJE ZAZNACZANIE TEKSTU PODCZAS PRZECIĄGANIA KSIĘŻYCA */
+    /* BLOKUJE ZAZNACZANIE TEKSTU */
     user-select: none;
     -webkit-user-select: none;
   }
@@ -193,7 +193,7 @@
     align-items: center;
     flex-grow: 1;
     width: 100%;
-    max-width: 550px; /* 550px - trochę szersze niż hotbar */
+    max-width: 550px; 
     z-index: 10;
     padding: 10px 0;
     overflow: hidden; 
@@ -386,14 +386,20 @@
   .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
   .home-slot:hover .tooltip { transform: translate(-50%, 0); }
 
-  /* Telefony */
+  /* --- DOSTOSOWANIE DO MAŁYCH EKRANÓW (Telefony) --- */
   @media (max-width: 600px) {
     body { padding: 20px 10px; }
+    
+    /* Okno regulaminu */
     .rules-wrapper { max-width: 100%; padding: 5px 0; }
     .mc-panel { height: 65vh; max-height: 65vh; padding: 15px; }
     .mc-panel h1 { font-size: 24px; }
     .rules-text { font-size: 13px; }
-    .slot { width: 32px; height: 32px; }
+    
+    /* POPRAWIONY HOTBAR (Identyczny jak w index.html) */
+    .slot { width: 32px; height: 32px; border-width: 1px; }
+    .hotbar { padding: 4px; gap: 2px; border-width: 3px; }
+    
     .tooltip { display: none; }
     .moon-container { width: 100px; height: 100px; }
     .shooting-star { width: 100px; }
