@@ -178,7 +178,7 @@
     z-index: 2; 
     touch-action: none; 
     will-change: transform;
-    opacity: 0; /* Ukryty do momentu ustawienia pozycji */
+    opacity: 0;
   }
 
   .moon-container.loaded {
@@ -199,19 +199,14 @@
     will-change: transform;
   }
 
+  /* Usunięto stąd animację floatAround, bo teraz robi to JavaScript */
   .moon-container.idle .moon-img {
-    animation: moonGlow 4s infinite alternate, floatAround 6s ease-in-out infinite;
+    animation: moonGlow 4s infinite alternate;
   }
 
   @keyframes moonGlow {
     0% { filter: drop-shadow(0 0 20px rgba(186, 230, 253, 0.7)) drop-shadow(0 0 40px rgba(79, 141, 255, 0.4)); }
     100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)) drop-shadow(0 0 80px rgba(79, 141, 255, 0.6)); }
-  }
-
-  @keyframes floatAround {
-    0%   { transform: translate(0, 0); }
-    50%  { transform: translate(-10px, -22px); }
-    100% { transform: translate(0, 0); }
   }
 
   /* --- EFEKT PODŚWIETLENIA GUI --- */
@@ -505,7 +500,7 @@
     <div class="stars-large"></div>
   </div>
 
-  <!-- Ukryty księżyc poza ekranem, dopóki JS go nie ustawi -->
+  <!-- Ukryty księżyc poza ekranem -->
   <div class="moon-container idle" id="moon" style="opacity: 0; transform: translate(-1000px, -1000px);">
     <div class="moon-img"></div>
   </div>
@@ -605,14 +600,13 @@
     el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
   });
 
-  // Zsynchronizuj lewitację księżyca (aby nie zaczynał od nowa)
+  // Zsynchronizuj tylko poświatę księżyca (moonGlow)
   document.querySelectorAll('.moon-img').forEach(el => {
-    el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
+    el.style.animationDelay = `-${elapsedTime}s`;
   });
 
   // ====== FUNKCJA NAWIGACJI Z ANIMACJĄ I ZAPISEM POZYCJI ======
   function navigateTo(url) {
-    // Zapisujemy obecną pozycję księżyca przed wyjściem
     sessionStorage.setItem('moonX', posX);
     sessionStorage.setItem('moonY', posY);
 
@@ -654,7 +648,7 @@
   let offsetX = 0, offsetY = 0;
   let lastMouseX = 0, lastMouseY = 0;
 
-  // Ustawiamy transformację i pokazujemy księżyc (bez teleportacji)
+  // Ustawiamy transformację i pokazujemy księżyc
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
   moon.style.opacity = '1';
 
@@ -765,6 +759,35 @@
     if (posY > maxY) posY = maxY;
     moon.style.transform = `translate(${posX}px, ${posY}px)`;
   });
+
+  // ====== PŁYNNA ANIMACJA LEWITACJI KSIĘŻYCA (JS) ======
+  const moonImgEl = document.querySelector('.moon-img');
+  const sessionStartTime = parseInt(sessionStorage.getItem('starTime'));
+
+  function animateMoonFloat() {
+    if (moon && moon.classList.contains('idle') && typeof isDragging !== 'undefined' && !isDragging) {
+      const t = (Date.now() - sessionStartTime) / 1000;
+      const cycle = t % 6; // 6-sekundowy cykl
+      let offsetX, offsetY;
+      
+      if (cycle < 3) {
+        // Płyniemy z (0,0) do (-10, -22)
+        offsetX = -10 * (cycle / 3);
+        offsetY = -22 * (cycle / 3);
+      } else {
+        // Wracamy z (-10, -22) do (0,0)
+        offsetX = -10 * (1 - (cycle - 3) / 3);
+        offsetY = -22 * (1 - (cycle - 3) / 3);
+      }
+      
+      moonImgEl.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    } else {
+      // Podczas przeciągania lub rzucania wyłączamy lewitację
+      moonImgEl.style.transform = 'none';
+    }
+    requestAnimationFrame(animateMoonFloat);
+  }
+  requestAnimationFrame(animateMoonFloat);
 
   // ====== EFEKT PODŚWIETLENIA (RADAR) ======
   const glowTargets = document.querySelectorAll('.glow-target');
