@@ -16,6 +16,7 @@
     --blue: #4f8dff;
     --yellow: #fde047;
     --green: #10b981;
+    --red: #ff4f4f;
     --text: #e8eaf2;
     --muted: #8a92a8;
     
@@ -51,6 +52,44 @@
     
     user-select: none;
     -webkit-user-select: none;
+  }
+
+  /* --- PRZYCISK ZAMKNIJ (X) --- */
+  .close-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--panel-bg);
+    border-top: 2px solid #2d3748;
+    border-left: 2px solid #2d3748;
+    border-bottom: 2px solid var(--panel-border);
+    border-right: 2px solid var(--panel-border);
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.05), 0 5px 15px rgba(0,0,0,0.5);
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.2s;
+  }
+
+  .close-btn:hover {
+    border-color: var(--red);
+    box-shadow: 0 0 15px rgba(255, 79, 79, 0.4), inset 0 0 10px rgba(255, 79, 79, 0.2);
+  }
+
+  .close-icon {
+    width: 28px;
+    height: 28px;
+    fill: var(--text);
+    transition: fill 0.2s;
+  }
+
+  .close-btn:hover .close-icon {
+    fill: var(--red);
   }
 
   /* --- KOSMICZNE TŁO Z GWIAZDKAMI --- */
@@ -385,7 +424,7 @@
   .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
   .home-slot:hover .tooltip { transform: translate(-50%, 0); }
 
-  /* --- TELEFONY (Skalowanie hotbara) --- */
+  /* --- TELEFONY (Skalowanie hotbara i krzyżyka) --- */
   @media (max-width: 600px) {
     body { padding: 20px 10px; }
     
@@ -394,6 +433,18 @@
     .mc-panel h1 { font-size: 24px; }
     .rules-text { font-size: 13px; }
     
+    /* Mniejszy krzyżyk na telefonie */
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      top: 10px;
+      left: 10px;
+    }
+    .close-icon {
+      width: 20px;
+      height: 20px;
+    }
+
     /* HOTBAR NA CAŁĄ SZEROKOŚĆ */
     .bottom-bar {
       padding-left: 5px;
@@ -419,6 +470,13 @@
 </style>
 </head>
 <body>
+
+  <!-- Przycisk Zamknij (X) -->
+  <div class="close-btn" onclick="window.location.href='index.html'" title="Wróć do menu">
+    <svg class="close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+    </svg>
+  </div>
 
   <!-- Tło z gwiazdkami i smugami -->
   <div class="space-bg" id="space-bg">
