@@ -178,6 +178,12 @@
     z-index: 2; 
     touch-action: none; 
     will-change: transform;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .moon-container.loaded {
+    opacity: 1;
   }
 
   .moon-container:active { cursor: grabbing; }
@@ -640,7 +646,9 @@
   let offsetX = 0, offsetY = 0;
   let lastMouseX = 0, lastMouseY = 0;
 
+  // Ustawiamy transformację i pokazujemy księżyc
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
+  moon.classList.add('loaded');
 
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;

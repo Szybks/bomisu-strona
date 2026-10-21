@@ -178,6 +178,12 @@
     z-index: 2; 
     touch-action: none; 
     will-change: transform;
+    opacity: 0; /* Ukryty do czasu ustawienia pozycji przez JS */
+    transition: opacity 0.3s ease;
+  }
+
+  .moon-container.loaded {
+    opacity: 1;
   }
 
   .moon-container:active { cursor: grabbing; }
@@ -588,14 +594,11 @@
 
 <script>
   // ====== ZAPAMIĘTYWANIE STANU GWIAZD ======
-  // Sprawdzamy, czy to pierwsze wejście na stronę w tej sesji
   if (!sessionStorage.getItem('starTime')) {
     sessionStorage.setItem('starTime', Date.now());
   }
-  // Obliczamy ile sekund minęło od wejścia
   const elapsedTime = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
   
-  // Ustawiamy ujemne opóźnienie animacji dla gwiazd, aby wznowić je w tym samym miejscu
   document.querySelectorAll('.stars-small, .stars-medium, .stars-large').forEach(el => {
     el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
   });
@@ -644,7 +647,9 @@
   let offsetX = 0, offsetY = 0;
   let lastMouseX = 0, lastMouseY = 0;
 
+  // Ustawiamy transformację i pokazujemy księżyc
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
+  moon.classList.add('loaded');
 
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;
@@ -697,7 +702,6 @@
     if (velY > maxSpeed) velY = maxSpeed;
     if (velY < -maxSpeed) velY = -maxSpeed;
     
-    // Zapisujemy pozycję po puszczeniu (na wypadek odświeżenia)
     sessionStorage.setItem('moonX', posX);
     sessionStorage.setItem('moonY', posY);
 
