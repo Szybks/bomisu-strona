@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Regulamin — Bomisu.pl</title>
+<title>Polityka Prywatności — Bomisu.pl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
@@ -192,12 +192,22 @@
     animation: moonGlow 4s infinite alternate;
   }
 
+  .moon-container.idle .moon-img {
+    animation: moonGlow 4s infinite alternate, floatAround 6s ease-in-out infinite;
+  }
+
   @keyframes moonGlow {
     0% { filter: drop-shadow(0 0 20px rgba(186, 230, 253, 0.7)); }
     100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)); }
   }
 
-  /* --- GŁÓWNY KONTENER REGULAMINU --- */
+  @keyframes floatAround {
+    0%   { transform: translate(0, 0); }
+    50%  { transform: translate(-10px, -22px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* --- GŁÓWNY KONTENER --- */
   .rules-wrapper {
     display: flex;
     justify-content: center;
@@ -262,7 +272,7 @@
 
   .mc-panel h1 {
     text-align: center;
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 900;
     letter-spacing: -1px;
     margin-bottom: 20px;
@@ -367,22 +377,22 @@
 
   .rules-icon { 
     width: 80%; height: 80%; 
-    fill: var(--yellow); 
-    transition: transform 0.2s, filter 0.2s; 
-    filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); 
-  }
-  .rules-slot:hover .rules-icon { transform: scale(1.15); }
-
-  .privacy-icon { 
-    width: 70%; height: 70%; 
     fill: #ffffff; 
     transition: transform 0.2s, filter 0.2s, fill 0.2s; 
   }
-  .privacy-slot:hover .privacy-icon { 
+  .rules-slot:hover .rules-icon { 
     transform: scale(1.15); 
+    fill: var(--yellow); 
+    filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); 
+  }
+
+  .privacy-icon { 
+    width: 70%; height: 70%; 
     fill: #4ade80; 
+    transition: transform 0.2s, filter 0.2s; 
     filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); 
   }
+  .privacy-slot:hover .privacy-icon { transform: scale(1.15); }
 
   .home-icon { 
     width: 80%; height: 80%; 
@@ -468,7 +478,7 @@
     
     .rules-wrapper { max-width: 100%; padding: 5px 0; }
     .mc-panel { height: 65vh; max-height: 65vh; padding: 15px; }
-    .mc-panel h1 { font-size: 24px; padding-left: 30px; padding-right: 30px; }
+    .mc-panel h1 { font-size: 22px; padding-left: 30px; padding-right: 30px; }
     .rules-text { font-size: 13px; }
     
     .close-btn { width: 32px; height: 32px; top: 10px; right: 10px; }
@@ -492,7 +502,8 @@
     <div class="stars-large"></div>
   </div>
 
-  <div class="moon-container" id="moon">
+  <!-- DODANA KLASA idle -->
+  <div class="moon-container idle" id="moon">
     <div class="moon-img"></div>
   </div>
 
@@ -504,33 +515,49 @@
         </svg>
       </div>
 
-      <h1>Regulamin Serwera</h1>
+      <h1>Polityka Prywatności</h1>
       
       <div class="rules-text">
-        <p>Witaj na serwerze <strong>Bomisu.pl</strong>! Korzystając z naszego serwera, akceptujesz poniższe zasady. Prosimy o ich przestrzeganie, aby gra była przyjemna dla wszystkich.</p>
-        <h2>1. Zasady ogólne</h2>
+        <p>Ostatnia aktualizacja: Październik 2026</p>
+        <p>Twoja prywatność jest dla nas niezwykle ważna. W tym dokumencie wyjaśniamy, jakie dane zbieramy podczas korzystania z serwera <strong>Bomisu.pl</strong> oraz w jaki sposób je przetwarzamy i chronimy.</p>
+
+        <h2>1. Jakie dane zbieramy?</h2>
+        <p>Podczas gry na serwerze oraz korzystania z naszej strony internetowej automatycznie zapisujemy następujące informacje:</p>
         <ul>
-          <li>Zakaz używania jakichkolwiek cheatów, modów ułatwiających rozgrywkę (X-Ray, KillAura itp.).</li>
-          <li>Zakaz wykorzystywania błędów gry (tzw. bugów) i pluginów. Znalezione błędy należy zgłaszać administracji.</li>
-          <li>Zakaz obrażania innych graczy, szerzenia mowy nienawiści i zachowań toksycznych.</li>
-          <li>Zakaz reklamowania innych serwerów, stron internetowych i usług bez zgody administracji.</li>
+          <li><strong>Nick z Minecrafta i UUID:</strong> Niezbędne do identyfikacji gracza na serwerze.</li>
+          <li><strong>Adres IP:</strong> Zbierany w celach bezpieczeństwa (ochrona przed atakami DDoS, wykrywanie multikont i oszustw).</li>
+          <li><strong>Dane płatności (Tebex):</strong> Jeśli dokonujesz zakupu w sklepie, dane transakcji są przetwarzane przez zewnętrzną platformę Tebex. My nie przechowujemy Twoich danych karty kredytowej ani haseł.</li>
+          <li><strong>Discord ID:</strong> Jeśli łączysz swoje konto z naszym Discordem.</li>
+          <li><strong>Logi systemowe:</strong> Zapisy komend, czatu i działań w grze, które pomagają nam egzekwować regulamin i rozwiązywać spory.</li>
         </ul>
-        <h2>2. Konto i Rozgrywka</h2>
+
+        <h2>2. Pliki Cookies</h2>
+        <p>Nasza strona internetowa wykorzystuje pliki cookies (ciasteczka) w minimalnym zakresie, wyłącznie w celach technicznych (np. do prawidłowego działania animacji, zapamiętania sesji). Większe zaawansowanie w tej kwestii mają zewnętrzne systemy, takie jak Tebex (podczas obsługi płatności).</p>
+
+        <h2>3. Cel przetwarzania danych</h2>
+        <p>Zebrane dane wykorzystujemy wyłącznie do:</p>
         <ul>
-          <li>Każdy gracz może posiadać jedno główne konto.</li>
-          <li>Zakaz podszywania się pod innych graczy oraz członków administracji.</li>
-          <li>Zakaz griefingu (niszczenia budowli innych graczy) na trybach, które tego nie zakładają.</li>
-          <li>Wykorzystywanie alt-kont do omijania banitów (banów) jest surowo zabronione.</li>
+          <li>Zapewnienia prawidłowego działania serwera i trybów gry.</li>
+          <li>Realizacji zakupów (nadawania rang, gemów).</li>
+          <li>Zapewnienia bezpieczeństwa i egzekwowania Regulaminu (bany, mute).</li>
+          <li>Kontaktu z graczem w sprawach technicznych lub administracyjnych.</li>
         </ul>
-        <h2>3. Sklep i Płatności</h2>
-        <p>Wszelkie wpłaty dokonywane w sklepie serwera (za pośrednictwem systemu Tebex) są dobrowolne. Zakupione usługi (gemy, rangi) nie podlegają zwrotowi. W przypadku problemów z płatnościami lub brakiem otrzymania zakupionych przedmiotów, prosimy o kontakt na Discordzie.</p>
-        <h2>4. Administracja</h2>
+
+        <h2>4. Udostępnianie danych</h2>
+        <p>Nie sprzedajemy i nie udostępniamy Twoich danych podmiotom trzecim w celach marketingowych. Dane mogą być udostępniane wyłącznie zaufanym partnerom technologicznym:</p>
         <ul>
-          <li>Decyzje administracji są ostateczne.</li>
-          <li>Zakaz utrudniania pracy administracji.</li>
-          <li>W sprawach spornych, odwołań od banów i problemów technicznych, kontakt odbywa się wyłącznie przez serwer Discord.</li>
+          <li><strong>Tebex:</strong> W celu obsługi płatności i realizacji zamówień.</li>
+          <li><strong>Dostawca hostingu:</strong> W celu utrzymania serwera i strony.</li>
+          <li><strong>Discord:</strong> W przypadku korzystania z integracji konta.</li>
         </ul>
-        <p style="margin-top: 20px; color: var(--blue); font-weight: bold; text-align: center;">Nieznajomość regulaminu nie zwalnia z jego przestrzegania. Miłej gry!</p>
+
+        <h2>5. Twoje prawa</h2>
+        <p>Masz prawo do wglądu w swoje dane, ich poprawiania oraz żądania ich usunięcia (tzw. prawo do bycia zapomnianym). W celu usunięcia konta lub danych skontaktuj się z nami przez nasz serwer Discord. Pamiętaj, że usunięcie niektórych danych (np. historii banów) może być niemożliwe ze względów bezpieczeństwa.</p>
+
+        <h2>6. Bezpieczeństwo</h2>
+        <p>Stosujemy odpowiednie środki techniczne i organizacyjne, aby chronić Twoje dane przed nieuprawnionym dostępem. Hasła do kont na stronie i w grze powinny być silne i unikalne.</p>
+
+        <p style="margin-top: 20px; color: var(--blue); font-weight: bold; text-align: center;">Korzystając z serwera Bomisu.pl, akceptujesz zasady opisane w tej Polityce Prywatności.</p>
       </div>
     </div>
   </main>
@@ -556,7 +583,7 @@
         </svg>
         <div class="tooltip">
           <div class="tooltip-title">Regulamin</div>
-          <div class="tooltip-desc">Jesteś na tej stronie.</div>
+          <div class="tooltip-desc">Zapoznaj się z zasadami panującymi na serwerze.</div>
         </div>
       </div>
 
@@ -580,7 +607,7 @@
         </svg>
         <div class="tooltip">
           <div class="tooltip-title">Polityka Prywatności</div>
-          <div class="tooltip-desc">Informacje o przetwarzaniu danych i ciasteczkach.</div>
+          <div class="tooltip-desc">Jesteś na tej stronie.</div>
         </div>
       </div>
 
@@ -608,8 +635,9 @@
   const moon = document.getElementById('moon');
   let isDragging = false;
   
-  let posX = window.innerWidth > 600 ? window.innerWidth - 250 : window.innerWidth - 120;
-  let posY = 40;
+  // Ustawienie identyczne jak na index.html
+  let posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
+  let posY = 60;
   
   let velX = 0;
   let velY = 0;
@@ -626,6 +654,7 @@
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;
     moon.style.cursor = 'grabbing';
+    moon.classList.remove('idle'); // Zatrzymuje animację lewitacji podczas łapania
     
     const rect = moon.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
@@ -675,6 +704,8 @@
     
     if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
       requestAnimationFrame(updatePhysics);
+    } else {
+      moon.classList.add('idle'); // Włącza lewitację po delikatnym puszczeniu
     }
   });
 
@@ -710,6 +741,8 @@
     
     if (Math.abs(velX) > 0.15 || Math.abs(velY) > 0.15) {
       requestAnimationFrame(updatePhysics);
+    } else {
+      moon.classList.add('idle'); // Włącza lewitację po wyhamowaniu
     }
   }
 
