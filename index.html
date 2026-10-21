@@ -16,6 +16,7 @@
     --blue: #4f8dff;
     --yellow: #fde047;
     --green: #10b981;
+    --red: #ff4f4f;
     --text: #e8eaf2;
     --muted: #8a92a8;
     
@@ -51,6 +52,30 @@
     
     user-select: none;
     -webkit-user-select: none;
+  }
+
+  /* --- ANIMACJE PRZEJŚCIA --- */
+  @keyframes dropIn {
+    0% { transform: translateY(-100vh); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  
+  @keyframes dropOut {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  .drop-in {
+    animation: dropIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    opacity: 0;
+  }
+
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+
+  body.page-exit .drop-in {
+    animation: dropOut 0.6s cubic-bezier(0.8, 0.2, 0.8, 0.2) forwards !important;
+    animation-delay: 0s !important;
   }
 
   /* --- KOSMICZNE TŁO Z GWIAZDKAMI --- */
@@ -132,21 +157,10 @@
     box-shadow: 0 0 10px 2px #fff, 0 0 20px #fff;
   }
 
-  .star-blue {
-    background: linear-gradient(to right, rgba(79,141,255,0), rgba(79,141,255,1));
-  }
-  .star-blue::after {
-    background: var(--blue);
-    box-shadow: 0 0 10px 2px var(--blue), 0 0 20px var(--blue);
-  }
-
-  .star-yellow {
-    background: linear-gradient(to right, rgba(253,224,71,0), rgba(253,224,71,1));
-  }
-  .star-yellow::after {
-    background: #fde047;
-    box-shadow: 0 0 10px 2px #fde047, 0 0 20px #fde047;
-  }
+  .star-blue { background: linear-gradient(to right, rgba(79,141,255,0), rgba(79,141,255,1)); }
+  .star-blue::after { background: var(--blue); box-shadow: 0 0 10px 2px var(--blue), 0 0 20px var(--blue); }
+  .star-yellow { background: linear-gradient(to right, rgba(253,224,71,0), rgba(253,224,71,1)); }
+  .star-yellow::after { background: #fde047; box-shadow: 0 0 10px 2px #fde047, 0 0 20px #fde047; }
 
   @keyframes shoot {
     0% { transform: translateX(0); opacity: 0; }
@@ -155,7 +169,7 @@
     100% { transform: translateX(200vmax); opacity: 0; }
   }
 
-  /* --- KSIĘŻYC Z FIZYKĄ --- */
+  /* --- KSIĘŻYC --- */
   .moon-container {
     position: fixed;
     top: 0; left: 0; 
@@ -166,9 +180,7 @@
     will-change: transform;
   }
 
-  .moon-container:active {
-    cursor: grabbing;
-  }
+  .moon-container:active { cursor: grabbing; }
 
   .moon-img {
     width: 100%; height: 100%;
@@ -197,17 +209,9 @@
   }
 
   /* --- EFEKT PODŚWIETLENIA GUI --- */
-  .glow-target {
-    transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
-  }
-
-  .glow-target.near-moon {
-    filter: drop-shadow(0 0 15px rgba(79, 141, 255, 0.7)) drop-shadow(0 0 30px rgba(147, 197, 253, 0.5));
-  }
-
-  .cd-box.near-moon, 
-  .ip-box.near-moon, 
-  .hotbar.near-moon {
+  .glow-target { transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; }
+  .glow-target.near-moon { filter: drop-shadow(0 0 15px rgba(79, 141, 255, 0.7)) drop-shadow(0 0 30px rgba(147, 197, 253, 0.5)); }
+  .cd-box.near-moon, .ip-box.near-moon, .hotbar.near-moon {
     border-color: rgba(147, 197, 253, 0.8);
     box-shadow: 0 0 30px rgba(79, 141, 255, 0.5), inset 0 0 15px rgba(79, 141, 255, 0.2);
   }
@@ -232,9 +236,7 @@
   .hero::-webkit-scrollbar { display: none; }
   .hero { -ms-overflow-style: none; scrollbar-width: none; }
 
-  .hero h1, .hero p, .countdown, .ip-box {
-    pointer-events: auto;
-  }
+  .hero h1, .hero p, .countdown, .ip-box { pointer-events: auto; }
 
   .hero h1 {
     font-size: clamp(40px, 10vw, 110px);
@@ -394,21 +396,66 @@
     box-shadow: inset 0 0 10px rgba(79, 141, 255, 0.5);
   }
 
-  /* Ikony */
-  .tiktok-icon { width: 65%; height: 65%; transition: transform 0.2s, filter 0.2s; }
-  .tiktok-slot:hover .tiktok-icon { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(254, 44, 85, 0.6)); }
+  /* --- IKONY --- */
+  /* 1. TikTok - Biały domyślnie, Czerwony po najechaniu */
+  .tiktok-icon { 
+    width: 65%; height: 65%; 
+    color: #ffffff; 
+    transition: transform 0.2s, filter 0.2s, color 0.2s; 
+  }
+  .tiktok-slot:hover .tiktok-icon { 
+    transform: scale(1.15); 
+    color: #ff0050; 
+    filter: drop-shadow(0 0 8px rgba(255, 0, 80, 0.8)); 
+  }
 
-  .rules-icon { width: 80%; height: 80%; fill: var(--text); transition: transform 0.2s, filter 0.2s, fill 0.2s; }
-  .rules-slot:hover .rules-icon { transform: scale(1.15); fill: var(--yellow); filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); }
+  /* 2. Regulamin - Biały domyślnie, Żółty po najechaniu */
+  .rules-icon { 
+    width: 80%; height: 80%; 
+    fill: #ffffff; 
+    transition: transform 0.2s, filter 0.2s, fill 0.2s; 
+  }
+  .rules-slot:hover .rules-icon { 
+    transform: scale(1.15); 
+    fill: var(--yellow); 
+    filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); 
+  }
 
-  .privacy-icon { width: 70%; height: 70%; fill: var(--text); transition: transform 0.2s, filter 0.2s, fill 0.2s; }
-  .privacy-slot:hover .privacy-icon { transform: scale(1.15); fill: #4ade80; filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); }
+  /* 3. Polityka - Biały domyślnie, Zielony po najechaniu */
+  .privacy-icon { 
+    width: 70%; height: 70%; 
+    fill: #ffffff; 
+    transition: transform 0.2s, filter 0.2s, fill 0.2s; 
+  }
+  .privacy-slot:hover .privacy-icon { 
+    transform: scale(1.15); 
+    fill: #4ade80; 
+    filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); 
+  }
 
-  .home-icon { width: 80%; height: 80%; fill: var(--text); transition: transform 0.2s, filter 0.2s, fill 0.2s; }
-  .home-slot:hover .home-icon { transform: scale(1.15); fill: var(--blue); filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); }
+  /* 4. Dom - Biały domyślnie, Niebieski po najechaniu */
+  .home-icon { 
+    width: 80%; height: 80%; 
+    fill: #ffffff; 
+    transition: transform 0.2s, filter 0.2s, fill 0.2s; 
+  }
+  .home-slot:hover .home-icon { 
+    transform: scale(1.15); 
+    fill: var(--blue); 
+    filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); 
+  }
 
-  .discord-icon { width: 70%; height: 70%; fill: #5865F2; transition: transform 0.2s, filter 0.2s; }
-  .discord-slot:hover .discord-icon { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); }
+  /* 5. Discord - Biały domyślnie, Niebieski (Discord) po najechaniu */
+  .discord-icon { 
+    width: 70%; height: 70%; 
+    fill: #ffffff; 
+    transition: transform 0.2s, filter 0.2s, fill 0.2s; 
+  }
+  .discord-slot:hover .discord-icon { 
+    transform: scale(1.15); 
+    fill: #5865F2; 
+    filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); 
+  }
 
   /* --- TOOLTIP --- */
   .tooltip {
@@ -443,18 +490,13 @@
     border-color: var(--blue) transparent transparent transparent;
   }
 
-  .slot:hover .tooltip {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
+  .slot:hover .tooltip { opacity: 1; transform: translateY(0); }
   .tooltip-title { color: var(--blue); font-weight: 800; margin-bottom: 4px; font-size: 14px; }
   .tooltip-desc { color: var(--muted); line-height: 1.4; }
 
-  /* Poprawki dla poszczególnych slotów */
   .tiktok-slot .tooltip { right: auto; left: 0; }
   .tiktok-slot .tooltip::after { right: auto; left: 15px; }
-  .tiktok-slot .tooltip-title { color: #fe2c55; }
+  .tiktok-slot .tooltip-title { color: #ff0050; }
 
   .rules-slot .tooltip { right: auto; left: 0; }
   .rules-slot .tooltip::after { right: auto; left: 15px; }
@@ -469,7 +511,9 @@
   .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
   .home-slot:hover .tooltip { transform: translate(-50%, 0); }
 
-  /* --- TELEFONY (Skalowanie hotbara) --- */
+  .discord-slot .tooltip-title { color: #5865F2; }
+
+  /* --- TELEFONY --- */
   @media (max-width: 600px) {
     body { padding: 20px 10px; }
     
@@ -484,23 +528,9 @@
     .ip-box { flex-direction: row; gap: 10px; padding: 10px 14px; }
     .ip-value { font-size: 18px; }
     
-    /* HOTBAR NA CAŁĄ SZEROKOŚĆ */
-    .bottom-bar {
-      padding-left: 5px;
-      padding-right: 5px;
-    }
-    .hotbar {
-      width: 100%;
-      padding: 4px;
-      gap: 2px;
-      border-width: 3px;
-    }
-    .slot {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 1 / 1;
-      border-width: 1px;
-    }
+    .bottom-bar { padding-left: 5px; padding-right: 5px; }
+    .hotbar { width: 100%; padding: 4px; gap: 2px; border-width: 3px; }
+    .slot { width: 100%; height: auto; aspect-ratio: 1 / 1; border-width: 1px; }
     
     .moon-container { width: 100px; height: 100px; }
     .tooltip { display: none; }
@@ -523,7 +553,7 @@
   </div>
 
   <!-- GÓRNA CZĘŚĆ -->
-  <header class="hero">
+  <header class="hero drop-in delay-1">
     <h1 class="glow-target" id="main-title">BOMISU.PL</h1>
     <p class="sub glow-target">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag i wkrótce Flag Hunt. Wbijaj i graj z nami!</p>
 
@@ -545,15 +575,15 @@
   </header>
 
   <!-- DOLNA CZĘŚĆ -->
-  <div class="bottom-bar">
+  <div class="bottom-bar drop-in delay-2">
     <div class="hotbar glow-target" id="hotbar">
       
-      <!-- 1. Slot z TikTokiem -->
+      <!-- 1. Slot z TikTokiem (Zmienione fill na currentColor) -->
       <div class="slot tiktok-slot" onclick="window.open('https://www.tiktok.com/@bomisumc', '_blank')">
         <svg class="tiktok-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
-          <path fill="#25F4EE" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(-8, -8)"/>
-          <path fill="#FE2C55" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(8, 8)"/>
-          <path fill="#FFFFFF" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(-8, -8)"/>
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(8, 8)"/>
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
         </svg>
         <div class="tooltip">
           <div class="tooltip-title">TikTok</div>
@@ -562,7 +592,7 @@
       </div>
 
       <!-- 2. Slot z Regulaminem -->
-      <div class="slot rules-slot" onclick="window.location.href='regulamin.html'">
+      <div class="slot rules-slot" onclick="navigateTo('regulamin.html')">
         <svg class="rules-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
         </svg>
@@ -576,7 +606,7 @@
       <div class="slot"></div><div class="slot"></div>
 
       <!-- 5. Slot - Strona Główna (Dom) -->
-      <div class="slot home-slot" onclick="window.location.href='index.html'">
+      <div class="slot home-slot" onclick="navigateTo('index.html')">
         <svg class="home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
@@ -590,7 +620,7 @@
       <div class="slot"></div><div class="slot"></div>
       
       <!-- 8. Slot z Polityką Prywatności -->
-      <div class="slot privacy-slot" onclick="window.location.href='polityka-prywatnosci.html'">
+      <div class="slot privacy-slot" onclick="navigateTo('polityka-prywatnosci.html')">
         <svg class="privacy-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
         </svg>
@@ -615,6 +645,14 @@
   </div>
 
 <script>
+  // ====== FUNKCJA NAWIGACJI Z ANIMACJĄ ======
+  function navigateTo(url) {
+    document.body.classList.add('page-exit');
+    setTimeout(() => {
+      window.location.href = url;
+    }, 600); 
+  }
+
   // ====== FIZYKA KSIĘŻYCA ======
   const moon = document.getElementById('moon');
   let isDragging = false;
