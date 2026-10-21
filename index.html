@@ -395,54 +395,20 @@
   }
 
   /* Ikony */
-  .tiktok-icon {
-    width: 65%;
-    height: 65%;
-    transition: transform 0.2s, filter 0.2s;
-  }
+  .tiktok-icon { width: 65%; height: 65%; transition: transform 0.2s, filter 0.2s; }
+  .tiktok-slot:hover .tiktok-icon { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(254, 44, 85, 0.6)); }
 
-  .tiktok-slot:hover .tiktok-icon {
-    transform: scale(1.15);
-    filter: drop-shadow(0 0 8px rgba(254, 44, 85, 0.6));
-  }
+  .rules-icon { width: 80%; height: 80%; fill: var(--text); transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .rules-slot:hover .rules-icon { transform: scale(1.15); fill: var(--yellow); filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); }
 
-  .home-icon {
-    width: 80%;
-    height: 80%;
-    fill: var(--text);
-    transition: transform 0.2s, filter 0.2s, fill 0.2s;
-  }
+  .privacy-icon { width: 70%; height: 70%; fill: var(--text); transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .privacy-slot:hover .privacy-icon { transform: scale(1.15); fill: #4ade80; filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); }
 
-  .home-slot:hover .home-icon {
-    transform: scale(1.15);
-    fill: var(--blue);
-    filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8));
-  }
+  .home-icon { width: 80%; height: 80%; fill: var(--text); transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .home-slot:hover .home-icon { transform: scale(1.15); fill: var(--blue); filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); }
 
-  .rules-icon {
-    width: 80%;
-    height: 80%;
-    fill: var(--text);
-    transition: transform 0.2s, filter 0.2s, fill 0.2s;
-  }
-
-  .rules-slot:hover .rules-icon {
-    transform: scale(1.15);
-    fill: var(--yellow);
-    filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8));
-  }
-
-  .discord-icon {
-    width: 70%;
-    height: 70%;
-    fill: #5865F2;
-    transition: transform 0.2s, filter 0.2s;
-  }
-
-  .discord-slot:hover .discord-icon {
-    transform: scale(1.15);
-    filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8));
-  }
+  .discord-icon { width: 70%; height: 70%; fill: #5865F2; transition: transform 0.2s, filter 0.2s; }
+  .discord-slot:hover .discord-icon { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); }
 
   /* --- TOOLTIP --- */
   .tooltip {
@@ -482,17 +448,8 @@
     transform: translateY(0);
   }
 
-  .tooltip-title {
-    color: var(--blue);
-    font-weight: 800;
-    margin-bottom: 4px;
-    font-size: 14px;
-  }
-
-  .tooltip-desc {
-    color: var(--muted);
-    line-height: 1.4;
-  }
+  .tooltip-title { color: var(--blue); font-weight: 800; margin-bottom: 4px; font-size: 14px; }
+  .tooltip-desc { color: var(--muted); line-height: 1.4; }
 
   /* Poprawki dla poszczególnych slotów */
   .tiktok-slot .tooltip { right: auto; left: 0; }
@@ -502,6 +459,11 @@
   .rules-slot .tooltip { right: auto; left: 0; }
   .rules-slot .tooltip::after { right: auto; left: 15px; }
   .rules-slot .tooltip-title { color: var(--yellow); }
+
+  .privacy-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .privacy-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .privacy-slot:hover .tooltip { transform: translate(-50%, 0); }
+  .privacy-slot .tooltip-title { color: #4ade80; }
 
   .home-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
   .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
@@ -624,9 +586,20 @@
         </div>
       </div>
 
-      <!-- Puste sloty 6, 7, 8 -->
-      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <!-- Puste sloty 6, 7 -->
+      <div class="slot"></div><div class="slot"></div>
       
+      <!-- 8. Slot z Polityką Prywatności -->
+      <div class="slot privacy-slot" onclick="window.location.href='polityka-prywatnosci.html'">
+        <svg class="privacy-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Polityka Prywatności</div>
+          <div class="tooltip-desc">Informacje o przetwarzaniu danych i ciasteczkach.</div>
+        </div>
+      </div>
+
       <!-- 9. Slot z Discordem -->
       <div class="slot discord-slot" onclick="window.open('https://dc.bomisu.pl/', '_blank')">
         <svg class="discord-icon" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
