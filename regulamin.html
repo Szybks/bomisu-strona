@@ -179,11 +179,11 @@
     touch-action: none; 
     will-change: transform;
     opacity: 0;
-    transition: opacity 0.3s ease;
   }
 
   .moon-container.loaded {
     opacity: 1;
+    transition: opacity 0.3s ease;
   }
 
   .moon-container:active { cursor: grabbing; }
@@ -471,7 +471,8 @@
     <div class="stars-large"></div>
   </div>
 
-  <div class="moon-container idle" id="moon">
+  <!-- Ukryty księżyc poza ekranem -->
+  <div class="moon-container idle" id="moon" style="opacity: 0; transform: translate(-1000px, -1000px);">
     <div class="moon-img"></div>
   </div>
 
@@ -577,13 +578,17 @@
   </div>
 
 <script>
-  // ====== ZAPAMIĘTYWANIE STANU GWIAZD ======
+  // ====== ZAPAMIĘTYWANIE STANU GWIAZD I ANIMACJI ======
   if (!sessionStorage.getItem('starTime')) {
     sessionStorage.setItem('starTime', Date.now());
   }
   const elapsedTime = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
   
   document.querySelectorAll('.stars-small, .stars-medium, .stars-large').forEach(el => {
+    el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
+  });
+
+  document.querySelectorAll('.moon-img').forEach(el => {
     el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
   });
 
@@ -632,7 +637,7 @@
 
   // Ustawiamy transformację i pokazujemy księżyc
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
-  moon.classList.add('loaded');
+  moon.style.opacity = '1';
 
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;

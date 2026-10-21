@@ -179,11 +179,11 @@
     touch-action: none; 
     will-change: transform;
     opacity: 0;
-    transition: opacity 0.3s ease;
   }
 
   .moon-container.loaded {
     opacity: 1;
+    transition: opacity 0.3s ease;
   }
 
   .moon-container:active { cursor: grabbing; }
@@ -471,7 +471,8 @@
     <div class="stars-large"></div>
   </div>
 
-  <div class="moon-container idle" id="moon">
+  <!-- Ukryty księżyc poza ekranem -->
+  <div class="moon-container idle" id="moon" style="opacity: 0; transform: translate(-1000px, -1000px);">
     <div class="moon-img"></div>
   </div>
 
@@ -593,7 +594,6 @@
   </div>
 
 <script>
-  // ====== ZAPAMIĘTYWANIE STANU GWIAZD ======
   if (!sessionStorage.getItem('starTime')) {
     sessionStorage.setItem('starTime', Date.now());
   }
@@ -603,7 +603,10 @@
     el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
   });
 
-  // ====== FUNKCJA NAWIGACJI Z ANIMACJĄ I ZAPISEM POZYCJI ======
+  document.querySelectorAll('.moon-img').forEach(el => {
+    el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
+  });
+
   function navigateTo(url) {
     sessionStorage.setItem('moonX', posX);
     sessionStorage.setItem('moonY', posY);
@@ -614,11 +617,9 @@
     }, 600); 
   }
 
-  // ====== FIZYKA KSIĘŻYCA ======
   const moon = document.getElementById('moon');
   let isDragging = false;
   
-  // ODCZYT POZYCJI Z PAMIĘCI
   let posX = sessionStorage.getItem('moonX');
   let posY = sessionStorage.getItem('moonY');
 
@@ -646,9 +647,8 @@
   let offsetX = 0, offsetY = 0;
   let lastMouseX = 0, lastMouseY = 0;
 
-  // Ustawiamy transformację i pokazujemy księżyc
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
-  moon.classList.add('loaded');
+  moon.style.opacity = '1';
 
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;
@@ -758,7 +758,6 @@
     moon.style.transform = `translate(${posX}px, ${posY}px)`;
   });
 
-  // ====== DYNAMICZNE SPADAJĄCE GWIAZDY ======
   const spaceBg = document.getElementById('space-bg');
   let activeStars = 0;
 
