@@ -364,57 +364,20 @@
   }
 
   /* --- IKONY --- */
-  .tiktok-icon { 
-    width: 65%; height: 65%; 
-    color: #ffffff; 
-    transition: transform 0.2s, filter 0.2s, color 0.2s; 
-  }
-  .tiktok-slot:hover .tiktok-icon { 
-    transform: scale(1.15); 
-    color: #ff0050; 
-    filter: drop-shadow(0 0 8px rgba(255, 0, 80, 0.8)); 
-  }
+  .tiktok-icon { width: 65%; height: 65%; color: #ffffff; transition: transform 0.2s, filter 0.2s, color 0.2s; }
+  .tiktok-slot:hover .tiktok-icon { transform: scale(1.15); color: #ff0050; filter: drop-shadow(0 0 8px rgba(255, 0, 80, 0.8)); }
 
-  .rules-icon { 
-    width: 80%; height: 80%; 
-    fill: #ffffff; 
-    transition: transform 0.2s, filter 0.2s, fill 0.2s; 
-  }
-  .rules-slot:hover .rules-icon { 
-    transform: scale(1.15); 
-    fill: var(--yellow); 
-    filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); 
-  }
+  .rules-icon { width: 80%; height: 80%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .rules-slot:hover .rules-icon { transform: scale(1.15); fill: var(--yellow); filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); }
 
-  .privacy-icon { 
-    width: 70%; height: 70%; 
-    fill: #4ade80; 
-    transition: transform 0.2s, filter 0.2s; 
-    filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); 
-  }
+  .privacy-icon { width: 70%; height: 70%; fill: #4ade80; transition: transform 0.2s, filter 0.2s; filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); }
   .privacy-slot:hover .privacy-icon { transform: scale(1.15); }
 
-  .home-icon { 
-    width: 80%; height: 80%; 
-    fill: #ffffff; 
-    transition: transform 0.2s, filter 0.2s, fill 0.2s; 
-  }
-  .home-slot:hover .home-icon { 
-    transform: scale(1.15); 
-    fill: var(--blue); 
-    filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); 
-  }
+  .home-icon { width: 80%; height: 80%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .home-slot:hover .home-icon { transform: scale(1.15); fill: var(--blue); filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); }
 
-  .discord-icon { 
-    width: 70%; height: 70%; 
-    fill: #ffffff; 
-    transition: transform 0.2s, filter 0.2s, fill 0.2s; 
-  }
-  .discord-slot:hover .discord-icon { 
-    transform: scale(1.15); 
-    fill: #5865F2; 
-    filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); 
-  }
+  .discord-icon { width: 70%; height: 70%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .discord-slot:hover .discord-icon { transform: scale(1.15); fill: #5865F2; filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); }
 
   /* Tooltipy */
   .tooltip {
@@ -502,7 +465,6 @@
     <div class="stars-large"></div>
   </div>
 
-  <!-- DODANA KLASA idle -->
   <div class="moon-container idle" id="moon">
     <div class="moon-img"></div>
   </div>
@@ -625,19 +587,48 @@
   </div>
 
 <script>
+  // ====== ZAPAMIĘTYWANIE STANU GWIAZD ======
+  if (!sessionStorage.getItem('starTime')) {
+    sessionStorage.setItem('starTime', Date.now());
+  }
+  const elapsedTime = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
+  
+  document.querySelectorAll('.stars-small, .stars-medium, .stars-large').forEach(el => {
+    el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
+  });
+
+  // ====== FUNKCJA NAWIGACJI Z ANIMACJĄ I ZAPISEM POZYCJI ======
   function navigateTo(url) {
+    sessionStorage.setItem('moonX', posX);
+    sessionStorage.setItem('moonY', posY);
+
     document.body.classList.add('page-exit');
     setTimeout(() => {
       window.location.href = url;
     }, 600); 
   }
 
+  // ====== FIZYKA KSIĘŻYCA ======
   const moon = document.getElementById('moon');
   let isDragging = false;
   
-  // Ustawienie identyczne jak na index.html
-  let posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
-  let posY = 60;
+  // ODCZYT POZYCJI Z PAMIĘCI
+  let posX = sessionStorage.getItem('moonX');
+  let posY = sessionStorage.getItem('moonY');
+
+  if (posX !== null && posY !== null) {
+    posX = parseFloat(posX);
+    posY = parseFloat(posY);
+    const maxX = window.innerWidth - moon.offsetWidth;
+    const maxY = window.innerHeight - moon.offsetHeight;
+    if (posX > maxX) posX = maxX;
+    if (posY > maxY) posY = maxY;
+    if (posX < 0) posX = 0;
+    if (posY < 0) posY = 0;
+  } else {
+    posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
+    posY = 60;
+  }
   
   let velX = 0;
   let velY = 0;
@@ -654,7 +645,7 @@
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;
     moon.style.cursor = 'grabbing';
-    moon.classList.remove('idle'); // Zatrzymuje animację lewitacji podczas łapania
+    moon.classList.remove('idle');
     
     const rect = moon.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
@@ -702,10 +693,13 @@
     if (velY > maxSpeed) velY = maxSpeed;
     if (velY < -maxSpeed) velY = -maxSpeed;
     
+    sessionStorage.setItem('moonX', posX);
+    sessionStorage.setItem('moonY', posY);
+
     if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
       requestAnimationFrame(updatePhysics);
     } else {
-      moon.classList.add('idle'); // Włącza lewitację po delikatnym puszczeniu
+      moon.classList.add('idle');
     }
   });
 
@@ -742,7 +736,9 @@
     if (Math.abs(velX) > 0.15 || Math.abs(velY) > 0.15) {
       requestAnimationFrame(updatePhysics);
     } else {
-      moon.classList.add('idle'); // Włącza lewitację po wyhamowaniu
+      moon.classList.add('idle');
+      sessionStorage.setItem('moonX', posX);
+      sessionStorage.setItem('moonY', posY);
     }
   }
 
@@ -754,6 +750,7 @@
     moon.style.transform = `translate(${posX}px, ${posY}px)`;
   });
 
+  // ====== DYNAMICZNE SPADAJĄCE GWIAZDY ======
   const spaceBg = document.getElementById('space-bg');
   let activeStars = 0;
 
