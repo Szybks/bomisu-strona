@@ -465,7 +465,8 @@
     <div class="stars-large"></div>
   </div>
 
-  <div class="moon-container idle" id="moon" style="opacity: 0;">
+  <!-- Usunięto style z księżyca -->
+  <div class="moon-container idle" id="moon">
     <div class="moon-img"></div>
   </div>
 
@@ -614,9 +615,8 @@
   const friction = 0.995;
   const bounce = 0.75;    
   const maxSpeed = 22;    
-  const moonSize = 180;
+  const moonSize = moon.offsetWidth || 180;
 
-  // EKSTRAPOLACJA (symulacja fizyki w tle)
   if (savedTime > 0 && (Math.abs(velX) > 0.01 || Math.abs(velY) > 0.01)) {
     const elapsedSeconds = (Date.now() - savedTime) / 1000;
     
