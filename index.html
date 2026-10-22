@@ -199,14 +199,13 @@
     will-change: transform;
   }
 
-  /* Usunięto stąd animację floatAround, bo teraz robi to JavaScript */
   .moon-container.idle .moon-img {
     animation: moonGlow 4s infinite alternate;
   }
 
   @keyframes moonGlow {
-    0% { filter: drop-shadow(0 0 20px rgba(186, 230, 253, 0.7)) drop-shadow(0 0 40px rgba(79, 141, 255, 0.4)); }
-    100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)) drop-shadow(0 0 80px rgba(79, 141, 255, 0.6)); }
+    0% { filter: drop-shadow(0 0 20px rgba(186, 230, 253, 0.7)); }
+    100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)); }
   }
 
   /* --- EFEKT PODŚWIETLENIA GUI --- */
@@ -595,20 +594,22 @@
   }
   const elapsedTime = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
   
-  // Zsynchronizuj gwiazdy w tle
   document.querySelectorAll('.stars-small, .stars-medium, .stars-large').forEach(el => {
     el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
   });
 
-  // Zsynchronizuj tylko poświatę księżyca (moonGlow)
   document.querySelectorAll('.moon-img').forEach(el => {
     el.style.animationDelay = `-${elapsedTime}s`;
   });
 
-  // ====== FUNKCJA NAWIGACJI Z ANIMACJĄ I ZAPISEM POZYCJI ======
+  // ====== FUNKCJA NAWIGACJI Z ANIMACJĄ I ZAPISEM POZYCJI I PRĘDKOŚCI ======
   function navigateTo(url) {
+    // Zapisujemy pozycję
     sessionStorage.setItem('moonX', posX);
     sessionStorage.setItem('moonY', posY);
+    // Zapisujemy wektor ruchu!
+    sessionStorage.setItem('moonVelX', velX);
+    sessionStorage.setItem('moonVelY', velY);
 
     document.body.classList.add('page-exit');
     setTimeout(() => {
@@ -638,8 +639,13 @@
     posY = 60;
   }
   
-  let velX = 0;
-  let velY = 0;
+  // ODCZYT PRĘDKOŚCI Z PAMIĘCI
+  let velX = parseFloat(sessionStorage.getItem('moonVelX')) || 0;
+  let velY = parseFloat(sessionStorage.getItem('moonVelY')) || 0;
+
+  // Czyszczenie zapisanej prędkości, aby odświeżenie strony nie powodowało ciągłego lotu
+  sessionStorage.removeItem('moonVelX');
+  sessionStorage.removeItem('moonVelY');
   
   const friction = 0.995;
   const bounce = 0.75;    
@@ -651,6 +657,14 @@
   // Ustawiamy transformację i pokazujemy księżyc
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
   moon.style.opacity = '1';
+
+  // Sprawdzamy, czy księżyc został rzucony (ma zapisaną prędkość)
+  if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
+    moon.classList.remove('idle'); // Zatrzymujemy lewitację
+    requestAnimationFrame(updatePhysics); // Wznawiamy lot
+  } else {
+    moon.classList.add('idle');
+  }
 
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;

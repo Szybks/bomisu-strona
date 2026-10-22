@@ -196,7 +196,6 @@
     background-position: center;
     filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
     animation: moonGlow 4s infinite alternate;
-    will-change: transform;
   }
 
   .moon-container.idle .moon-img {
@@ -584,15 +583,16 @@
     el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
   });
 
-  // Zsynchronizuj tylko poświatę księżyca (moonGlow)
   document.querySelectorAll('.moon-img').forEach(el => {
     el.style.animationDelay = `-${elapsedTime}s`;
   });
 
-  // ====== FUNKCJA NAWIGACJI Z ANIMACJĄ I ZAPISEM POZYCJI ======
+  // ====== FUNKCJA NAWIGACJI Z ZAPISEM POZYCJI I PRĘDKOŚCI ======
   function navigateTo(url) {
     sessionStorage.setItem('moonX', posX);
     sessionStorage.setItem('moonY', posY);
+    sessionStorage.setItem('moonVelX', velX);
+    sessionStorage.setItem('moonVelY', velY);
 
     document.body.classList.add('page-exit');
     setTimeout(() => {
@@ -604,7 +604,6 @@
   const moon = document.getElementById('moon');
   let isDragging = false;
   
-  // ODCZYT POZYCJI Z PAMIĘCI
   let posX = sessionStorage.getItem('moonX');
   let posY = sessionStorage.getItem('moonY');
 
@@ -622,8 +621,11 @@
     posY = 60;
   }
   
-  let velX = 0;
-  let velY = 0;
+  let velX = parseFloat(sessionStorage.getItem('moonVelX')) || 0;
+  let velY = parseFloat(sessionStorage.getItem('moonVelY')) || 0;
+
+  sessionStorage.removeItem('moonVelX');
+  sessionStorage.removeItem('moonVelY');
   
   const friction = 0.995;
   const bounce = 0.75;    
@@ -632,9 +634,16 @@
   let offsetX = 0, offsetY = 0;
   let lastMouseX = 0, lastMouseY = 0;
 
-  // Ustawiamy transformację i pokazujemy księżyc
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
   moon.style.opacity = '1';
+
+  // Wznawiamy lot, jeśli zapisano prędkość
+  if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
+    moon.classList.remove('idle');
+    requestAnimationFrame(updatePhysics);
+  } else {
+    moon.classList.add('idle');
+  }
 
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;
@@ -751,22 +760,19 @@
   function animateMoonFloat() {
     if (moon && moon.classList.contains('idle') && typeof isDragging !== 'undefined' && !isDragging) {
       const t = (Date.now() - sessionStartTime) / 1000;
-      const cycle = t % 6; // 6-sekundowy cykl
+      const cycle = t % 6;
       let offsetX, offsetY;
       
       if (cycle < 3) {
-        // Płyniemy z (0,0) do (-10, -22)
         offsetX = -10 * (cycle / 3);
         offsetY = -22 * (cycle / 3);
       } else {
-        // Wracamy z (-10, -22) do (0,0)
         offsetX = -10 * (1 - (cycle - 3) / 3);
         offsetY = -22 * (1 - (cycle - 3) / 3);
       }
       
       moonImgEl.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
     } else {
-      // Podczas przeciągania lub rzucania wyłączamy lewitację
       moonImgEl.style.transform = 'none';
     }
     requestAnimationFrame(animateMoonFloat);
