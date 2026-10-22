@@ -196,6 +196,7 @@
     background-position: center;
     filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
     animation: moonGlow 4s infinite alternate;
+    will-change: transform;
   }
 
   .moon-container.idle .moon-img {
@@ -588,11 +589,13 @@
   </div>
 
 <script>
+  // ====== ZAPAMIĘTYWANIE STANU GWIAZD I ANIMACJI ======
   if (!sessionStorage.getItem('starTime')) {
     sessionStorage.setItem('starTime', Date.now());
   }
   const elapsedTime = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
   
+  // Zsynchronizuj gwiazdy w tle
   document.querySelectorAll('.stars-small, .stars-medium, .stars-large').forEach(el => {
     el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
   });
@@ -601,18 +604,21 @@
     el.style.animationDelay = `-${elapsedTime}s`;
   });
 
+  // ====== FUNKCJA NAWIGACJI Z ZAPISEM POZYCJI I PRĘDKOŚCI ======
   function navigateTo(url) {
-    sessionStorage.setItem('moonX', posX);
-    sessionStorage.setItem('moonY', posY);
-    sessionStorage.setItem('moonVelX', velX);
-    sessionStorage.setItem('moonVelY', velY);
-
     document.body.classList.add('page-exit');
+    
+    // ZAPISUJEMY STAN DOPIERO PRZED ZMIANĄ STRONY (po animacji wyjścia, żeby nie zapisać starej pozycji)
     setTimeout(() => {
+      sessionStorage.setItem('moonX', posX);
+      sessionStorage.setItem('moonY', posY);
+      sessionStorage.setItem('moonVelX', velX);
+      sessionStorage.setItem('moonVelY', velY);
       window.location.href = url;
     }, 600); 
   }
 
+  // ====== FIZYKA KSIĘŻYCA ======
   const moon = document.getElementById('moon');
   let isDragging = false;
   
@@ -636,6 +642,7 @@
   let velX = parseFloat(sessionStorage.getItem('moonVelX')) || 0;
   let velY = parseFloat(sessionStorage.getItem('moonVelY')) || 0;
 
+  // Czyszczenie prędkości z pamięci, aby odświeżenie (F5) nie powodowało lotu
   sessionStorage.removeItem('moonVelX');
   sessionStorage.removeItem('moonVelY');
   
@@ -649,6 +656,7 @@
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
   moon.style.opacity = '1';
 
+  // Wznawiamy lot, jeśli zapisano prędkość
   if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
     moon.classList.remove('idle');
     requestAnimationFrame(updatePhysics);
@@ -764,6 +772,7 @@
     moon.style.transform = `translate(${posX}px, ${posY}px)`;
   });
 
+  // ====== PŁYNNA ANIMACJA LEWITACJI KSIĘŻYCA (JS) ======
   const moonImgEl = document.querySelector('.moon-img');
   const sessionStartTime = parseInt(sessionStorage.getItem('starTime'));
 
@@ -789,6 +798,7 @@
   }
   requestAnimationFrame(animateMoonFloat);
 
+  // ====== DYNAMICZNE SPADAJĄCE GWIAZDY ======
   const spaceBg = document.getElementById('space-bg');
   let activeStars = 0;
 

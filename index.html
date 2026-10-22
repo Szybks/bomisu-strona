@@ -499,8 +499,8 @@
     <div class="stars-large"></div>
   </div>
 
-  <!-- Ukryty księżyc poza ekranem -->
-  <div class="moon-container idle" id="moon" style="opacity: 0; transform: translate(-1000px, -1000px);">
+  <!-- Księżyc ukryty przed załadowaniem JS (bez sztywnego transformu w HTML) -->
+  <div class="moon-container idle" id="moon" style="opacity: 0;">
     <div class="moon-img"></div>
   </div>
 
@@ -602,15 +602,8 @@
     el.style.animationDelay = `-${elapsedTime}s`;
   });
 
-  // ====== FUNKCJA NAWIGACJI Z ANIMACJĄ I ZAPISEM POZYCJI I PRĘDKOŚCI ======
+  // ====== NAWIGACJA ======
   function navigateTo(url) {
-    // Zapisujemy pozycję
-    sessionStorage.setItem('moonX', posX);
-    sessionStorage.setItem('moonY', posY);
-    // Zapisujemy wektor ruchu!
-    sessionStorage.setItem('moonVelX', velX);
-    sessionStorage.setItem('moonVelY', velY);
-
     document.body.classList.add('page-exit');
     setTimeout(() => {
       window.location.href = url;
@@ -621,7 +614,6 @@
   const moon = document.getElementById('moon');
   let isDragging = false;
   
-  // ODCZYT POZYCJI Z PAMIĘCI
   let posX = sessionStorage.getItem('moonX');
   let posY = sessionStorage.getItem('moonY');
 
@@ -639,11 +631,10 @@
     posY = 60;
   }
   
-  // ODCZYT PRĘDKOŚCI Z PAMIĘCI
   let velX = parseFloat(sessionStorage.getItem('moonVelX')) || 0;
   let velY = parseFloat(sessionStorage.getItem('moonVelY')) || 0;
 
-  // Czyszczenie zapisanej prędkości, aby odświeżenie strony nie powodowało ciągłego lotu
+  // Czyszczenie zapisanej prędkości z sesji
   sessionStorage.removeItem('moonVelX');
   sessionStorage.removeItem('moonVelY');
   
@@ -654,17 +645,30 @@
   let offsetX = 0, offsetY = 0;
   let lastMouseX = 0, lastMouseY = 0;
 
-  // Ustawiamy transformację i pokazujemy księżyc
+  // Ustawiamy transformację przed pokazaniem księżyca
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
-  moon.style.opacity = '1';
+  
+  // Opóźniamy dodanie klasy 'loaded' o jedną klatkę, aby zapobiec mignięciu w rogu
+  requestAnimationFrame(() => {
+    moon.classList.add('loaded');
+  });
 
-  // Sprawdzamy, czy księżyc został rzucony (ma zapisaną prędkość)
   if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
-    moon.classList.remove('idle'); // Zatrzymujemy lewitację
-    requestAnimationFrame(updatePhysics); // Wznawiamy lot
+    moon.classList.remove('idle');
+    requestAnimationFrame(updatePhysics);
   } else {
     moon.classList.add('idle');
   }
+
+  // Zapisywanie stanu w momencie opuszczania strony (pagehide / beforeunload)
+  function saveState() {
+    sessionStorage.setItem('moonX', posX);
+    sessionStorage.setItem('moonY', posY);
+    sessionStorage.setItem('moonVelX', velX);
+    sessionStorage.setItem('moonVelY', velY);
+  }
+  window.addEventListener('pagehide', saveState);
+  window.addEventListener('beforeunload', saveState);
 
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;
@@ -716,9 +720,6 @@
     if (velX < -maxSpeed) velX = -maxSpeed;
     if (velY > maxSpeed) velY = maxSpeed;
     if (velY < -maxSpeed) velY = -maxSpeed;
-    
-    sessionStorage.setItem('moonX', posX);
-    sessionStorage.setItem('moonY', posY);
 
     if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
       requestAnimationFrame(updatePhysics);
@@ -761,8 +762,6 @@
       requestAnimationFrame(updatePhysics);
     } else {
       moon.classList.add('idle');
-      sessionStorage.setItem('moonX', posX);
-      sessionStorage.setItem('moonY', posY);
     }
   }
 
@@ -781,22 +780,19 @@
   function animateMoonFloat() {
     if (moon && moon.classList.contains('idle') && typeof isDragging !== 'undefined' && !isDragging) {
       const t = (Date.now() - sessionStartTime) / 1000;
-      const cycle = t % 6; // 6-sekundowy cykl
+      const cycle = t % 6; 
       let offsetX, offsetY;
       
       if (cycle < 3) {
-        // Płyniemy z (0,0) do (-10, -22)
         offsetX = -10 * (cycle / 3);
         offsetY = -22 * (cycle / 3);
       } else {
-        // Wracamy z (-10, -22) do (0,0)
         offsetX = -10 * (1 - (cycle - 3) / 3);
         offsetY = -22 * (1 - (cycle - 3) / 3);
       }
       
       moonImgEl.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
     } else {
-      // Podczas przeciągania lub rzucania wyłączamy lewitację
       moonImgEl.style.transform = 'none';
     }
     requestAnimationFrame(animateMoonFloat);
