@@ -499,7 +499,7 @@
     <div class="stars-large"></div>
   </div>
 
-  <!-- Księżyc ukryty przed załadowaniem JS (bez sztywnego transformu w HTML) -->
+  <!-- Księżyc ukryty przed załadowaniem JS -->
   <div class="moon-container idle" id="moon" style="opacity: 0;">
     <div class="moon-img"></div>
   </div>
@@ -606,6 +606,11 @@
   function navigateTo(url) {
     document.body.classList.add('page-exit');
     setTimeout(() => {
+      sessionStorage.setItem('moonX', posX);
+      sessionStorage.setItem('moonY', posY);
+      sessionStorage.setItem('moonVelX', velX);
+      sessionStorage.setItem('moonVelY', velY);
+      sessionStorage.setItem('moonSaveTime', Date.now()); // Zapisujemy czas
       window.location.href = url;
     }, 600); 
   }
@@ -614,41 +619,58 @@
   const moon = document.getElementById('moon');
   let isDragging = false;
   
-  let posX = sessionStorage.getItem('moonX');
-  let posY = sessionStorage.getItem('moonY');
-
-  if (posX !== null && posY !== null) {
-    posX = parseFloat(posX);
-    posY = parseFloat(posY);
-    const maxX = window.innerWidth - moon.offsetWidth;
-    const maxY = window.innerHeight - moon.offsetHeight;
-    if (posX > maxX) posX = maxX;
-    if (posY > maxY) posY = maxY;
-    if (posX < 0) posX = 0;
-    if (posY < 0) posY = 0;
-  } else {
-    posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
-    posY = 60;
-  }
+  let posX = parseFloat(sessionStorage.getItem('moonX'));
+  let posY = parseFloat(sessionStorage.getItem('moonY'));
   
   let velX = parseFloat(sessionStorage.getItem('moonVelX')) || 0;
   let velY = parseFloat(sessionStorage.getItem('moonVelY')) || 0;
+  const savedTime = parseInt(sessionStorage.getItem('moonSaveTime')) || 0;
 
-  // Czyszczenie zapisanej prędkości z sesji
-  sessionStorage.removeItem('moonVelX');
-  sessionStorage.removeItem('moonVelY');
-  
+  if (isNaN(posX) || isNaN(posY)) {
+    posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
+    posY = 60;
+  }
+
   const friction = 0.995;
   const bounce = 0.75;    
   const maxSpeed = 22;    
+  const moonSize = 180; // Przybliżony rozmiar do symulacji
+
+  // EKSTRAPOLACJA: Jeśli minęło trochę czasu, symulujemy ruch księżyca
+  if (savedTime > 0 && (Math.abs(velX) > 0.01 || Math.abs(velY) > 0.01)) {
+    const elapsedSeconds = (Date.now() - savedTime) / 1000;
+    
+    if (elapsedSeconds > 0) {
+      // Symulujemy klatki po klatce (zamiast ułamków), aby uwzględnić odbicia od ścian
+      const frames = Math.min(Math.round(elapsedSeconds * 60), 300); // Max 5 sekund symulacji
+      const maxX = window.innerWidth - moonSize;
+      const maxY = window.innerHeight - moonSize;
+
+      for (let i = 0; i < frames; i++) {
+        velX *= friction;
+        velY *= friction;
+        posX += velX;
+        posY += velY;
+        
+        if (posX <= 0) { posX = 0; velX = Math.abs(velX) * bounce; }
+        else if (posX >= maxX) { posX = maxX; velX = -Math.abs(velX) * bounce; }
+        
+        if (posY <= 0) { posY = 0; velY = Math.abs(velY) * bounce; }
+        else if (posY >= maxY) { posY = maxY; velY = -Math.abs(velY) * bounce; }
+      }
+    }
+  }
+
+  // Czyszczenie zapisanych wartości, aby odświeżenie F5 nie powodowało dziwnych efektów
+  sessionStorage.removeItem('moonVelX');
+  sessionStorage.removeItem('moonVelY');
+  sessionStorage.removeItem('moonSaveTime');
 
   let offsetX = 0, offsetY = 0;
   let lastMouseX = 0, lastMouseY = 0;
 
-  // Ustawiamy transformację przed pokazaniem księżyca
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
   
-  // Opóźniamy dodanie klasy 'loaded' o jedną klatkę, aby zapobiec mignięciu w rogu
   requestAnimationFrame(() => {
     moon.classList.add('loaded');
   });
@@ -659,16 +681,6 @@
   } else {
     moon.classList.add('idle');
   }
-
-  // Zapisywanie stanu w momencie opuszczania strony (pagehide / beforeunload)
-  function saveState() {
-    sessionStorage.setItem('moonX', posX);
-    sessionStorage.setItem('moonY', posY);
-    sessionStorage.setItem('moonVelX', velX);
-    sessionStorage.setItem('moonVelY', velY);
-  }
-  window.addEventListener('pagehide', saveState);
-  window.addEventListener('beforeunload', saveState);
 
   moon.addEventListener('pointerdown', (e) => {
     isDragging = true;
@@ -720,6 +732,9 @@
     if (velX < -maxSpeed) velX = -maxSpeed;
     if (velY > maxSpeed) velY = maxSpeed;
     if (velY < -maxSpeed) velY = -maxSpeed;
+    
+    sessionStorage.setItem('moonX', posX);
+    sessionStorage.setItem('moonY', posY);
 
     if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
       requestAnimationFrame(updatePhysics);
@@ -762,6 +777,8 @@
       requestAnimationFrame(updatePhysics);
     } else {
       moon.classList.add('idle');
+      sessionStorage.setItem('moonX', posX);
+      sessionStorage.setItem('moonY', posY);
     }
   }
 
