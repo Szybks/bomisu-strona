@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kontakt — Bomisu.pl</title>
+<link rel="preload" href="assets/moon.png" as="image">
+<link rel="prefetch" href="index.html">
+<link rel="prefetch" href="regulamin.html">
+<link rel="prefetch" href="polityka-prywatnosci.html">
+<link rel="prefetch" href="kontakt.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-void: #07040d;
+    --bg-purple: #150b26;
+    --panel-bg: #1a202c;
+    --panel-border: #0f141e;
+    --blue: #4f8dff;
+    --yellow: #fde047;
+    --green: #10b981;
+    --red: #ff4f4f;
+    --text: #e8eaf2;
+    --muted: #8a92a8;
+
+    --slot-bg: #1c1c21;
+    --slot-border-light: #111115;
+    --slot-border-dark: #3a3a45;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { height: 100%; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: radial-gradient(circle at 50% 0%, var(--bg-purple) 0%, var(--bg-void) 100%);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* --- ANIMACJE PRZEJŚCIA --- */
+  @keyframes dropIn {
+    0% { transform: translateY(-100vh); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes dropOut {
+    0%   { transform: translateY(0); opacity: 1; }
+    60%  { opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+  .drop-in { animation: dropIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  body.page-exit { pointer-events: none; }
+  body.page-exit .drop-in {
+    animation: dropOut 0.5s cubic-bezier(0.55, 0, 0.9, 0.5) forwards !important;
+    animation-delay: 0s !important;
+  }
+  body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
+
+  /* --- TŁO Z GWIAZDKAMI --- */
+  .space-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .stars-small, .stars-medium, .stars-large {
+    position: absolute; top: 0; left: 0; width: 200%; height: 200%;
+  }
+  .stars-small {
+    background-image:
+      radial-gradient(1px 1px at 10% 10%, #fff, transparent),
+      radial-gradient(1px 1px at 30% 40%, #fff, transparent),
+      radial-gradient(1px 1px at 60% 20%, #fff, transparent),
+      radial-gradient(1px 1px at 80% 70%, #fff, transparent),
+      radial-gradient(1px 1px at 20% 80%, #fff, transparent),
+      radial-gradient(1px 1px at 50% 50%, #fff, transparent);
+    background-size: 200px 200px;
+    animation: drift 60s linear infinite, twinkle 3s infinite alternate;
+  }
+  .stars-medium {
+    background-image:
+      radial-gradient(2px 2px at 40% 10%, #fff, transparent),
+      radial-gradient(2px 2px at 70% 40%, #fff, transparent),
+      radial-gradient(2px 2px at 15% 60%, #fff, transparent),
+      radial-gradient(2px 2px at 90% 90%, #fff, transparent);
+    background-size: 300px 300px;
+    animation: drift 120s linear infinite, twinkle 5s infinite alternate-reverse;
+  }
+  .stars-large {
+    background-image:
+      radial-gradient(3px 3px at 25% 15%, #fde047, transparent),
+      radial-gradient(3px 3px at 75% 65%, #60a5fa, transparent),
+      radial-gradient(3px 3px at 50% 85%, #fde047, transparent);
+    background-size: 400px 400px;
+    animation: drift 180s linear infinite, twinkle 7s infinite alternate;
+  }
+  @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-50%, -50%); } }
+  @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
+
+  /* --- SPADAJĄCE GWIAZDY --- */
+  .star-wrapper { position: absolute; top: 0; left: 0; transform-origin: top left; pointer-events: none; z-index: 1; }
+  .shooting-star {
+    position: absolute; top: 0; left: 0;
+    width: 180px; height: 2px;
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
+    opacity: 0;
+    transform-origin: left center;
+  }
+  .shooting-star::after {
+    content: '';
+    position: absolute; right: -3px; top: 50%;
+    transform: translateY(-50%);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px 2px #fff, 0 0 20px #fff;
+  }
+  .star-blue { background: linear-gradient(to right, rgba(79,141,255,0), rgba(79,141,255,1)); }
+  .star-blue::after { background: var(--blue); box-shadow: 0 0 10px 2px var(--blue), 0 0 20px var(--blue); }
+  .star-yellow { background: linear-gradient(to right, rgba(253,224,71,0), rgba(253,224,71,1)); }
+  .star-yellow::after { background: #fde047; box-shadow: 0 0 10px 2px #fde047, 0 0 20px #fde047; }
+  @keyframes shoot {
+    0% { transform: translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(200vmax); opacity: 0; }
+  }
+
+  /* --- KSIĘŻYC --- */
+  .moon-container {
+    position: fixed; top: 0; left: 0;
+    width: 180px; height: 180px;
+    cursor: grab; z-index: 2; touch-action: none; will-change: transform; opacity: 0;
+  }
+  .moon-container.loaded { opacity: 1; transition: opacity 0.3s ease; }
+  .moon-container.loaded.instant { transition: none; }
+  .moon-container:active { cursor: grabbing; }
+  .moon-img {
+    width: 100%; height: 100%;
+    background-image: url('assets/moon.png');
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
+    animation: moonGlow 4s infinite alternate;
+    will-change: transform;
+  }
+  @keyframes moonGlow {
+    0% { filter: drop-shadow(0 0 20px rgba(186, 230, 253, 0.7)); }
+    100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)); }
+  }
+
+  /* --- POŚWIATA GUI --- */
+  .glow-target { transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; }
+  .glow-target.near-moon { filter: drop-shadow(0 0 15px rgba(79, 141, 255, 0.7)) drop-shadow(0 0 30px rgba(147, 197, 253, 0.5)); }
+  .mc-panel.near-moon {
+    border-color: rgba(147, 197, 253, 0.8);
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.05),
+                0 0 30px rgba(79, 141, 255, 0.5), 0 0 70px rgba(79, 141, 255, 0.25);
+  }
+  .hotbar.near-moon {
+    border-color: rgba(147, 197, 253, 0.8);
+    box-shadow: 0 0 30px rgba(79, 141, 255, 0.5), inset 0 0 15px rgba(79, 141, 255, 0.2);
+  }
+
+  /* --- GŁÓWNY KONTENER --- */
+  .rules-wrapper {
+    display: flex; justify-content: center; align-items: center;
+    flex-grow: 1; width: 100%; max-width: 550px; z-index: 10;
+    padding: 10px 0; min-height: 0; overflow: visible;
+  }
+  .mc-panel {
+    background: var(--panel-bg);
+    border: 4px solid var(--panel-border);
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.8);
+    border-radius: 8px;
+    padding: 30px; width: 100%; height: 75vh; max-height: 75vh;
+    display: flex; flex-direction: column; position: relative;
+  }
+
+  /* --- PRZYCISK X --- */
+  .close-btn {
+    position: absolute; top: 15px; right: 15px;
+    width: 40px; height: 40px;
+    background-color: var(--slot-bg);
+    border-top: 2px solid #2d3748;
+    border-left: 2px solid #2d3748;
+    border-bottom: 2px solid var(--panel-border);
+    border-right: 2px solid var(--panel-border);
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.05);
+    border-radius: 6px;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer; z-index: 1000; transition: all 0.2s;
+  }
+  .close-btn:hover { border-color: var(--red); box-shadow: 0 0 15px rgba(255, 79, 79, 0.4), inset 0 0 10px rgba(255, 79, 79, 0.2); }
+  .close-icon { width: 24px; height: 24px; fill: var(--text); transition: fill 0.2s; }
+  .close-btn:hover .close-icon { fill: var(--red); }
+
+  .mc-panel h1 {
+    text-align: center; font-size: 30px; font-weight: 900; letter-spacing: -1px;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #dbeafe, #60a5fa, #2563eb, #60a5fa, #dbeafe);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: textFlow 5s linear infinite;
+    border-bottom: 2px solid var(--panel-border);
+    padding-bottom: 15px; padding-left: 40px; padding-right: 40px;
+  }
+  @keyframes textFlow {
+    0% { background-position: 0% center; }
+    100% { background-position: -200% center; }
+  }
+
+  .rules-text {
+    overflow-y: auto; padding-right: 15px;
+    font-size: 15px; line-height: 1.6; color: var(--muted); flex-grow: 1;
+  }
+  .rules-text::-webkit-scrollbar { width: 8px; }
+  .rules-text::-webkit-scrollbar-track { background: var(--panel-border); border-radius: 4px; }
+  .rules-text::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
+  .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; }
+  .rules-text p { margin-bottom: 10px; }
+  .rules-text ul { list-style-position: inside; margin-bottom: 15px; padding-left: 10px; }
+  .rules-text li { margin-bottom: 5px; }
+
+  /* --- KARTY KONTAKTOWE --- */
+  .contact-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-dark);
+    border-left: 2px solid var(--slot-border-dark);
+    border-bottom: 2px solid var(--slot-border-light);
+    border-right: 2px solid var(--slot-border-light);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    user-select: none;
+  }
+  .contact-card:hover {
+    background: #252530;
+    transform: translateX(4px);
+  }
+  .contact-card > svg {
+    width: 32px; height: 32px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  .contact-card:hover > svg { transform: scale(1.1); }
+  .contact-card h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 2px;
+    color: var(--text);
+  }
+  .contact-card p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .discord-card > svg { fill: #5865F2; }
+  .discord-card:hover {
+    border-color: #5865F2;
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.35);
+  }
+  .discord-card:hover h3 { color: #5865F2; }
+
+  .tiktok-card > svg { color: #ff0050; }
+  .tiktok-card:hover {
+    border-color: #ff0050;
+    box-shadow: 0 0 20px rgba(255, 0, 80, 0.35);
+  }
+  .tiktok-card:hover h3 { color: #ff0050; }
+
+  .ip-card > svg { fill: var(--green); }
+  .ip-card:hover {
+    border-color: var(--green);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+  }
+  .ip-card:hover h3 { color: var(--green); }
+
+  /* --- DOLNA SEKCJA (Hotbar) --- */
+  .bottom-bar {
+    width: 100%; display: flex; justify-content: center;
+    padding-bottom: 10px; z-index: 10; flex-shrink: 0;
+  }
+  .hotbar {
+    display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px;
+    background-color: var(--panel-bg);
+    border-top: 4px solid #2d3748;
+    border-left: 4px solid #2d3748;
+    border-bottom: 4px solid var(--panel-border);
+    border-right: 4px solid var(--panel-border);
+    padding: 6px; border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  }
+  .slot {
+    width: 50px; height: 50px;
+    background-color: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-light);
+    border-left: 2px solid var(--slot-border-light);
+    border-bottom: 2px solid var(--slot-border-dark);
+    border-right: 2px solid var(--slot-border-dark);
+    transition: background-color 0.2s;
+    cursor: pointer; position: relative;
+    display: flex; justify-content: center; align-items: center;
+  }
+  .slot:hover { background-color: #3a3a45; box-shadow: inset 0 0 10px rgba(79, 141, 255, 0.5); }
+
+  /* --- IKONY --- */
+  .tiktok-icon { width: 65%; height: 65%; color: #ffffff; transition: transform 0.2s, filter 0.2s, color 0.2s; }
+  .tiktok-slot:hover .tiktok-icon { transform: scale(1.15); color: #ff0050; filter: drop-shadow(0 0 8px rgba(255, 0, 80, 0.8)); }
+
+  .rules-icon { width: 80%; height: 80%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .rules-slot:hover .rules-icon { transform: scale(1.15); fill: var(--yellow); filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); }
+
+  .contact-icon { width: 75%; height: 75%; fill: #f59e0b; transition: transform 0.2s, filter 0.2s; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6)); }
+  .contact-slot:hover .contact-icon { transform: scale(1.15); }
+
+  .home-icon { width: 80%; height: 80%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .home-slot:hover .home-icon { transform: scale(1.15); fill: var(--blue); filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); }
+
+  .privacy-icon { width: 70%; height: 70%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .privacy-slot:hover .privacy-icon { transform: scale(1.15); fill: #4ade80; filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); }
+
+  .discord-icon { width: 70%; height: 70%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .discord-slot:hover .discord-icon { transform: scale(1.15); fill: #5865F2; filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); }
+
+  /* --- TOOLTIPY --- */
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px); right: 0;
+    background-color: rgba(10, 12, 16, 0.95);
+    border: 2px solid #0f141e;
+    outline: 2px solid var(--blue);
+    padding: 10px 14px; border-radius: 6px;
+    color: #fff; font-size: 13px;
+    width: max-content; max-width: 220px;
+    pointer-events: none; opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100; text-align: left;
+    box-shadow: 0 4px 15px rgba(79, 141, 255, 0.2);
+  }
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; right: 15px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--blue) transparent transparent transparent;
+  }
+  .slot:hover .tooltip { opacity: 1; transform: translateY(0); }
+  .tooltip-title { color: var(--blue); font-weight: 800; margin-bottom: 4px; font-size: 14px; }
+  .tooltip-desc { color: var(--muted); line-height: 1.4; }
+
+  .tiktok-slot .tooltip { right: auto; left: 0; }
+  .tiktok-slot .tooltip::after { right: auto; left: 15px; }
+  .tiktok-slot .tooltip-title { color: #ff0050; }
+
+  .rules-slot .tooltip { right: auto; left: 0; }
+  .rules-slot .tooltip::after { right: auto; left: 15px; }
+  .rules-slot .tooltip-title { color: var(--yellow); }
+
+  .contact-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .contact-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .contact-slot:hover .tooltip { transform: translate(-50%, 0); }
+  .contact-slot .tooltip-title { color: #f59e0b; }
+
+  .home-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .home-slot:hover .tooltip { transform: translate(-50%, 0); }
+
+  .privacy-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .privacy-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .privacy-slot:hover .tooltip { transform: translate(-50%, 0); }
+  .privacy-slot .tooltip-title { color: #4ade80; }
+
+  .discord-slot .tooltip-title { color: #5865F2; }
+
+  /* --- TELEFONY --- */
+  @media (max-width: 600px) {
+    body { padding: 20px 10px; }
+    .rules-wrapper { max-width: 100%; padding: 5px 0; }
+    .mc-panel { height: 65vh; max-height: 65vh; padding: 15px; }
+    .mc-panel h1 { font-size: 22px; padding-left: 30px; padding-right: 30px; }
+    .rules-text { font-size: 13px; }
+    .contact-card { padding: 12px 14px; gap: 12px; }
+    .contact-card > svg { width: 26px; height: 26px; }
+    .contact-card h3 { font-size: 14px; }
+    .contact-card p { font-size: 12px; }
+    .close-btn { width: 32px; height: 32px; top: 10px; right: 10px; }
+    .close-icon { width: 18px; height: 18px; }
+    .bottom-bar { padding-left: 5px; padding-right: 5px; }
+    .hotbar { width: 100%; padding: 4px; gap: 2px; border-width: 3px; }
+    .slot { width: 100%; height: auto; aspect-ratio: 1 / 1; border-width: 1px; }
+    .tooltip { display: none; }
+    .moon-container { width: 100px; height: 100px; }
+    .shooting-star { width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="space-bg" id="space-bg">
+    <div class="stars-small"></div>
+    <div class="stars-medium"></div>
+    <div class="stars-large"></div>
+  </div>
+
+  <div class="moon-container idle" id="moon">
+    <div class="moon-img"></div>
+  </div>
+
+  <main class="rules-wrapper drop-in delay-1">
+    <div class="mc-panel glow-target" id="main-panel">
+      <div class="close-btn" onclick="navigateTo('index.html')" title="Wróć do menu">
+        <svg class="close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </div>
+
+      <h1>Kontakt</h1>
+
+      <div class="rules-text">
+        <p>Masz pytanie, problem techniczny albo chcesz coś zgłosić? Skontaktuj się z nami przez jeden z kanałów poniżej — najszybciej odpowiadamy na naszym <strong>Discordzie</strong>.</p>
+
+        <div class="contact-grid">
+          <a href="https://dc.bomisu.pl/" target="_blank" rel="noopener" class="contact-card discord-card">
+            <svg viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+              <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.2,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+            </svg>
+            <div>
+              <h3>Discord</h3>
+              <p>dc.bomisu.pl — główny kanał kontaktu</p>
+            </div>
+          </a>
+
+          <a href="https://www.tiktok.com/@bomisumc" target="_blank" rel="noopener" class="contact-card tiktok-card">
+            <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+              <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+            </svg>
+            <div>
+              <h3>TikTok</h3>
+              <p>@bomisumc — nowości, update'y i zapowiedzi</p>
+            </div>
+          </a>
+
+          <div class="contact-card ip-card" onclick="copyContactIP()" id="ip-card" title="Kliknij, aby skopiować IP">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <div>
+              <h3>IP Serwera</h3>
+              <p id="contact-ip">bomisu.pl — kliknij, aby skopiować</p>
+            </div>
+          </div>
+        </div>
+
+        <h2>W sprawie...</h2>
+        <ul>
+          <li><strong>Odwołania od banów i mute</strong> — wyłącznie przez Discorda (otwórz ticket).</li>
+          <li><strong>Problemy z płatnościami (Tebex)</strong> — Discord (ticket) z numerem transakcji.</li>
+          <li><strong>Zgłoszenia błędów</strong> — Discord, kanał <code>#bug-reports</code>.</li>
+          <li><strong>Współpraca i reklama</strong> — kontakt przez Discord.</li>
+          <li><strong>Problemy techniczne ze stroną</strong> — Discord lub ticket techniczny.</li>
+        </ul>
+
+        <h2>Czas odpowiedzi</h2>
+        <p>Staramy się odpowiadać w ciągu <strong>24–48 godzin</strong>. W weekendy i święta może to potrwać nieco dłużej. Prosimy o cierpliwość — każdy ticket jest przez nas sprawdzany.</p>
+
+        <p>⚠️ <strong>Nie wysyłaj tej samej sprawy wielokrotnie</strong> — duplikaty tylko wydłużają czas oczekiwania na odpowiedź.</p>
+
+        <p style="margin-top: 20px; color: var(--blue); font-weight: bold; text-align: center;">Do zobaczenia na serwerze i na Discordzie! 🌙</p>
+      </div>
+    </div>
+  </main>
+
+  <div class="bottom-bar drop-in delay-2">
+    <div class="hotbar glow-target" id="hotbar">
+
+      <div class="slot tiktok-slot" onclick="window.open('https://www.tiktok.com/@bomisumc', '_blank')">
+        <svg class="tiktok-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(-8, -8)"/>
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(8, 8)"/>
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">TikTok</div>
+          <div class="tooltip-desc">Zobacz naszego TikToka! Kliknij, aby wejść.</div>
+        </div>
+      </div>
+
+      <div class="slot rules-slot" onclick="navigateTo('regulamin.html')">
+        <svg class="rules-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Regulamin</div>
+          <div class="tooltip-desc">Zapoznaj się z zasadami panującymi na serwerze.</div>
+        </div>
+      </div>
+
+      <div class="slot"></div>
+
+      <div class="slot contact-slot" onclick="navigateTo('kontakt.html')">
+        <svg class="contact-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Kontakt</div>
+          <div class="tooltip-desc">Jesteś na tej stronie.</div>
+        </div>
+      </div>
+
+      <div class="slot home-slot" onclick="navigateTo('index.html')">
+        <svg class="home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Strona Główna</div>
+          <div class="tooltip-desc">Wróć do menu głównego.</div>
+        </div>
+      </div>
+
+      <div class="slot"></div><div class="slot"></div>
+
+      <div class="slot privacy-slot" onclick="navigateTo('polityka-prywatnosci.html')">
+        <svg class="privacy-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Polityka Prywatności</div>
+          <div class="tooltip-desc">Informacje o przetwarzaniu danych i ciasteczkach.</div>
+        </div>
+      </div>
+
+      <div class="slot discord-slot" onclick="window.open('https://dc.bomisu.pl/', '_blank')">
+        <svg class="discord-icon" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+          <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.2,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Discord</div>
+          <div class="tooltip-desc">Dołącz do naszej społeczności! Kliknij, aby wejść.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  // ====== ZAPAMIĘTYWANIE STANU GWIAZD I ANIMACJI ======
+  if (!sessionStorage.getItem('starTime')) {
+    sessionStorage.setItem('starTime', Date.now());
+  }
+  const elapsedTime = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
+
+  document.querySelectorAll('.stars-small, .stars-medium, .stars-large').forEach(el => {
+    el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
+  });
+
+  document.querySelectorAll('.moon-img').forEach(el => {
+    el.style.animationDelay = `-${elapsedTime}s`;
+  });
+
+  // ====== NAWIGACJA ======
+  let isNavigating = false;
+  const pageName = p => (p.split('/').pop() || 'index').replace(/\.html$/, '');
+
+  function navigateTo(url) {
+    if (isNavigating || pageName(url) === pageName(location.pathname)) return;
+    isNavigating = true;
+    document.body.classList.add('page-exit');
+
+    setTimeout(() => {
+      sessionStorage.setItem('moonX', posX);
+      sessionStorage.setItem('moonY', posY);
+      sessionStorage.setItem('moonVelX', velX);
+      sessionStorage.setItem('moonVelY', velY);
+      sessionStorage.setItem('moonSaveTime', Date.now());
+      window.location.href = url;
+    }, 580);
+  }
+
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      isNavigating = false;
+      document.body.classList.remove('page-exit');
+    }
+  });
+
+  // ====== FIZYKA KSIĘŻYCA ======
+  const moon = document.getElementById('moon');
+  let isDragging = false;
+
+  let posX = parseFloat(sessionStorage.getItem('moonX'));
+  let posY = parseFloat(sessionStorage.getItem('moonY'));
+  const hasSavedMoon = !isNaN(posX) && !isNaN(posY);
+
+  let velX = parseFloat(sessionStorage.getItem('moonVelX')) || 0;
+  let velY = parseFloat(sessionStorage.getItem('moonVelY')) || 0;
+  const savedTime = parseInt(sessionStorage.getItem('moonSaveTime')) || 0;
+
+  if (!hasSavedMoon) {
+    posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
+    posY = 60;
+  }
+
+  const friction = 0.995;
+  const bounce = 0.75;
+  const maxSpeed = 22;
+  const moonSize = moon.offsetWidth || 180;
+
+  if (savedTime > 0 && (Math.abs(velX) > 0.01 || Math.abs(velY) > 0.01)) {
+    const elapsedSeconds = (Date.now() - savedTime) / 1000;
+    if (elapsedSeconds > 0) {
+      const frames = Math.min(Math.round(elapsedSeconds * 60), 300);
+      const maxX = window.innerWidth - moonSize;
+      const maxY = window.innerHeight - moonSize;
+      for (let i = 0; i < frames; i++) {
+        velX *= friction; velY *= friction;
+        posX += velX; posY += velY;
+        if (posX <= 0) { posX = 0; velX = Math.abs(velX) * bounce; }
+        else if (posX >= maxX) { posX = maxX; velX = -Math.abs(velX) * bounce; }
+        if (posY <= 0) { posY = 0; velY = Math.abs(velY) * bounce; }
+        else if (posY >= maxY) { posY = maxY; velY = -Math.abs(velY) * bounce; }
+      }
+    }
+  }
+
+  sessionStorage.removeItem('moonVelX');
+  sessionStorage.removeItem('moonVelY');
+  sessionStorage.removeItem('moonSaveTime');
+
+  let offsetX = 0, offsetY = 0;
+  let lastMouseX = 0, lastMouseY = 0;
+
+  moon.style.transform = `translate(${posX}px, ${posY}px)`;
+
+  if (hasSavedMoon) {
+    moon.classList.add('loaded', 'instant');
+  } else {
+    requestAnimationFrame(() => moon.classList.add('loaded'));
+  }
+
+  if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
+    moon.classList.remove('idle');
+    requestAnimationFrame(updatePhysics);
+  } else {
+    moon.classList.add('idle');
+  }
+
+  moon.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    moon.style.cursor = 'grabbing';
+    moon.classList.remove('idle');
+    const rect = moon.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    posX = rect.left; posY = rect.top;
+    velX = 0; velY = 0;
+    lastMouseX = e.clientX; lastMouseY = e.clientY;
+  });
+
+  document.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    posX = e.clientX - offsetX;
+    posY = e.clientY - offsetY;
+    const maxX = window.innerWidth - moon.offsetWidth;
+    const maxY = window.innerHeight - moon.offsetHeight;
+    if (posX < 0) posX = 0;
+    if (posX > maxX) posX = maxX;
+    if (posY < 0) posY = 0;
+    if (posY > maxY) posY = maxY;
+    moon.style.transform = `translate(${posX}px, ${posY}px)`;
+    velX = (e.clientX - lastMouseX) * 0.8;
+    velY = (e.clientY - lastMouseY) * 0.8;
+    lastMouseX = e.clientX; lastMouseY = e.clientY;
+  });
+
+  document.addEventListener('pointerup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    moon.style.cursor = 'grab';
+    if (velX > maxSpeed) velX = maxSpeed;
+    if (velX < -maxSpeed) velX = -maxSpeed;
+    if (velY > maxSpeed) velY = maxSpeed;
+    if (velY < -maxSpeed) velY = -maxSpeed;
+    sessionStorage.setItem('moonX', posX);
+    sessionStorage.setItem('moonY', posY);
+    if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
+      requestAnimationFrame(updatePhysics);
+    } else {
+      moon.classList.add('idle');
+    }
+  });
+
+  function updatePhysics() {
+    if (isDragging) return;
+    velX *= friction; velY *= friction;
+    posX += velX; posY += velY;
+    const maxX = window.innerWidth - moon.offsetWidth;
+    const maxY = window.innerHeight - moon.offsetHeight;
+    if (posX <= 0) { posX = 0; velX = Math.abs(velX) * bounce; }
+    else if (posX >= maxX) { posX = maxX; velX = -Math.abs(velX) * bounce; }
+    if (posY <= 0) { posY = 0; velY = Math.abs(velY) * bounce; }
+    else if (posY >= maxY) { posY = maxY; velY = -Math.abs(velY) * bounce; }
+    moon.style.transform = `translate(${posX}px, ${posY}px)`;
+    if (Math.abs(velX) > 0.15 || Math.abs(velY) > 0.15) {
+      requestAnimationFrame(updatePhysics);
+    } else {
+      moon.classList.add('idle');
+      sessionStorage.setItem('moonX', posX);
+      sessionStorage.setItem('moonY', posY);
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    const maxX = window.innerWidth - moon.offsetWidth;
+    const maxY = window.innerHeight - moon.offsetHeight;
+    if (posX > maxX) posX = maxX;
+    if (posY > maxY) posY = maxY;
+    moon.style.transform = `translate(${posX}px, ${posY}px)`;
+  });
+
+  // ====== LEWITACJA ======
+  const moonImgEl = document.querySelector('.moon-img');
+  const sessionStartTime = parseInt(sessionStorage.getItem('starTime'));
+
+  function animateMoonFloat() {
+    if (moon && moon.classList.contains('idle') && !isDragging) {
+      const t = (Date.now() - sessionStartTime) / 1000;
+      const cycle = t % 6;
+      let floatX, floatY;
+      if (cycle < 3) {
+        floatX = -10 * (cycle / 3);
+        floatY = -22 * (cycle / 3);
+      } else {
+        floatX = -10 * (1 - (cycle - 3) / 3);
+        floatY = -22 * (1 - (cycle - 3) / 3);
+      }
+      moonImgEl.style.transform = `translate(${floatX}px, ${floatY}px)`;
+    } else {
+      moonImgEl.style.transform = 'none';
+    }
+    requestAnimationFrame(animateMoonFloat);
+  }
+  requestAnimationFrame(animateMoonFloat);
+
+  // ====== RADAR (GLOW) ======
+  const glowTargets = document.querySelectorAll('.glow-target');
+  const glowRadius = 90;
+
+  function checkProximity() {
+    const moonRect = moon.getBoundingClientRect();
+    const moonCenterX = moonRect.left + moonRect.width / 2;
+    const moonCenterY = moonRect.top + moonRect.height / 2;
+    glowTargets.forEach(target => {
+      const rect = target.getBoundingClientRect();
+      const closestX = Math.max(rect.left, Math.min(moonCenterX, rect.right));
+      const closestY = Math.max(rect.top, Math.min(moonCenterY, rect.bottom));
+      const distance = Math.hypot(moonCenterX - closestX, moonCenterY - closestY);
+      target.classList.toggle('near-moon', distance < glowRadius);
+    });
+    requestAnimationFrame(checkProximity);
+  }
+  requestAnimationFrame(checkProximity);
+
+  // ====== SPADAJĄCE GWIAZDY ======
+  const spaceBg = document.getElementById('space-bg');
+  let activeStars = 0;
+
+  function spawnStar(startX, startY, angle, duration) {
+    if (activeStars >= 2) return;
+    activeStars++;
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('star-wrapper');
+    const star = document.createElement('div');
+    star.classList.add('shooting-star');
+    const colorRoll = Math.random();
+    if (colorRoll > 0.7) star.classList.add('star-blue');
+    else if (colorRoll > 0.4) star.classList.add('star-yellow');
+    wrapper.style.transform = `translate(${startX}vw, ${startY}vh) rotate(${angle}deg)`;
+    star.style.animation = `shoot ${duration}s linear forwards`;
+    wrapper.appendChild(star);
+    spaceBg.appendChild(wrapper);
+    star.addEventListener('animationend', () => {
+      wrapper.remove();
+      activeStars--;
+    });
+  }
+
+  function scheduleNextStar() {
+    const delay = 1000 + Math.random() * 2500;
+    setTimeout(() => {
+      const baseX = 5 + Math.random() * 35;
+      const baseY = -20 - Math.random() * 20;
+      const baseAngle = 65 + Math.random() * 20;
+      const baseDuration = 3.5 + Math.random() * 2.5;
+      spawnStar(baseX, baseY, baseAngle, baseDuration);
+      if (Math.random() < 0.4) {
+        const offX = 3 + Math.random() * 5;
+        const offY = 2 + Math.random() * 3;
+        const offAngle = (Math.random() * 4) - 2;
+        spawnStar(baseX + offX, baseY + offY, baseAngle + offAngle, baseDuration + (Math.random() * 0.4 - 0.2));
+      }
+      scheduleNextStar();
+    }, delay);
+  }
+  scheduleNextStar();
+
+  // ====== KOPIUJ IP (karta kontaktowa) ======
+  function copyContactIP() {
+    const label = document.getElementById('contact-ip');
+    navigator.clipboard.writeText('bomisu.pl').then(() => {
+      const old = label.textContent;
+      label.textContent = '✅ Skopiowano: bomisu.pl';
+      setTimeout(() => { label.textContent = old; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

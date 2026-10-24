@@ -7,6 +7,7 @@
 <link rel="preload" href="assets/moon.png" as="image">
 <link rel="prefetch" href="index.html">
 <link rel="prefetch" href="polityka-prywatnosci.html">
+<link rel="prefetch" href="kontakt.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
@@ -29,7 +30,6 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { height: 100%; }
 
   body {
@@ -49,38 +49,27 @@
     -webkit-user-select: none;
   }
 
-  /* --- ANIMACJE PRZEJŚCIA --- */
   @keyframes dropIn {
     0% { transform: translateY(-100vh); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
   }
-
-  /* wyjście: elementy równo opadają, znikają dopiero pod koniec */
   @keyframes dropOut {
     0%   { transform: translateY(0); opacity: 1; }
     60%  { opacity: 1; }
     100% { transform: translateY(100vh); opacity: 0; }
   }
 
-  .drop-in {
-    animation: dropIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    opacity: 0;
-  }
-
+  .drop-in { animation: dropIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
   .delay-1 { animation-delay: 0.1s; }
   .delay-2 { animation-delay: 0.2s; }
 
   body.page-exit { pointer-events: none; }
-
   body.page-exit .drop-in {
     animation: dropOut 0.5s cubic-bezier(0.55, 0, 0.9, 0.5) forwards !important;
     animation-delay: 0s !important;
   }
-
-  /* dolny pasek opada chwilę później */
   body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
 
-  /* --- TŁO Z GWIAZDKAMI --- */
   .space-bg {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -126,7 +115,6 @@
   @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-50%, -50%); } }
   @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
 
-  /* --- SPADAJĄCE GWIAZDY --- */
   .star-wrapper {
     position: absolute;
     top: 0; left: 0;
@@ -167,7 +155,6 @@
     100% { transform: translateX(200vmax); opacity: 0; }
   }
 
-  /* --- KSIĘŻYC --- */
   .moon-container {
     position: fixed;
     top: 0; left: 0;
@@ -180,7 +167,6 @@
   }
 
   .moon-container.loaded { opacity: 1; transition: opacity 0.3s ease; }
-  /* po zmianie strony księżyc jest widoczny od razu, bez mrugania */
   .moon-container.loaded.instant { transition: none; }
   .moon-container:active { cursor: grabbing; }
 
@@ -200,11 +186,9 @@
     100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)); }
   }
 
-  /* --- POŚWIATA GUI, GDY KSIĘŻYC JEST BLISKO (jak na stronie głównej) --- */
   .glow-target { transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; }
   .glow-target.near-moon { filter: drop-shadow(0 0 15px rgba(79, 141, 255, 0.7)) drop-shadow(0 0 30px rgba(147, 197, 253, 0.5)); }
 
-  /* panel zachowuje klockową ramkę (inset), dzięki temu poświata wchodzi płynnie */
   .mc-panel.near-moon {
     border-color: rgba(147, 197, 253, 0.8);
     box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.05),
@@ -216,7 +200,6 @@
     box-shadow: 0 0 30px rgba(79, 141, 255, 0.5), inset 0 0 15px rgba(79, 141, 255, 0.2);
   }
 
-  /* --- GŁÓWNY KONTENER REGULAMINU --- */
   .rules-wrapper {
     display: flex;
     justify-content: center;
@@ -227,7 +210,7 @@
     z-index: 10;
     padding: 10px 0;
     min-height: 0;
-    overflow: visible; /* wcześniej hidden – przycinało poświatę panelu */
+    overflow: visible;
   }
 
   .mc-panel {
@@ -244,7 +227,6 @@
     position: relative;
   }
 
-  /* --- PRZYCISK ZAMKNIJ (X) --- */
   .close-btn {
     position: absolute;
     top: 15px; right: 15px;
@@ -313,7 +295,6 @@
   .rules-text ul { list-style-position: inside; margin-bottom: 15px; padding-left: 10px; }
   .rules-text li { margin-bottom: 5px; }
 
-  /* --- DOLNA SEKCJA (Hotbar) --- */
   .bottom-bar {
     width: 100%;
     display: flex;
@@ -354,12 +335,14 @@
 
   .slot:hover { background-color: #3a3a45; box-shadow: inset 0 0 10px rgba(79, 141, 255, 0.5); }
 
-  /* --- IKONY --- */
   .tiktok-icon { width: 65%; height: 65%; color: #ffffff; transition: transform 0.2s, filter 0.2s, color 0.2s; }
   .tiktok-slot:hover .tiktok-icon { transform: scale(1.15); color: #ff0050; filter: drop-shadow(0 0 8px rgba(255, 0, 80, 0.8)); }
 
   .rules-icon { width: 80%; height: 80%; fill: var(--yellow); transition: transform 0.2s, filter 0.2s; filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); }
   .rules-slot:hover .rules-icon { transform: scale(1.15); }
+
+  .contact-icon { width: 75%; height: 75%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .contact-slot:hover .contact-icon { transform: scale(1.15); fill: #f59e0b; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8)); }
 
   .privacy-icon { width: 70%; height: 70%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
   .privacy-slot:hover .privacy-icon { transform: scale(1.15); fill: #4ade80; filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); }
@@ -370,7 +353,6 @@
   .discord-icon { width: 70%; height: 70%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
   .discord-slot:hover .discord-icon { transform: scale(1.15); fill: #5865F2; filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); }
 
-  /* --- TOOLTIPY --- */
   .tooltip {
     position: absolute;
     bottom: calc(100% + 12px);
@@ -414,6 +396,11 @@
   .rules-slot .tooltip::after { right: auto; left: 15px; }
   .rules-slot .tooltip-title { color: var(--yellow); }
 
+  .contact-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .contact-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .contact-slot:hover .tooltip { transform: translate(-50%, 0); }
+  .contact-slot .tooltip-title { color: #f59e0b; }
+
   .privacy-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
   .privacy-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
   .privacy-slot:hover .tooltip { transform: translate(-50%, 0); }
@@ -425,7 +412,6 @@
 
   .discord-slot .tooltip-title { color: #5865F2; }
 
-  /* --- TELEFONY --- */
   @media (max-width: 600px) {
     body { padding: 20px 10px; }
 
@@ -523,7 +509,17 @@
         </div>
       </div>
 
-      <div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div>
+
+      <div class="slot contact-slot" onclick="navigateTo('kontakt.html')">
+        <svg class="contact-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Kontakt</div>
+          <div class="tooltip-desc">Napisz do nas — Discord, TikTok i inne kanały.</div>
+        </div>
+      </div>
 
       <div class="slot home-slot" onclick="navigateTo('index.html')">
         <svg class="home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -561,7 +557,6 @@
   </div>
 
 <script>
-  // ====== ZAPAMIĘTYWANIE STANU GWIAZD I ANIMACJI ======
   if (!sessionStorage.getItem('starTime')) {
     sessionStorage.setItem('starTime', Date.now());
   }
@@ -575,12 +570,10 @@
     el.style.animationDelay = `-${elapsedTime}s`;
   });
 
-  // ====== NAWIGACJA ======
   let isNavigating = false;
   const pageName = p => (p.split('/').pop() || 'index').replace(/\.html$/, '');
 
   function navigateTo(url) {
-    // podwójne kliknięcie albo ta sama strona – nic nie robimy
     if (isNavigating || pageName(url) === pageName(location.pathname)) return;
     isNavigating = true;
     document.body.classList.add('page-exit');
@@ -595,7 +588,6 @@
     }, 580);
   }
 
-  // powrót przyciskiem "wstecz" – strona nie zostaje w stanie wyjścia
   window.addEventListener('pageshow', (e) => {
     if (e.persisted) {
       isNavigating = false;
@@ -603,7 +595,6 @@
     }
   });
 
-  // ====== FIZYKA KSIĘŻYCA ======
   const moon = document.getElementById('moon');
   let isDragging = false;
 
@@ -625,24 +616,17 @@
   const maxSpeed = 22;
   const moonSize = moon.offsetWidth || 180;
 
-  // symulacja ruchu księżyca w czasie ładowania nowej strony
   if (savedTime > 0 && (Math.abs(velX) > 0.01 || Math.abs(velY) > 0.01)) {
     const elapsedSeconds = (Date.now() - savedTime) / 1000;
-
     if (elapsedSeconds > 0) {
       const frames = Math.min(Math.round(elapsedSeconds * 60), 300);
       const maxX = window.innerWidth - moonSize;
       const maxY = window.innerHeight - moonSize;
-
       for (let i = 0; i < frames; i++) {
-        velX *= friction;
-        velY *= friction;
-        posX += velX;
-        posY += velY;
-
+        velX *= friction; velY *= friction;
+        posX += velX; posY += velY;
         if (posX <= 0) { posX = 0; velX = Math.abs(velX) * bounce; }
         else if (posX >= maxX) { posX = maxX; velX = -Math.abs(velX) * bounce; }
-
         if (posY <= 0) { posY = 0; velY = Math.abs(velY) * bounce; }
         else if (posY >= maxY) { posY = maxY; velY = -Math.abs(velY) * bounce; }
       }
@@ -658,7 +642,6 @@
 
   moon.style.transform = `translate(${posX}px, ${posY}px)`;
 
-  // przy pierwszym wejściu księżyc płynnie się pojawia, po zmianie strony jest od razu
   if (hasSavedMoon) {
     moon.classList.add('loaded', 'instant');
   } else {
@@ -676,56 +659,40 @@
     isDragging = true;
     moon.style.cursor = 'grabbing';
     moon.classList.remove('idle');
-
     const rect = moon.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
-
-    posX = rect.left;
-    posY = rect.top;
-    velX = 0;
-    velY = 0;
-
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
+    posX = rect.left; posY = rect.top;
+    velX = 0; velY = 0;
+    lastMouseX = e.clientX; lastMouseY = e.clientY;
   });
 
   document.addEventListener('pointermove', (e) => {
     if (!isDragging) return;
-
     posX = e.clientX - offsetX;
     posY = e.clientY - offsetY;
-
     const maxX = window.innerWidth - moon.offsetWidth;
     const maxY = window.innerHeight - moon.offsetHeight;
-
     if (posX < 0) posX = 0;
     if (posX > maxX) posX = maxX;
     if (posY < 0) posY = 0;
     if (posY > maxY) posY = maxY;
-
     moon.style.transform = `translate(${posX}px, ${posY}px)`;
-
     velX = (e.clientX - lastMouseX) * 0.8;
     velY = (e.clientY - lastMouseY) * 0.8;
-
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
+    lastMouseX = e.clientX; lastMouseY = e.clientY;
   });
 
   document.addEventListener('pointerup', () => {
     if (!isDragging) return;
     isDragging = false;
     moon.style.cursor = 'grab';
-
     if (velX > maxSpeed) velX = maxSpeed;
     if (velX < -maxSpeed) velX = -maxSpeed;
     if (velY > maxSpeed) velY = maxSpeed;
     if (velY < -maxSpeed) velY = -maxSpeed;
-
     sessionStorage.setItem('moonX', posX);
     sessionStorage.setItem('moonY', posY);
-
     if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
       requestAnimationFrame(updatePhysics);
     } else {
@@ -735,34 +702,15 @@
 
   function updatePhysics() {
     if (isDragging) return;
-
-    velX *= friction;
-    velY *= friction;
-
-    posX += velX;
-    posY += velY;
-
+    velX *= friction; velY *= friction;
+    posX += velX; posY += velY;
     const maxX = window.innerWidth - moon.offsetWidth;
     const maxY = window.innerHeight - moon.offsetHeight;
-
-    if (posX <= 0) {
-      posX = 0;
-      velX = Math.abs(velX) * bounce;
-    } else if (posX >= maxX) {
-      posX = maxX;
-      velX = -Math.abs(velX) * bounce;
-    }
-
-    if (posY <= 0) {
-      posY = 0;
-      velY = Math.abs(velY) * bounce;
-    } else if (posY >= maxY) {
-      posY = maxY;
-      velY = -Math.abs(velY) * bounce;
-    }
-
+    if (posX <= 0) { posX = 0; velX = Math.abs(velX) * bounce; }
+    else if (posX >= maxX) { posX = maxX; velX = -Math.abs(velX) * bounce; }
+    if (posY <= 0) { posY = 0; velY = Math.abs(velY) * bounce; }
+    else if (posY >= maxY) { posY = maxY; velY = -Math.abs(velY) * bounce; }
     moon.style.transform = `translate(${posX}px, ${posY}px)`;
-
     if (Math.abs(velX) > 0.15 || Math.abs(velY) > 0.15) {
       requestAnimationFrame(updatePhysics);
     } else {
@@ -780,7 +728,6 @@
     moon.style.transform = `translate(${posX}px, ${posY}px)`;
   });
 
-  // ====== PŁYNNA LEWITACJA KSIĘŻYCA ======
   const moonImgEl = document.querySelector('.moon-img');
   const sessionStartTime = parseInt(sessionStorage.getItem('starTime'));
 
@@ -789,7 +736,6 @@
       const t = (Date.now() - sessionStartTime) / 1000;
       const cycle = t % 6;
       let floatX, floatY;
-
       if (cycle < 3) {
         floatX = -10 * (cycle / 3);
         floatY = -22 * (cycle / 3);
@@ -797,7 +743,6 @@
         floatX = -10 * (1 - (cycle - 3) / 3);
         floatY = -22 * (1 - (cycle - 3) / 3);
       }
-
       moonImgEl.style.transform = `translate(${floatX}px, ${floatY}px)`;
     } else {
       moonImgEl.style.transform = 'none';
@@ -806,7 +751,6 @@
   }
   requestAnimationFrame(animateMoonFloat);
 
-  // ====== EFEKT PODŚWIETLENIA (RADAR) ======
   const glowTargets = document.querySelectorAll('.glow-target');
   const glowRadius = 90;
 
@@ -814,47 +758,34 @@
     const moonRect = moon.getBoundingClientRect();
     const moonCenterX = moonRect.left + moonRect.width / 2;
     const moonCenterY = moonRect.top + moonRect.height / 2;
-
     glowTargets.forEach(target => {
       const rect = target.getBoundingClientRect();
-
       const closestX = Math.max(rect.left, Math.min(moonCenterX, rect.right));
       const closestY = Math.max(rect.top, Math.min(moonCenterY, rect.bottom));
-
       const distance = Math.hypot(moonCenterX - closestX, moonCenterY - closestY);
-
       target.classList.toggle('near-moon', distance < glowRadius);
     });
-
     requestAnimationFrame(checkProximity);
   }
-
   requestAnimationFrame(checkProximity);
 
-  // ====== DYNAMICZNE SPADAJĄCE GWIAZDY ======
   const spaceBg = document.getElementById('space-bg');
   let activeStars = 0;
 
   function spawnStar(startX, startY, angle, duration) {
     if (activeStars >= 2) return;
     activeStars++;
-
     const wrapper = document.createElement('div');
     wrapper.classList.add('star-wrapper');
-
     const star = document.createElement('div');
     star.classList.add('shooting-star');
-
     const colorRoll = Math.random();
     if (colorRoll > 0.7) star.classList.add('star-blue');
     else if (colorRoll > 0.4) star.classList.add('star-yellow');
-
     wrapper.style.transform = `translate(${startX}vw, ${startY}vh) rotate(${angle}deg)`;
     star.style.animation = `shoot ${duration}s linear forwards`;
-
     wrapper.appendChild(star);
     spaceBg.appendChild(wrapper);
-
     star.addEventListener('animationend', () => {
       wrapper.remove();
       activeStars--;
@@ -863,32 +794,21 @@
 
   function scheduleNextStar() {
     const delay = 1000 + Math.random() * 2500;
-
     setTimeout(() => {
       const baseX = 5 + Math.random() * 35;
       const baseY = -20 - Math.random() * 20;
       const baseAngle = 65 + Math.random() * 20;
       const baseDuration = 3.5 + Math.random() * 2.5;
-
       spawnStar(baseX, baseY, baseAngle, baseDuration);
-
       if (Math.random() < 0.4) {
         const offX = 3 + Math.random() * 5;
         const offY = 2 + Math.random() * 3;
         const offAngle = (Math.random() * 4) - 2;
-
-        spawnStar(
-          baseX + offX,
-          baseY + offY,
-          baseAngle + offAngle,
-          baseDuration + (Math.random() * 0.4 - 0.2)
-        );
+        spawnStar(baseX + offX, baseY + offY, baseAngle + offAngle, baseDuration + (Math.random() * 0.4 - 0.2));
       }
-
       scheduleNextStar();
     }, delay);
   }
-
   scheduleNextStar();
 </script>
 </body>
