@@ -217,8 +217,11 @@
   }
 
   .rules-text {
-    padding-right: 6px;
-    font-size: 15px; line-height: 1.6; color: var(--muted); flex-grow: 1;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: 17px;
+    margin-right: 9px;
+font-size: 15px; line-height: 1.6; color: var(--muted); flex-grow: 1;
     display: flex; flex-direction: column;
     overflow-y: auto;
     min-height: 0;
@@ -226,7 +229,7 @@
   .rules-text::-webkit-scrollbar { width: 8px; }
   .rules-text::-webkit-scrollbar-track { background: var(--panel-border); border-radius: 4px; }
   .rules-text::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
-  .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; }
+  .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; text-align: center; }
   .rules-text p { margin-bottom: 10px; }
   .rules-text > p:first-of-type { margin-bottom: 10px; }
 
@@ -265,6 +268,13 @@
     align-items: baseline;
     gap: 8px;
     line-height: 1;
+    justify-content: center;
+    width: 100%;
+  }
+  .amount-main::before {
+    content: '';
+    width: 22px;
+    flex-shrink: 0;
   }
   .amount-value-input {
     width: 1em;
@@ -301,6 +311,7 @@
   .amount-gems {
     display: flex;
     align-items: baseline;
+    justify-content: center;
     gap: 6px;
     font-size: 15px;
     color: var(--muted);
@@ -317,6 +328,8 @@
     letter-spacing: 1px;
   }
   .display-hint {
+    text-align: center;
+    width: 100%;
     font-size: 10px;
     color: var(--muted);
     opacity: 0.6;
@@ -682,6 +695,13 @@
     .hotbar .slot svg { width: 75% !important; height: 75% !important; }
     .hotbar .slot .tiktok-icon { width: 55% !important; height: 55% !important; }
   }
+
+  @media (min-width: 1024px) {
+    .rules-wrapper.wide-layout { max-width: 1000px; margin-left: auto; margin-right: auto; }
+    .hotbar { max-width: 1200px; margin: 0 auto; }
+    .mc-panel { aspect-ratio: 1 / 1; max-width: 700px; max-height: calc(100vh - 180px); overflow-y: auto; margin: 40px auto; }
+    .hotbar { position: relative; z-index: 1000; }
+  }
 </style>
 <script>
 (function(){
@@ -722,7 +742,7 @@
     <div class="moon-img"></div>
   </div>
 
-  <main class="rules-wrapper drop-in delay-1">
+  <main class="rules-wrapper wide-layout drop-in delay-1">
     <div class="mc-panel glow-target" id="main-panel">
       <div class="close-btn" onclick="navigateTo('index.html')" title="Wróć do menu">
         <svg class="close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

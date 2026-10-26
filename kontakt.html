@@ -220,13 +220,17 @@
   }
 
   .rules-text {
-    overflow-y: auto; padding-right: 15px;
-    font-size: 15px; line-height: 1.6; color: var(--muted); flex-grow: 1;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: 9px;
+    margin-right: 1px;
+    overflow-y: auto;
+font-size: 15px; line-height: 1.6; color: var(--muted); flex-grow: 1;
   }
   .rules-text::-webkit-scrollbar { width: 8px; }
   .rules-text::-webkit-scrollbar-track { background: var(--panel-border); border-radius: 4px; }
   .rules-text::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
-  .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; }
+  .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; text-align: center; }
   .rules-text p { margin-bottom: 10px; }
   .rules-text ul { list-style-position: inside; margin-bottom: 15px; padding-left: 10px; }
   .rules-text li { margin-bottom: 5px; }
@@ -435,6 +439,13 @@
     .hotbar .slot svg { width: 75% !important; height: 75% !important; }
     .hotbar .slot .tiktok-icon { width: 55% !important; height: 55% !important; }
   }
+
+  @media (min-width: 1024px) {
+    .rules-wrapper.wide-layout { max-width: 1000px; margin-left: auto; margin-right: auto; }
+    .hotbar { max-width: 1200px; margin: 0 auto; }
+    .mc-panel { aspect-ratio: 1 / 1; max-width: 700px; max-height: calc(100vh - 180px); overflow-y: auto; margin: 40px auto; }
+    .hotbar { position: relative; z-index: 1000; }
+  }
 </style>
 <script>
 (function(){
@@ -475,7 +486,7 @@
     <div class="moon-img"></div>
   </div>
 
-  <main class="rules-wrapper drop-in delay-1">
+  <main class="rules-wrapper wide-layout drop-in delay-1">
     <div class="mc-panel glow-target" id="main-panel">
       <div class="close-btn" onclick="navigateTo('index.html')" title="Wróć do menu">
         <svg class="close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
