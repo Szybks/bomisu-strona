@@ -490,6 +490,14 @@
     .tooltip { display: none; }
     .shooting-star { width: 100px; }
   }
+
+  /* === HOTBAR MOBILE OPTIMIZATION === */
+  @media (max-width: 600px) {
+    .slot:empty { display: none !important; }
+    .hotbar { display: flex !important; flex-wrap: nowrap; }
+    .slot { flex: 1 1 0; min-width: 0; }
+    .hotbar .slot svg { width: 75% !important; height: 75% !important; }
+  }
 </style>
 <script>
 (function(){
