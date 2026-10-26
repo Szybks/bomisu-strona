@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sklep — Bomisu.pl</title>
+<link rel="preload" href="assets/moon.png" as="image">
+<link rel="prefetch" href="index.html">
+<link rel="prefetch" href="regulamin.html">
+<link rel="prefetch" href="polityka-prywatnosci.html">
+<link rel="prefetch" href="kontakt.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-void: #07040d;
+    --bg-purple: #150b26;
+    --panel-bg: #1a202c;
+    --panel-border: #0f141e;
+    --blue: #4f8dff;
+    --yellow: #fde047;
+    --green: #10b981;
+    --red: #ff4f4f;
+    --text: #e8eaf2;
+    --muted: #8a92a8;
+
+    --slot-bg: #1c1c21;
+    --slot-border-light: #111115;
+    --slot-border-dark: #3a3a45;
+
+    --shop-blue: #4f8dff;
+    --shop-blue-dark: #2563eb;
+    --shop-blue-light: #93c5fd;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { height: 100%; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: radial-gradient(circle at 50% 0%, var(--bg-purple) 0%, var(--bg-void) 100%);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  @keyframes dropIn {
+    0% { transform: translateY(-100vh); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes dropOut {
+    0%   { transform: translateY(0); opacity: 1; }
+    60%  { opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+  .drop-in { animation: dropIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  body.page-exit { pointer-events: none; }
+  body.page-exit .drop-in {
+    animation: dropOut 0.5s cubic-bezier(0.55, 0, 0.9, 0.5) forwards !important;
+    animation-delay: 0s !important;
+  }
+  body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
+
+  .space-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .stars-small, .stars-medium, .stars-large {
+    position: absolute; top: 0; left: 0; width: 200%; height: 200%;
+  }
+  .stars-small {
+    background-image:
+      radial-gradient(1px 1px at 10% 10%, #fff, transparent),
+      radial-gradient(1px 1px at 30% 40%, #fff, transparent),
+      radial-gradient(1px 1px at 60% 20%, #fff, transparent),
+      radial-gradient(1px 1px at 80% 70%, #fff, transparent),
+      radial-gradient(1px 1px at 20% 80%, #fff, transparent),
+      radial-gradient(1px 1px at 50% 50%, #fff, transparent);
+    background-size: 200px 200px;
+    animation: drift 60s linear infinite, twinkle 3s infinite alternate;
+  }
+  .stars-medium {
+    background-image:
+      radial-gradient(2px 2px at 40% 10%, #fff, transparent),
+      radial-gradient(2px 2px at 70% 40%, #fff, transparent),
+      radial-gradient(2px 2px at 15% 60%, #fff, transparent),
+      radial-gradient(2px 2px at 90% 90%, #fff, transparent);
+    background-size: 300px 300px;
+    animation: drift 120s linear infinite, twinkle 5s infinite alternate-reverse;
+  }
+  .stars-large {
+    background-image:
+      radial-gradient(3px 3px at 25% 15%, #fde047, transparent),
+      radial-gradient(3px 3px at 75% 65%, #60a5fa, transparent),
+      radial-gradient(3px 3px at 50% 85%, #fde047, transparent);
+    background-size: 400px 400px;
+    animation: drift 180s linear infinite, twinkle 7s infinite alternate;
+  }
+  @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-600px, -600px); } }
+  @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
+
+  .star-wrapper { position: absolute; top: 0; left: 0; transform-origin: top left; pointer-events: none; z-index: 1; }
+  .shooting-star {
+    position: absolute; top: 0; left: 0;
+    width: 180px; height: 2px;
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
+    opacity: 0;
+    transform-origin: left center;
+  }
+  .shooting-star::after {
+    content: '';
+    position: absolute; right: -3px; top: 50%;
+    transform: translateY(-50%);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px 2px #fff, 0 0 20px #fff;
+  }
+  .star-blue { background: linear-gradient(to right, rgba(79,141,255,0), rgba(79,141,255,1)); }
+  .star-blue::after { background: var(--blue); box-shadow: 0 0 10px 2px var(--blue), 0 0 20px var(--blue); }
+  .star-yellow { background: linear-gradient(to right, rgba(253,224,71,0), rgba(253,224,71,1)); }
+  .star-yellow::after { background: #fde047; box-shadow: 0 0 10px 2px #fde047, 0 0 20px #fde047; }
+  @keyframes shoot {
+    0% { transform: translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(200vmax); opacity: 0; }
+  }
+
+  .moon-container {
+    position: fixed; top: 0; left: 0;
+    width: 180px; height: 180px;
+    cursor: grab; z-index: 2; touch-action: none; will-change: transform; opacity: 0;
+  }
+  .moon-container.loaded { opacity: 1; transition: opacity 0.3s ease; }
+  .moon-container.loaded.instant { transition: none; }
+  .moon-container:active { cursor: grabbing; }
+  .moon-img {
+    width: 100%; height: 100%;
+    background-image: url('assets/moon.png');
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
+    animation: moonGlow 4s infinite alternate;
+    will-change: transform;
+  }
+  @keyframes moonGlow {
+    0% { filter: drop-shadow(0 0 20px rgba(186, 230, 253, 0.7)); }
+    100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)); }
+  }
+
+  .glow-target { transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; }
+  .glow-target.near-moon { filter: drop-shadow(0 0 15px rgba(79, 141, 255, 0.7)) drop-shadow(0 0 30px rgba(147, 197, 253, 0.5)); }
+  .mc-panel.near-moon {
+    border-color: rgba(147, 197, 253, 0.8);
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.05),
+                0 0 30px rgba(79, 141, 255, 0.5), 0 0 70px rgba(79, 141, 255, 0.25);
+  }
+  .hotbar.near-moon {
+    border-color: rgba(147, 197, 253, 0.8);
+    box-shadow: 0 0 30px rgba(79, 141, 255, 0.5), inset 0 0 15px rgba(79, 141, 255, 0.2);
+  }
+
+  .rules-wrapper {
+    display: flex; justify-content: center; align-items: center;
+    flex-grow: 1; width: 100%; max-width: 550px; z-index: 10;
+    padding: 10px 0; min-height: 0; overflow: visible;
+  }
+  .mc-panel {
+    background: var(--panel-bg);
+    border: 4px solid var(--panel-border);
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.8);
+    border-radius: 8px;
+    padding: 22px;
+    width: 100%; height: 75vh; max-height: 75vh;
+    display: flex; flex-direction: column; position: relative;
+  }
+
+  .close-btn {
+    position: absolute; top: 15px; right: 15px;
+    width: 40px; height: 40px;
+    background-color: var(--slot-bg);
+    border-top: 2px solid #2d3748;
+    border-left: 2px solid #2d3748;
+    border-bottom: 2px solid var(--panel-border);
+    border-right: 2px solid var(--panel-border);
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.05);
+    border-radius: 6px;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer; z-index: 1000; transition: all 0.2s;
+  }
+  .close-btn:hover { border-color: var(--red); box-shadow: 0 0 15px rgba(255, 79, 79, 0.4), inset 0 0 10px rgba(255, 79, 79, 0.2); }
+  .close-icon { width: 24px; height: 24px; fill: var(--text); transition: fill 0.2s; }
+  .close-btn:hover .close-icon { fill: var(--red); }
+
+  .mc-panel h1 {
+    text-align: center; font-size: 30px; font-weight: 900; letter-spacing: -1px;
+    margin-bottom: 16px;
+    background: linear-gradient(90deg, #dbeafe, #60a5fa, #2563eb, #60a5fa, #dbeafe);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: textFlow 5s linear infinite;
+    border-bottom: 2px solid var(--panel-border);
+    padding-bottom: 15px; padding-left: 40px; padding-right: 40px;
+  }
+  @keyframes textFlow {
+    0% { background-position: 0% center; }
+    100% { background-position: -200% center; }
+  }
+
+  .rules-text {
+    padding-right: 6px;
+    font-size: 15px; line-height: 1.6; color: var(--muted); flex-grow: 1;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .rules-text::-webkit-scrollbar { width: 8px; }
+  .rules-text::-webkit-scrollbar-track { background: var(--panel-border); border-radius: 4px; }
+  .rules-text::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
+  .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; }
+  .rules-text p { margin-bottom: 10px; }
+  .rules-text > p:first-of-type { margin-bottom: 10px; }
+
+  /* --- SKLEP: DISPLAY KWOTY + GEMÓW (EDYTOWALNY) --- */
+  .amount-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 20px;
+    margin: 18px 0;
+    background: var(--slot-bg);
+    border-top: 3px solid var(--slot-border-dark);
+    border-left: 3px solid var(--slot-border-dark);
+    border-bottom: 3px solid #2d3748;
+    border-right: 3px solid #2d3748;
+    border-radius: 8px;
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .amount-display:hover {
+    border-color: var(--shop-blue);
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.03),
+                0 0 20px rgba(79, 141, 255, 0.35);
+  }
+  .amount-display:focus-within {
+    border-color: var(--shop-blue);
+    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.03),
+                0 0 24px rgba(79, 141, 255, 0.5);
+  }
+  .amount-display:active { transform: scale(0.99); }
+
+  .amount-main {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    line-height: 1;
+  }
+  .amount-value-input {
+    width: 1em;
+    background: linear-gradient(135deg, var(--shop-blue-light), var(--shop-blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    caret-color: var(--shop-blue-light);
+    border: none;
+    outline: none;
+    font-family: inherit;
+    font-size: clamp(36px, 10vw, 54px);
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1;
+    text-align: center;
+    padding: 0;
+    -moz-appearance: textfield;
+    cursor: text;
+    transition: width 0.15s ease;
+  }
+  .amount-value-input::-webkit-outer-spin-button,
+  .amount-value-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .amount-currency {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--muted);
+  }
+
+  .amount-gems {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .gems-value {
+    font-weight: 800;
+    color: var(--shop-blue);
+    font-size: 18px;
+  }
+  .gems-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .display-hint {
+    font-size: 10px;
+    color: var(--muted);
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-top: 4px;
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+  .amount-display:focus-within .display-hint {
+    color: var(--shop-blue-light);
+    opacity: 1;
+  }
+
+  /* --- SKLEP: SLIDER --- */
+  .amount-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 18px;
+    background: var(--panel-border);
+    border-top: 2px solid var(--slot-border-dark);
+    border-left: 2px solid var(--slot-border-dark);
+    border-bottom: 2px solid #2d3748;
+    border-right: 2px solid #2d3748;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    margin: 8px 0 4px;
+  }
+  .amount-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 26px;
+    height: 32px;
+    background: var(--shop-blue);
+    border-top: 2px solid rgba(255,255,255,0.5);
+    border-left: 2px solid rgba(255,255,255,0.5);
+    border-bottom: 2px solid rgba(0,0,0,0.4);
+    border-right: 2px solid rgba(0,0,0,0.4);
+    border-radius: 3px;
+    cursor: grab;
+    box-shadow: 0 0 14px rgba(79, 141, 255, 0.6);
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+  }
+  .amount-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(79, 141, 255, 0.9);
+  }
+  .amount-slider::-webkit-slider-thumb:active { cursor: grabbing; }
+  .amount-slider::-moz-range-thumb {
+    width: 26px;
+    height: 32px;
+    background: var(--shop-blue);
+    border-top: 2px solid rgba(255,255,255,0.5);
+    border-left: 2px solid rgba(255,255,255,0.5);
+    border-bottom: 2px solid rgba(0,0,0,0.4);
+    border-right: 2px solid rgba(0,0,0,0.4);
+    border-radius: 3px;
+    cursor: grab;
+    box-shadow: 0 0 14px rgba(79, 141, 255, 0.6);
+  }
+  .amount-slider::-moz-range-track { background: transparent; }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  /* --- SKLEP: PRESETY --- */
+  .presets {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .preset {
+    padding: 10px 4px;
+    background: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-dark);
+    border-left: 2px solid var(--slot-border-dark);
+    border-bottom: 2px solid #2d3748;
+    border-right: 2px solid #2d3748;
+    border-radius: 5px;
+    color: var(--text);
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .preset:hover {
+    background: #2a2a3a;
+    border-color: var(--shop-blue);
+    color: var(--shop-blue-light);
+    box-shadow: 0 0 12px rgba(79, 141, 255, 0.35);
+  }
+  .preset.active {
+    background: var(--shop-blue);
+    border-color: var(--shop-blue);
+    color: #fff;
+    box-shadow: 0 0 16px rgba(79, 141, 255, 0.6);
+  }
+
+  /* --- SKLEP: POLE NICKU --- */
+  .nickname-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .nickname-row label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .nickname-row .input-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-dark);
+    border-left: 2px solid var(--slot-border-dark);
+    border-bottom: 2px solid #2d3748;
+    border-right: 2px solid #2d3748;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .nickname-row .input-wrapper:focus-within {
+    border-color: var(--shop-blue);
+    box-shadow: 0 0 12px rgba(79, 141, 255, 0.4);
+  }
+  .nickname-row .input-wrapper.invalid {
+    border-color: var(--red);
+    box-shadow: 0 0 12px rgba(255, 79, 79, 0.4);
+  }
+  .nickname-row input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 10px 14px;
+    letter-spacing: 0.5px;
+  }
+  .nickname-row input::placeholder {
+    color: var(--muted);
+    opacity: 0.6;
+    font-weight: 600;
+  }
+  .nickname-row .input-prefix {
+    padding: 10px 0 10px 14px;
+    color: var(--muted);
+    font-weight: 800;
+    font-size: 15px;
+    user-select: none;
+  }
+
+  /* --- SKLEP: PRZYCISK ZAPŁAĆ (na samym dole) --- */
+  .shop-footer {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 2px solid var(--panel-border);
+  }
+  .pay-btn {
+    width: 100%;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--shop-blue), var(--shop-blue-dark));
+    border: none;
+    border-top: 3px solid rgba(255,255,255,0.3);
+    border-left: 3px solid rgba(255,255,255,0.3);
+    border-bottom: 3px solid rgba(0,0,0,0.4);
+    border-right: 3px solid rgba(0,0,0,0.4);
+    border-radius: 8px;
+    color: #fff;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 6px 20px rgba(79, 141, 255, 0.35);
+    transition: all 0.15s ease;
+  }
+  .pay-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(79, 141, 255, 0.5);
+  }
+  .pay-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(79, 141, 255, 0.3);
+  }
+  .pay-btn-right {
+    font-size: 14px;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.95;
+  }
+
+  .trust-note {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .trust-note strong { color: var(--shop-blue-light); }
+
+  /* --- DOLNA SEKCJA (Hotbar) --- */
+  .bottom-bar {
+    width: 100%; display: flex; justify-content: center;
+    padding-bottom: 10px; z-index: 10; flex-shrink: 0;
+  }
+  .hotbar {
+    display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px;
+    background-color: var(--panel-bg);
+    border-top: 4px solid #2d3748;
+    border-left: 4px solid #2d3748;
+    border-bottom: 4px solid var(--panel-border);
+    border-right: 4px solid var(--panel-border);
+    padding: 6px; border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  }
+  .slot {
+    width: 50px; height: 50px;
+    background-color: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-light);
+    border-left: 2px solid var(--slot-border-light);
+    border-bottom: 2px solid var(--slot-border-dark);
+    border-right: 2px solid var(--slot-border-dark);
+    transition: background-color 0.2s;
+    cursor: pointer; position: relative;
+    display: flex; justify-content: center; align-items: center;
+  }
+  .slot:hover { background-color: #3a3a45; box-shadow: inset 0 0 10px rgba(79, 141, 255, 0.5); }
+
+  /* --- IKONY --- */
+  .tiktok-icon { width: 65%; height: 65%; color: #ffffff; transition: transform 0.2s, filter 0.2s, color 0.2s; }
+  .tiktok-slot:hover .tiktok-icon { transform: scale(1.15); color: #ff0050; filter: drop-shadow(0 0 8px rgba(255, 0, 80, 0.8)); }
+
+  .rules-icon { width: 80%; height: 80%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .rules-slot:hover .rules-icon { transform: scale(1.15); fill: var(--yellow); filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.8)); }
+
+  .contact-icon { width: 75%; height: 75%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .contact-slot:hover .contact-icon { transform: scale(1.15); fill: #f59e0b; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8)); }
+
+  .shop-icon { width: 75%; height: 75%; fill: var(--shop-blue); transition: transform 0.2s, filter 0.2s; filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.6)); }
+  .shop-slot:hover .shop-icon { transform: scale(1.15); }
+
+  .home-icon { width: 80%; height: 80%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .home-slot:hover .home-icon { transform: scale(1.15); fill: var(--blue); filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); }
+
+  .privacy-icon { width: 70%; height: 70%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .privacy-slot:hover .privacy-icon { transform: scale(1.15); fill: #4ade80; filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8)); }
+
+  .discord-icon { width: 70%; height: 70%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .discord-slot:hover .discord-icon { transform: scale(1.15); fill: #5865F2; filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8)); }
+
+  /* --- TOOLTIPY --- */
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px); right: 0;
+    background-color: rgba(10, 12, 16, 0.95);
+    border: 2px solid #0f141e;
+    outline: 2px solid var(--blue);
+    padding: 10px 14px; border-radius: 6px;
+    color: #fff; font-size: 13px;
+    width: max-content; max-width: 220px;
+    pointer-events: none; opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100; text-align: left;
+    box-shadow: 0 4px 15px rgba(79, 141, 255, 0.2);
+  }
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; right: 15px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--blue) transparent transparent transparent;
+  }
+  .slot:hover .tooltip { opacity: 1; transform: translateY(0); }
+  .tooltip-title { color: var(--blue); font-weight: 800; margin-bottom: 4px; font-size: 14px; }
+  .tooltip-desc { color: var(--muted); line-height: 1.4; }
+
+  .tiktok-slot .tooltip { right: auto; left: 0; }
+  .tiktok-slot .tooltip::after { right: auto; left: 15px; }
+  .tiktok-slot .tooltip-title { color: #ff0050; }
+
+  .rules-slot .tooltip { right: auto; left: 0; }
+  .rules-slot .tooltip::after { right: auto; left: 15px; }
+  .rules-slot .tooltip-title { color: var(--yellow); }
+
+  .contact-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .contact-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .contact-slot:hover .tooltip { transform: translate(-50%, 0); }
+  .contact-slot .tooltip-title { color: #f59e0b; }
+
+  .shop-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .shop-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .shop-slot:hover .tooltip { transform: translate(-50%, 0); }
+  .shop-slot .tooltip-title { color: var(--shop-blue); }
+
+  .home-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .home-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .home-slot:hover .tooltip { transform: translate(-50%, 0); }
+
+  .privacy-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .privacy-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .privacy-slot:hover .tooltip { transform: translate(-50%, 0); }
+  .privacy-slot .tooltip-title { color: #4ade80; }
+
+  .discord-slot .tooltip-title { color: #5865F2; }
+
+  /* --- TELEFONY --- */
+  @media (max-width: 600px) {
+    body { padding: 20px 10px; }
+    .rules-wrapper { max-width: 100%; padding: 5px 0; }
+    .mc-panel { height: 70vh; max-height: 70vh; padding: 15px; }
+    .mc-panel h1 { font-size: 22px; padding-left: 30px; padding-right: 30px; }
+    .rules-text { font-size: 13px; }
+    .amount-display { padding: 14px 12px; margin: 12px 0; }
+    .amount-gems { font-size: 13px; }
+    .gems-value { font-size: 16px; }
+    .presets { gap: 4px; }
+    .preset { padding: 8px 2px; font-size: 11px; }
+    .pay-btn { padding: 14px 16px; font-size: 14px; }
+    .pay-btn-right { font-size: 12px; }
+    .nickname-row input { font-size: 15px; padding: 9px 12px; }
+    .nickname-row .input-prefix { padding: 9px 0 9px 12px; font-size: 14px; }
+    .close-btn { width: 32px; height: 32px; top: 10px; right: 10px; }
+    .close-icon { width: 18px; height: 18px; }
+    .bottom-bar { padding-left: 5px; padding-right: 5px; }
+    .hotbar { width: 100%; padding: 4px; gap: 2px; border-width: 3px; }
+    .slot { width: 100%; height: auto; aspect-ratio: 1 / 1; border-width: 1px; }
+    .tooltip { display: none; }
+    .moon-container { width: 100px; height: 100px; }
+    .shooting-star { width: 100px; }
+  }
+</style>
+<script>
+(function(){
+  try {
+    var x = sessionStorage.getItem('moonX');
+    var y = sessionStorage.getItem('moonY');
+    if (x !== null && y !== null && !isNaN(parseFloat(x)) && !isNaN(parseFloat(y))) {
+      var s = document.createElement('style');
+      s.textContent = '#moon { transform: translate(' + parseFloat(x) + 'px, ' + parseFloat(y) + 'px); opacity: 1; transition: none; }';
+      document.head.appendChild(s);
+    }
+  } catch (e) {}
+})();
+</script>
+<script>
+(function(){
+  try {
+    if (!sessionStorage.getItem('starTime')) {
+      sessionStorage.setItem('starTime', Date.now());
+    }
+    var elapsed = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
+    var s = document.createElement('style');
+    s.textContent = '.stars-small, .stars-medium, .stars-large { animation-delay: -' + elapsed + 's, -' + elapsed + 's; }';
+    document.head.appendChild(s);
+  } catch (e) {}
+})();
+</script>
+</head>
+<body>
+
+  <div class="space-bg" id="space-bg">
+    <div class="stars-small"></div>
+    <div class="stars-medium"></div>
+    <div class="stars-large"></div>
+  </div>
+
+  <div class="moon-container idle" id="moon">
+    <div class="moon-img"></div>
+  </div>
+
+  <main class="rules-wrapper drop-in delay-1">
+    <div class="mc-panel glow-target" id="main-panel">
+      <div class="close-btn" onclick="navigateTo('index.html')" title="Wróć do menu">
+        <svg class="close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </div>
+
+      <h1>Sklep</h1>
+
+      <div class="rules-text">
+        <p>Ile chcesz wpłacić gemów na serwerze Bomisu? <strong>Za każde 1 zł otrzymujesz 100 gemów</strong>. Kliknij kwotę na górze, aby wpisać dowolną wartość (5–1000 zł). 💎</p>
+
+        <div class="amount-display" id="amount-display" title="Kliknij, aby wpisać własną kwotę">
+          <div class="amount-main">
+            <input
+              type="text"
+              class="amount-value-input"
+              id="amount-value-input"
+              value="5"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Kwota w złotówkach (5-100)"
+            >
+            <span class="amount-currency">zł</span>
+          </div>
+          <div class="amount-gems">
+            <span class="gems-value" id="gems-value">500</span>
+            <span class="gems-label">💎 gemów</span>
+          </div>
+          <div class="display-hint" id="display-hint">kliknij, aby edytować</div>
+        </div>
+
+        <input type="range" class="amount-slider" id="amount-slider" min="5" max="100" step="1" value="5" aria-label="Kwota w złotówkach">
+
+        <div class="slider-labels">
+          <span>5 zł</span>
+          <span>100 zł</span>
+        </div>
+
+        <div class="presets">
+          <button type="button" class="preset" data-amount="5">5 zł</button>
+          <button type="button" class="preset" data-amount="10">10 zł</button>
+          <button type="button" class="preset" data-amount="25">25 zł</button>
+          <button type="button" class="preset" data-amount="50">50 zł</button>
+          <button type="button" class="preset" data-amount="100">100 zł</button>
+        </div>
+
+        <div class="nickname-row">
+          <label for="nickname-input">Nick gracza w Minecraft (który otrzyma gemy):</label>
+          <div class="input-wrapper" id="nickname-wrapper">
+            <span class="input-prefix">🎮</span>
+            <input
+              type="text"
+              id="nickname-input"
+              placeholder="np. JustAJolty"
+              maxlength="16"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Nick gracza w Minecraft"
+            >
+          </div>
+        </div>
+
+        <div class="shop-footer">
+          <button type="button" class="pay-btn" id="pay-btn" onclick="payWithTebex()">
+            <span>💳 Zapłać</span>
+            <span class="pay-btn-right" id="pay-amount">5 zł · 500 💎</span>
+          </button>
+
+          <p class="trust-note">
+            🔒 Bezpieczna płatność obsługiwana przez <strong>Tebex</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="bottom-bar drop-in delay-2">
+    <div class="hotbar glow-target" id="hotbar">
+
+      <div class="slot tiktok-slot" onclick="window.open('https://www.tiktok.com/@bomisumc', '_blank')">
+        <svg class="tiktok-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(-8, -8)"/>
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(8, 8)"/>
+          <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">TikTok</div>
+          <div class="tooltip-desc">Zobacz naszego TikToka! Kliknij, aby wejść.</div>
+        </div>
+      </div>
+
+      <div class="slot rules-slot" onclick="navigateTo('regulamin.html')">
+        <svg class="rules-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Regulamin</div>
+          <div class="tooltip-desc">Zapoznaj się z zasadami panującymi na serwerze.</div>
+        </div>
+      </div>
+
+      <div class="slot"></div>
+
+      <div class="slot contact-slot" onclick="navigateTo('kontakt.html')">
+        <svg class="contact-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Kontakt</div>
+          <div class="tooltip-desc">Napisz do nas — Discord, TikTok i inne kanały.</div>
+        </div>
+      </div>
+
+      <div class="slot home-slot" onclick="navigateTo('index.html')">
+        <svg class="home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Strona Główna</div>
+          <div class="tooltip-desc">Wróć do menu głównego.</div>
+        </div>
+      </div>
+
+      <div class="slot shop-slot" onclick="navigateTo('sklep.html')">
+        <svg class="shop-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12zm-7-8c-1.66 0-3-1.34-3-3H7c0 2.76 2.24 5 5 5s5-2.24 5-5h-2c0 1.66-1.34 3-3 3z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Sklep</div>
+          <div class="tooltip-desc">Jesteś na tej stronie.</div>
+        </div>
+      </div>
+
+      <div class="slot"></div>
+
+      <div class="slot privacy-slot" onclick="navigateTo('polityka-prywatnosci.html')">
+        <svg class="privacy-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Polityka Prywatności</div>
+          <div class="tooltip-desc">Informacje o przetwarzaniu danych i ciasteczkach.</div>
+        </div>
+      </div>
+
+      <div class="slot discord-slot" onclick="window.open('https://dc.bomisu.pl/', '_blank')">
+        <svg class="discord-icon" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+          <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.2,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Discord</div>
+          <div class="tooltip-desc">Dołącz do naszej społeczności! Kliknij, aby wejść.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script src="background.js"></script>
+<script>
+  // ====== SKLEP — LOGIKA ======
+  const MIN_AMOUNT = 5;
+  const MAX_AMOUNT = 1000;
+  const SLIDER_MAX = 100;
+  const GEMS_PER_ZL = 100;
+
+  const amountDisplay = document.getElementById('amount-display');
+  const amountSlider = document.getElementById('amount-slider');
+  const amountInput = document.getElementById('amount-value-input');
+  const gemsValue = document.getElementById('gems-value');
+  const payAmount = document.getElementById('pay-amount');
+  const displayHint = document.getElementById('display-hint');
+  const presetBtns = document.querySelectorAll('.preset');
+  const nicknameInput = document.getElementById('nickname-input');
+  const nicknameWrapper = document.getElementById('nickname-wrapper');
+
+  let currentAmount = 5;
+
+  function formatNumber(n) {
+    return n.toLocaleString('pl-PL');
+  }
+
+  function updateInputWidth() {
+    const len = Math.max(String(amountInput.value || '').length, 1);
+    amountInput.style.width = (len * 0.62 + 0.15) + 'em';
+  }
+
+  function highlightPreset() {
+    presetBtns.forEach(btn => {
+      const a = parseInt(btn.dataset.amount);
+      btn.classList.toggle('active', a === currentAmount);
+    });
+  }
+
+  function setState(val, { updateInput = true } = {}) {
+    val = Math.max(MIN_AMOUNT, Math.min(MAX_AMOUNT, Math.floor(val)));
+    currentAmount = val;
+
+    if (updateInput) amountInput.value = val;
+
+    gemsValue.textContent = formatNumber(val * GEMS_PER_ZL);
+    payAmount.textContent = `${val} zł · ${formatNumber(val * GEMS_PER_ZL)} 💎`;
+
+    const sliderVal = Math.min(val, SLIDER_MAX);
+    if (parseFloat(amountSlider.value) !== sliderVal) amountSlider.value = sliderVal;
+
+    highlightPreset();
+    updateInputWidth();
+  }
+
+  amountSlider.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value) || MIN_AMOUNT;
+    setState(val);
+  });
+
+  amountDisplay.addEventListener('click', (e) => {
+    if (e.target !== amountInput) amountInput.focus();
+  });
+
+  amountInput.addEventListener('focus', () => {
+    amountInput.select();
+    displayHint.textContent = `wpisz kwotę (${MIN_AMOUNT}–${MAX_AMOUNT} zł)`;
+  });
+
+  amountInput.addEventListener('input', (e) => {
+    let raw = e.target.value.replace(/\D/g, '');
+    if (raw !== '') raw = raw.replace(/^0+/, '') || '';
+    if (raw !== '' && parseInt(raw) > MAX_AMOUNT) raw = String(MAX_AMOUNT);
+    e.target.value = raw;
+    updateInputWidth();
+    if (raw === '') return;
+    const val = parseInt(raw);
+    if (val >= MIN_AMOUNT) setState(val, { updateInput: false });
+  });
+
+  amountInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      amountInput.blur();
+    }
+  });
+
+  amountInput.addEventListener('blur', () => {
+    displayHint.textContent = 'kliknij, aby edytować';
+    let val = parseInt(amountInput.value);
+    if (isNaN(val) || val < MIN_AMOUNT) setState(currentAmount);
+    else if (val > MAX_AMOUNT) setState(MAX_AMOUNT);
+    else setState(val);
+  });
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = parseInt(btn.dataset.amount);
+      setState(val);
+    });
+  });
+
+  nicknameInput.addEventListener('input', () => {
+    const raw = nicknameInput.value.replace(/[^a-zA-Z0-9_]/g, '');
+    if (nicknameInput.value !== raw) nicknameInput.value = raw;
+    nicknameWrapper.classList.toggle('invalid', raw.length > 0 && raw.length < 3);
+  });
+
+  nicknameInput.addEventListener('blur', () => {
+    const val = nicknameInput.value.trim();
+    nicknameWrapper.classList.toggle('invalid', val.length > 0 && val.length < 3);
+  });
+
+  setState(5);
+
+  function payWithTebex() {
+    const nickname = nicknameInput.value.trim();
+
+    if (nickname.length < 3) {
+      nicknameWrapper.classList.add('invalid');
+      nicknameInput.focus();
+      nicknameWrapper.animate(
+        [
+          { transform: 'translateX(0)' },
+          { transform: 'translateX(-5px)' },
+          { transform: 'translateX(5px)' },
+          { transform: 'translateX(-3px)' },
+          { transform: 'translateX(3px)' },
+          { transform: 'translateX(0)' }
+        ],
+        { duration: 300, easing: 'ease-in-out' }
+      );
+      return;
+    }
+
+    const gems = formatNumber(currentAmount * GEMS_PER_ZL);
+    alert(`Nick: ${nickname}\nKwota: ${currentAmount} zł → ${gems} 💎 gemów\n\n(Tutaj nastąpi płatność Tebex — integracja do dodania)`);
+  }
+</script>
+</body>
+</html>

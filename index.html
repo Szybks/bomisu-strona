@@ -8,6 +8,7 @@
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="polityka-prywatnosci.html">
 <link rel="prefetch" href="kontakt.html">
+<link rel="prefetch" href="sklep.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
@@ -27,6 +28,8 @@
     --slot-bg: #1c1c21;
     --slot-border-light: #111115;
     --slot-border-dark: #3a3a45;
+
+    --shop-blue: #4f8dff;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -56,7 +59,6 @@
     100% { transform: translateY(0); opacity: 1; }
   }
 
-  /* wyjście: elementy równo opadają, znikają dopiero pod koniec */
   @keyframes dropOut {
     0%   { transform: translateY(0); opacity: 1; }
     60%  { opacity: 1; }
@@ -77,7 +79,6 @@
     animation-delay: 0s !important;
   }
 
-  /* dolny pasek opada chwilę później */
   body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
 
   /* --- KOSMICZNE TŁO Z GWIAZDKAMI --- */
@@ -123,7 +124,7 @@
     animation: drift 180s linear infinite, twinkle 7s infinite alternate;
   }
 
-  @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-50%, -50%); } }
+  @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-600px, -600px); } }
   @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
 
   /* --- SPADAJĄCE GWIAZDY --- */
@@ -178,7 +179,6 @@
   }
 
   .moon-container.loaded { opacity: 1; transition: opacity 0.3s ease; }
-  /* po zmianie strony księżyc jest widoczny od razu, bez mrugania */
   .moon-container.loaded.instant { transition: none; }
   .moon-container:active { cursor: grabbing; }
 
@@ -390,6 +390,9 @@
   .contact-icon { width: 75%; height: 75%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
   .contact-slot:hover .contact-icon { transform: scale(1.15); fill: #f59e0b; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8)); }
 
+  .shop-icon { width: 75%; height: 75%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
+  .shop-slot:hover .shop-icon { transform: scale(1.15); fill: var(--shop-blue); filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); }
+
   .home-icon { width: 80%; height: 80%; fill: #ffffff; transition: transform 0.2s, filter 0.2s, fill 0.2s; }
   .home-slot:hover .home-icon { transform: scale(1.15); fill: var(--blue); filter: drop-shadow(0 0 8px rgba(79, 141, 255, 0.8)); }
 
@@ -448,6 +451,11 @@
   .contact-slot:hover .tooltip { transform: translate(-50%, 0); }
   .contact-slot .tooltip-title { color: #f59e0b; }
 
+  .shop-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
+  .shop-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
+  .shop-slot:hover .tooltip { transform: translate(-50%, 0); }
+  .shop-slot .tooltip-title { color: var(--shop-blue); }
+
   .privacy-slot .tooltip { right: auto; left: 50%; transform: translate(-50%, 10px); }
   .privacy-slot .tooltip::after { right: auto; left: 50%; transform: translateX(-50%); }
   .privacy-slot:hover .tooltip { transform: translate(-50%, 0); }
@@ -483,6 +491,32 @@
     .shooting-star { width: 100px; }
   }
 </style>
+<script>
+(function(){
+  try {
+    var x = sessionStorage.getItem('moonX');
+    var y = sessionStorage.getItem('moonY');
+    if (x !== null && y !== null && !isNaN(parseFloat(x)) && !isNaN(parseFloat(y))) {
+      var s = document.createElement('style');
+      s.textContent = '#moon { transform: translate(' + parseFloat(x) + 'px, ' + parseFloat(y) + 'px); opacity: 1; transition: none; }';
+      document.head.appendChild(s);
+    }
+  } catch (e) {}
+})();
+</script>
+<script>
+(function(){
+  try {
+    if (!sessionStorage.getItem('starTime')) {
+      sessionStorage.setItem('starTime', Date.now());
+    }
+    var elapsed = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
+    var s = document.createElement('style');
+    s.textContent = '.stars-small, .stars-medium, .stars-large { animation-delay: -' + elapsed + 's, -' + elapsed + 's; }';
+    document.head.appendChild(s);
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 
@@ -564,7 +598,17 @@
         </div>
       </div>
 
-      <div class="slot"></div><div class="slot"></div>
+      <div class="slot shop-slot" onclick="navigateTo('sklep.html')">
+        <svg class="shop-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12zm-7-8c-1.66 0-3-1.34-3-3H7c0 2.76 2.24 5 5 5s5-2.24 5-5h-2c0 1.66-1.34 3-3 3z"/>
+        </svg>
+        <div class="tooltip">
+          <div class="tooltip-title">Sklep</div>
+          <div class="tooltip-desc">Wybierz kwotę i wesprzyj serwer.</div>
+        </div>
+      </div>
+
+      <div class="slot"></div>
 
       <div class="slot privacy-slot" onclick="navigateTo('polityka-prywatnosci.html')">
         <svg class="privacy-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -589,267 +633,8 @@
     </div>
   </div>
 
+<script src="background.js"></script>
 <script>
-  // ====== ZAPAMIĘTYWANIE STANU GWIAZD I ANIMACJI ======
-  if (!sessionStorage.getItem('starTime')) {
-    sessionStorage.setItem('starTime', Date.now());
-  }
-  const elapsedTime = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
-
-  document.querySelectorAll('.stars-small, .stars-medium, .stars-large').forEach(el => {
-    el.style.animationDelay = `-${elapsedTime}s, -${elapsedTime}s`;
-  });
-
-  document.querySelectorAll('.moon-img').forEach(el => {
-    el.style.animationDelay = `-${elapsedTime}s`;
-  });
-
-  // ====== NAWIGACJA ======
-  let isNavigating = false;
-  const pageName = p => (p.split('/').pop() || 'index').replace(/\.html$/, '');
-
-  function navigateTo(url) {
-    if (isNavigating || pageName(url) === pageName(location.pathname)) return;
-    isNavigating = true;
-    document.body.classList.add('page-exit');
-
-    setTimeout(() => {
-      sessionStorage.setItem('moonX', posX);
-      sessionStorage.setItem('moonY', posY);
-      sessionStorage.setItem('moonVelX', velX);
-      sessionStorage.setItem('moonVelY', velY);
-      sessionStorage.setItem('moonSaveTime', Date.now());
-      window.location.href = url;
-    }, 580);
-  }
-
-  window.addEventListener('pageshow', (e) => {
-    if (e.persisted) {
-      isNavigating = false;
-      document.body.classList.remove('page-exit');
-    }
-  });
-
-  // ====== FIZYKA KSIĘŻYCA ======
-  const moon = document.getElementById('moon');
-  let isDragging = false;
-
-  let posX = parseFloat(sessionStorage.getItem('moonX'));
-  let posY = parseFloat(sessionStorage.getItem('moonY'));
-  const hasSavedMoon = !isNaN(posX) && !isNaN(posY);
-
-  let velX = parseFloat(sessionStorage.getItem('moonVelX')) || 0;
-  let velY = parseFloat(sessionStorage.getItem('moonVelY')) || 0;
-  const savedTime = parseInt(sessionStorage.getItem('moonSaveTime')) || 0;
-
-  if (!hasSavedMoon) {
-    posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
-    posY = 60;
-  }
-
-  const friction = 0.995;
-  const bounce = 0.75;
-  const maxSpeed = 22;
-  const moonSize = moon.offsetWidth || 180;
-
-  if (savedTime > 0 && (Math.abs(velX) > 0.01 || Math.abs(velY) > 0.01)) {
-    const elapsedSeconds = (Date.now() - savedTime) / 1000;
-    if (elapsedSeconds > 0) {
-      const frames = Math.min(Math.round(elapsedSeconds * 60), 300);
-      const maxX = window.innerWidth - moonSize;
-      const maxY = window.innerHeight - moonSize;
-      for (let i = 0; i < frames; i++) {
-        velX *= friction; velY *= friction;
-        posX += velX; posY += velY;
-        if (posX <= 0) { posX = 0; velX = Math.abs(velX) * bounce; }
-        else if (posX >= maxX) { posX = maxX; velX = -Math.abs(velX) * bounce; }
-        if (posY <= 0) { posY = 0; velY = Math.abs(velY) * bounce; }
-        else if (posY >= maxY) { posY = maxY; velY = -Math.abs(velY) * bounce; }
-      }
-    }
-  }
-
-  sessionStorage.removeItem('moonVelX');
-  sessionStorage.removeItem('moonVelY');
-  sessionStorage.removeItem('moonSaveTime');
-
-  let offsetX = 0, offsetY = 0;
-  let lastMouseX = 0, lastMouseY = 0;
-
-  moon.style.transform = `translate(${posX}px, ${posY}px)`;
-
-  if (hasSavedMoon) {
-    moon.classList.add('loaded', 'instant');
-  } else {
-    requestAnimationFrame(() => moon.classList.add('loaded'));
-  }
-
-  if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
-    moon.classList.remove('idle');
-    requestAnimationFrame(updatePhysics);
-  } else {
-    moon.classList.add('idle');
-  }
-
-  moon.addEventListener('pointerdown', (e) => {
-    isDragging = true;
-    moon.style.cursor = 'grabbing';
-    moon.classList.remove('idle');
-    const rect = moon.getBoundingClientRect();
-    offsetX = e.clientX - rect.left;
-    offsetY = e.clientY - rect.top;
-    posX = rect.left; posY = rect.top;
-    velX = 0; velY = 0;
-    lastMouseX = e.clientX; lastMouseY = e.clientY;
-  });
-
-  document.addEventListener('pointermove', (e) => {
-    if (!isDragging) return;
-    posX = e.clientX - offsetX;
-    posY = e.clientY - offsetY;
-    const maxX = window.innerWidth - moon.offsetWidth;
-    const maxY = window.innerHeight - moon.offsetHeight;
-    if (posX < 0) posX = 0;
-    if (posX > maxX) posX = maxX;
-    if (posY < 0) posY = 0;
-    if (posY > maxY) posY = maxY;
-    moon.style.transform = `translate(${posX}px, ${posY}px)`;
-    velX = (e.clientX - lastMouseX) * 0.8;
-    velY = (e.clientY - lastMouseY) * 0.8;
-    lastMouseX = e.clientX; lastMouseY = e.clientY;
-  });
-
-  document.addEventListener('pointerup', () => {
-    if (!isDragging) return;
-    isDragging = false;
-    moon.style.cursor = 'grab';
-    if (velX > maxSpeed) velX = maxSpeed;
-    if (velX < -maxSpeed) velX = -maxSpeed;
-    if (velY > maxSpeed) velY = maxSpeed;
-    if (velY < -maxSpeed) velY = -maxSpeed;
-    sessionStorage.setItem('moonX', posX);
-    sessionStorage.setItem('moonY', posY);
-    if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
-      requestAnimationFrame(updatePhysics);
-    } else {
-      moon.classList.add('idle');
-    }
-  });
-
-  function updatePhysics() {
-    if (isDragging) return;
-    velX *= friction; velY *= friction;
-    posX += velX; posY += velY;
-    const maxX = window.innerWidth - moon.offsetWidth;
-    const maxY = window.innerHeight - moon.offsetHeight;
-    if (posX <= 0) { posX = 0; velX = Math.abs(velX) * bounce; }
-    else if (posX >= maxX) { posX = maxX; velX = -Math.abs(velX) * bounce; }
-    if (posY <= 0) { posY = 0; velY = Math.abs(velY) * bounce; }
-    else if (posY >= maxY) { posY = maxY; velY = -Math.abs(velY) * bounce; }
-    moon.style.transform = `translate(${posX}px, ${posY}px)`;
-    if (Math.abs(velX) > 0.15 || Math.abs(velY) > 0.15) {
-      requestAnimationFrame(updatePhysics);
-    } else {
-      moon.classList.add('idle');
-      sessionStorage.setItem('moonX', posX);
-      sessionStorage.setItem('moonY', posY);
-    }
-  }
-
-  window.addEventListener('resize', () => {
-    const maxX = window.innerWidth - moon.offsetWidth;
-    const maxY = window.innerHeight - moon.offsetHeight;
-    if (posX > maxX) posX = maxX;
-    if (posY > maxY) posY = maxY;
-    moon.style.transform = `translate(${posX}px, ${posY}px)`;
-  });
-
-  // ====== PŁYNNA LEWITACJA KSIĘŻYCA ======
-  const moonImgEl = document.querySelector('.moon-img');
-  const sessionStartTime = parseInt(sessionStorage.getItem('starTime'));
-
-  function animateMoonFloat() {
-    if (moon && moon.classList.contains('idle') && !isDragging) {
-      const t = (Date.now() - sessionStartTime) / 1000;
-      const cycle = t % 6;
-      let floatX, floatY;
-      if (cycle < 3) {
-        floatX = -10 * (cycle / 3);
-        floatY = -22 * (cycle / 3);
-      } else {
-        floatX = -10 * (1 - (cycle - 3) / 3);
-        floatY = -22 * (1 - (cycle - 3) / 3);
-      }
-      moonImgEl.style.transform = `translate(${floatX}px, ${floatY}px)`;
-    } else {
-      moonImgEl.style.transform = 'none';
-    }
-    requestAnimationFrame(animateMoonFloat);
-  }
-  requestAnimationFrame(animateMoonFloat);
-
-  // ====== EFEKT PODŚWIETLENIA (RADAR) ======
-  const glowTargets = document.querySelectorAll('.glow-target');
-  const glowRadius = 90;
-
-  function checkProximity() {
-    const moonRect = moon.getBoundingClientRect();
-    const moonCenterX = moonRect.left + moonRect.width / 2;
-    const moonCenterY = moonRect.top + moonRect.height / 2;
-    glowTargets.forEach(target => {
-      const rect = target.getBoundingClientRect();
-      const closestX = Math.max(rect.left, Math.min(moonCenterX, rect.right));
-      const closestY = Math.max(rect.top, Math.min(moonCenterY, rect.bottom));
-      const distance = Math.hypot(moonCenterX - closestX, moonCenterY - closestY);
-      target.classList.toggle('near-moon', distance < glowRadius);
-    });
-    requestAnimationFrame(checkProximity);
-  }
-  requestAnimationFrame(checkProximity);
-
-  // ====== DYNAMICZNE SPADAJĄCE GWIAZDY ======
-  const spaceBg = document.getElementById('space-bg');
-  let activeStars = 0;
-
-  function spawnStar(startX, startY, angle, duration) {
-    if (activeStars >= 2) return;
-    activeStars++;
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('star-wrapper');
-    const star = document.createElement('div');
-    star.classList.add('shooting-star');
-    const colorRoll = Math.random();
-    if (colorRoll > 0.7) star.classList.add('star-blue');
-    else if (colorRoll > 0.4) star.classList.add('star-yellow');
-    wrapper.style.transform = `translate(${startX}vw, ${startY}vh) rotate(${angle}deg)`;
-    star.style.animation = `shoot ${duration}s linear forwards`;
-    wrapper.appendChild(star);
-    spaceBg.appendChild(wrapper);
-    star.addEventListener('animationend', () => {
-      wrapper.remove();
-      activeStars--;
-    });
-  }
-
-  function scheduleNextStar() {
-    const delay = 1000 + Math.random() * 2500;
-    setTimeout(() => {
-      const baseX = 5 + Math.random() * 35;
-      const baseY = -20 - Math.random() * 20;
-      const baseAngle = 65 + Math.random() * 20;
-      const baseDuration = 3.5 + Math.random() * 2.5;
-      spawnStar(baseX, baseY, baseAngle, baseDuration);
-      if (Math.random() < 0.4) {
-        const offX = 3 + Math.random() * 5;
-        const offY = 2 + Math.random() * 3;
-        const offAngle = (Math.random() * 4) - 2;
-        spawnStar(baseX + offX, baseY + offY, baseAngle + offAngle, baseDuration + (Math.random() * 0.4 - 0.2));
-      }
-      scheduleNextStar();
-    }, delay);
-  }
-  scheduleNextStar();
-
   // ====== KOPIUJ IP ======
   function copyIP() {
     const ip = document.getElementById('ip').textContent.trim();
