@@ -17,7 +17,7 @@
   } catch (err) { /* brak dostępu do sessionStorage */ }
 </script>
 <link rel="preload" href="assets/moon.png" as="image">
-<link rel="preload" href="background.js?v=6" as="script">
+<link rel="preload" href="background.js?v=9" as="script">
 <link rel="prefetch" href="index.html">
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="polityka-prywatnosci.html">
@@ -171,7 +171,9 @@
     box-shadow: inset -4px -4px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.8);
     border-radius: 8px;
     padding: 22px;
-    width: 100%; height: 75vh; max-height: 75vh;
+    /* Panel dopasowuje wysokość do treści — na dużym oknie nie ma pustej
+       przestrzeni między polem nicku a przyciskiem Zapłać. */
+    width: 100%; height: auto; max-height: 75vh;
     display: flex; flex-direction: column; position: relative;
   }
 
@@ -322,67 +324,6 @@
     opacity: 1;
   }
 
-  /* --- SKLEP: SLIDER --- */
-  .amount-slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 18px;
-    background: var(--panel-border);
-    border-top: 2px solid var(--slot-border-dark);
-    border-left: 2px solid var(--slot-border-dark);
-    border-bottom: 2px solid #2d3748;
-    border-right: 2px solid #2d3748;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-    margin: 8px 0 4px;
-  }
-  .amount-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 26px;
-    height: 32px;
-    background: var(--shop-blue);
-    border-top: 2px solid rgba(255,255,255,0.5);
-    border-left: 2px solid rgba(255,255,255,0.5);
-    border-bottom: 2px solid rgba(0,0,0,0.4);
-    border-right: 2px solid rgba(0,0,0,0.4);
-    border-radius: 3px;
-    cursor: grab;
-    box-shadow: 0 0 14px rgba(79, 141, 255, 0.6);
-    transition: transform 0.1s ease, box-shadow 0.15s ease;
-  }
-  .amount-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(79, 141, 255, 0.9);
-  }
-  .amount-slider::-webkit-slider-thumb:active { cursor: grabbing; }
-  .amount-slider::-moz-range-thumb {
-    width: 26px;
-    height: 32px;
-    background: var(--shop-blue);
-    border-top: 2px solid rgba(255,255,255,0.5);
-    border-left: 2px solid rgba(255,255,255,0.5);
-    border-bottom: 2px solid rgba(0,0,0,0.4);
-    border-right: 2px solid rgba(0,0,0,0.4);
-    border-radius: 3px;
-    cursor: grab;
-    box-shadow: 0 0 14px rgba(79, 141, 255, 0.6);
-  }
-  .amount-slider::-moz-range-track { background: transparent; }
-
-  .slider-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-    margin-bottom: 16px;
-  }
-
   /* --- SKLEP: PRESETY --- */
   .presets {
     display: grid;
@@ -477,9 +418,8 @@
     user-select: none;
   }
 
-  /* --- SKLEP: PRZYCISK ZAPŁAĆ (na samym dole) --- */
+  /* --- SKLEP: PRZYCISK ZAPŁAĆ (pod polem nicku) --- */
   .shop-footer {
-    margin-top: auto;
     padding-top: 18px;
     border-top: 2px solid var(--panel-border);
   }
@@ -643,7 +583,7 @@
   @media (max-width: 600px) {
     body { padding: 20px 10px; }
     .rules-wrapper { max-width: 100%; padding: 5px 0; }
-    .mc-panel { height: 70vh; max-height: 70vh; padding: 15px; }
+    .mc-panel { height: auto; max-height: 70vh; padding: 15px; }
     .mc-panel h1 { font-size: 22px; padding-left: 30px; padding-right: 30px; }
     .rules-text { font-size: 13px; }
     .amount-display { padding: 14px 12px; margin: 12px 0; }
@@ -715,13 +655,6 @@
             <span class="gems-label">💎 gemów</span>
           </div>
           <div class="display-hint" id="display-hint">kliknij, aby edytować</div>
-        </div>
-
-        <input type="range" class="amount-slider" id="amount-slider" min="5" max="1000" step="1" value="5" aria-label="Kwota w złotówkach">
-
-        <div class="slider-labels">
-          <span>5 zł</span>
-          <span>1000 zł</span>
         </div>
 
         <div class="presets">
@@ -844,7 +777,7 @@
     </div>
   </div>
 
-<script src="background.js?v=6"></script>
+<script src="background.js?v=9"></script>
 <script>
   // ====== SKLEP — LOGIKA ======
   const MIN_AMOUNT = 5;
@@ -852,7 +785,6 @@
   const GEMS_PER_ZL = 100;
 
   const amountDisplay = document.getElementById('amount-display');
-  const amountSlider = document.getElementById('amount-slider');
   const amountInput = document.getElementById('amount-value-input');
   const gemsValue = document.getElementById('gems-value');
   const payAmount = document.getElementById('pay-amount');
@@ -888,16 +820,9 @@
     gemsValue.textContent = formatNumber(val * GEMS_PER_ZL);
     payAmount.textContent = `${val} zł · ${formatNumber(val * GEMS_PER_ZL)} 💎`;
 
-    if (parseFloat(amountSlider.value) !== val) amountSlider.value = val;
-
     highlightPreset();
     updateInputWidth();
   }
-
-  amountSlider.addEventListener('input', (e) => {
-    const val = parseInt(e.target.value) || MIN_AMOUNT;
-    setState(val);
-  });
 
   amountDisplay.addEventListener('click', (e) => {
     if (e.target !== amountInput) amountInput.focus();

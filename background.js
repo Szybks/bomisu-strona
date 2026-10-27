@@ -51,6 +51,38 @@
   // ====== NAWIGACJA ======
   const pageName = path => (path.split('/').pop() || 'index').replace(/\.html$/, '');
 
+  // Przybliżony ping: RTT z Network Information API albo czas odpowiedzi
+  // serwera zmierzony przy ładowaniu bieżącej strony.
+  function estimateRtt() {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    let rtt = conn && Number.isFinite(conn.rtt) ? conn.rtt : 0;
+
+    if (window.performance && performance.getEntriesByType) {
+      const nav = performance.getEntriesByType('navigation')[0];
+      if (nav && nav.requestStart > 0) {
+        const ttfb = nav.responseStart - nav.requestStart;
+        if (ttfb > 0) rtt = Math.max(rtt, ttfb);
+      }
+    }
+
+    return Math.max(0, Math.min(rtt, 1500));
+  }
+
+  // Czy docelowa strona została już pobrana przez <link rel="prefetch">.
+  // Jeśli tak, jej otwarcie jest natychmiastowe i można spokojnie dograć
+  // całą animację wyjścia.
+  function isPrefetched(url) {
+    if (!window.performance || !performance.getEntriesByType) return false;
+    try {
+      const target = new URL(url, location.href).href;
+      return performance.getEntriesByType('resource').some(entry =>
+        entry.name === target && entry.responseEnd > 0
+      );
+    } catch (err) {
+      return false;
+    }
+  }
+
   function saveState() {
     storage.set('moonX', posX.toFixed(2));
     storage.set('moonY', posY.toFixed(2));
@@ -66,11 +98,20 @@
     isNavigating = true;
     saveState();
     document.body.classList.add('page-exit');
+
+    // Normalnie czekamy na koniec animacji wyjścia. Jeśli docelowa strona
+    // nie jest jeszcze pobrana, zaczynamy ładowanie wcześniej o zmierzony
+    // ping — animacja przykrywa wtedy opóźnienie sieci.
+    const baseDelay = 580;
+    const minDelay = 280;
+    const rtt = estimateRtt();
+    const delay = isPrefetched(url) ? baseDelay : Math.max(minDelay, baseDelay - rtt);
+
     window.setTimeout(() => {
       // Zapisujemy dokładnie tę klatkę, którą użytkownik widzi tuż przed wyjściem.
       saveStarSnapshot();
       window.location.href = url;
-    }, 580);
+    }, delay);
   }
   window.navigateTo = navigateTo;
 
@@ -80,6 +121,7 @@
       document.body.classList.remove('page-exit');
       lastPhysicsTs = 0;
       lastCanvasDraw = 0;
+      syncShotVisuals();
     }
   });
 
@@ -95,6 +137,7 @@
     } else {
       lastPhysicsTs = 0;
       lastCanvasDraw = 0;
+      syncShotVisuals();
     }
   });
 
@@ -504,10 +547,17 @@
   let shots = [];
   let nextSpawnAt = 0;
   let snapshotActive = false;
+  let shotLayer = null;
+  const shotVisuals = new Map();
 
   const MAX_SHOTS = 2;
   const SHOT_COLORS = ['#ffffff', '#4f8dff', '#fde047'];
   const MAX_DPR = lowPower ? 1 : 1.4;
+
+  // Spadające gwiazdy dostają własną warstwę DOM animowaną przez przeglądarkę.
+  // Dzięki temu ich ruch nie zależy od pętli canvasu (24-30 FPS) i jest płynny
+  // nawet na dużych oknach. Canvas rysuje już tylko samo tło z gwiazdami.
+  let shotDomMode = typeof Element !== 'undefined' && typeof Element.prototype.animate === 'function';
 
   // Gęstości i prędkości odwzorowują pierwszą wersję tła:
   // 6 gwiazd / 200 px, 4 / 300 px i 3 / 400 px.
@@ -692,7 +742,23 @@
 
   function buildTrailSprites() {
     trailSprites = {};
-    SHOT_COLORS.forEach(color => { trailSprites[color] = makeTrailSprite(color); });
+    SHOT_COLORS.forEach(color => {
+      const sprite = makeTrailSprite(color);
+
+      if (shotDomMode) {
+        try {
+          sprite.url = sprite.img.toDataURL('image/png');
+          if (!sprite.url) shotDomMode = false;
+        } catch (err) {
+          shotDomMode = false;
+        }
+      }
+
+      trailSprites[color] = sprite;
+    });
+
+    if (shotDomMode) rebuildShotVisuals();
+    else clearShotVisuals();
   }
 
   function pickShotColor() {
@@ -785,12 +851,19 @@
     storage.remove('shootingStarsState');
   }
 
-  function updateShootingStars(time) {
+  function pruneExpiredShots(time) {
     for (let i = shots.length - 1; i >= 0; i--) {
-      if (time - shots[i].spawnTime >= shots[i].duration) shots.splice(i, 1);
+      if (time - shots[i].spawnTime >= shots[i].duration) {
+        removeShotVisual(shots[i]);
+        shots.splice(i, 1);
+      }
     }
+  }
 
+  function updateShootingStars(time) {
+    pruneExpiredShots(time);
     if (time >= nextSpawnAt) spawnShotPair(time);
+    ensureShotVisuals();
   }
 
   function drawShootingStars(time) {
@@ -826,6 +899,141 @@
     }
   }
 
+  // ====== SPADAJĄCE GWIAZDY — WARSTWA ANIMOWANA ======
+  function ensureShotLayer() {
+    if (shotLayer || !spaceBg) return shotLayer;
+
+    shotLayer = document.createElement('div');
+    shotLayer.className = 'shooting-stars';
+    shotLayer.setAttribute('aria-hidden', 'true');
+    shotLayer.style.cssText =
+      'position:absolute;inset:0;overflow:hidden;pointer-events:none;contain:strict;';
+    spaceBg.appendChild(shotLayer);
+    return shotLayer;
+  }
+
+  function shotTransform(shot, sprite, progress) {
+    const vmax = Math.max(cw, ch);
+    const radians = shot.angle * Math.PI / 180;
+    const startX = (shot.startX / 100) * cw;
+    const startY = (shot.startY / 100) * ch;
+    const distance = progress * 2 * vmax;
+    const headX = startX + Math.cos(radians) * distance;
+    const headY = startY + Math.sin(radians) * distance;
+
+    return `translate(${(headX - sprite.headX).toFixed(2)}px, ${(headY - sprite.h / 2).toFixed(2)}px) rotate(${shot.angle}deg)`;
+  }
+
+  function createShotVisual(shot) {
+    if (!shotDomMode) return null;
+
+    const sprite = trailSprites[shot.color] || trailSprites['#ffffff'];
+    if (!sprite || !sprite.url) {
+      // Brak sprite'a w trybie DOM — wracamy do rysowania na canvasie.
+      shotDomMode = false;
+      clearShotVisuals();
+      return null;
+    }
+
+    const layer = ensureShotLayer();
+    if (!layer) return null;
+
+    const image = new Image();
+    image.alt = '';
+    image.draggable = false;
+    image.src = sprite.url;
+    // Obrazek ma punkt zaczepienia w głowie gwiazdy, tak jak sprite na canvasie.
+    image.style.cssText =
+      'position:absolute;left:0;top:0;pointer-events:none;user-select:none;-webkit-user-drag:none;' +
+      `width:${sprite.w}px;height:${sprite.h}px;` +
+      `transform-origin:${sprite.headX}px ${sprite.h / 2}px;` +
+      'will-change:transform,opacity;';
+    layer.appendChild(image);
+
+    const elapsed = clamp(nowMs() - shot.spawnTime, 0, shot.duration);
+    const frames = [
+      { offset: 0, transform: shotTransform(shot, sprite, 0), opacity: 0 },
+      { offset: 0.1, transform: shotTransform(shot, sprite, 0.1), opacity: 1 },
+      { offset: 0.9, transform: shotTransform(shot, sprite, 0.9), opacity: 1 },
+      { offset: 1, transform: shotTransform(shot, sprite, 1), opacity: 0 }
+    ];
+
+    let animation = null;
+    try {
+      animation = image.animate(frames, {
+        duration: shot.duration,
+        easing: 'linear',
+        fill: 'forwards'
+      });
+      // Wznowiona gwiazda startuje od właściwego miejsca, a nie od początku.
+      animation.currentTime = elapsed;
+    } catch (err) {
+      image.remove();
+      // Animacja DOM nie wystartowała — od następnej klatki rysujemy na canvasie.
+      shotDomMode = false;
+      clearShotVisuals();
+      return null;
+    }
+
+    const visual = { image, animation };
+    shotVisuals.set(shot, visual);
+
+    animation.finished.then(() => {
+      if (shotVisuals.get(shot) === visual) removeShotVisual(shot);
+    }).catch(() => { /* animacja anulowana przy sprzątaniu */ });
+
+    return visual;
+  }
+
+  function removeShotVisual(shot) {
+    const visual = shotVisuals.get(shot);
+    if (!visual) return;
+
+    shotVisuals.delete(shot);
+    try { visual.animation.cancel(); } catch (err) { /* już zakończona */ }
+    if (visual.image.parentNode) visual.image.parentNode.removeChild(visual.image);
+  }
+
+  function ensureShotVisuals() {
+    if (!shotDomMode) return;
+    for (let i = 0; i < shots.length; i++) {
+      if (!shotVisuals.has(shots[i])) createShotVisual(shots[i]);
+    }
+  }
+
+  function clearShotVisuals() {
+    shotVisuals.forEach(visual => {
+      try { visual.animation.cancel(); } catch (err) { /* już zakończona */ }
+      if (visual.image.parentNode) visual.image.parentNode.removeChild(visual.image);
+    });
+    shotVisuals.clear();
+  }
+
+  function rebuildShotVisuals() {
+    if (!shotDomMode) return;
+    clearShotVisuals();
+    ensureShotVisuals();
+  }
+
+  // Po powrocie z zakładki w tle animacje mogą być wstrzymane — ustawiamy je
+  // ponownie na czas liczony od rozpoczęcia gwiazdy.
+  function syncShotVisuals() {
+    if (!shotDomMode) return;
+
+    const time = nowMs();
+    pruneExpiredShots(time);
+    shotVisuals.forEach((visual, shot) => {
+      const elapsed = time - shot.spawnTime;
+      if (elapsed < 0) {
+        removeShotVisual(shot);
+        return;
+      }
+      try { visual.animation.currentTime = elapsed; } catch (err) { /* pomijamy */ }
+    });
+
+    ensureShotVisuals();
+  }
+
   // ====== PĘTLA CANVASU ======
   // Zapisuje ostatnią klatkę gwiazd. Nowa podstrona pokaże ją od razu,
   // jeszcze przed pierwszym rysowaniem canvasu, więc tło pozostaje ciągłe.
@@ -843,7 +1051,9 @@
     ctx.clearRect(0, 0, cw, ch);
     drawStars(elapsed);
     updateShootingStars(time);
-    drawShootingStars(time);
+    // W nowoczesnych przeglądarkach gwiazdy rysuje warstwa DOM animowana
+    // przez compositor. Canvas zostaje jako fallback dla starszych silników.
+    if (!shotDomMode) drawShootingStars(time);
 
     // Pierwsza własna klatka zastępuje zapisany obraz tła.
     if (snapshotActive) {
