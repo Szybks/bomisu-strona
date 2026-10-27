@@ -4,7 +4,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Polityka Prywatności — Bomisu.pl</title>
+<script>
+  // Nowa podstrona od razu pokazuje ostatnią klatkę gwiazd zapisaną przed
+  // przejściem, dzięki czemu tło jest ciągłe i nie mruga.
+  try {
+    const starSnapshot = sessionStorage.getItem('bgSnapshot');
+    if (starSnapshot) {
+      sessionStorage.removeItem('bgSnapshot');
+      document.documentElement.style.setProperty('--bg-snapshot', 'url("' + starSnapshot + '")');
+      document.documentElement.classList.add('bg-snapshot');
+    }
+  } catch (err) { /* brak dostępu do sessionStorage */ }
+</script>
 <link rel="preload" href="assets/moon.png" as="image">
+<link rel="preload" href="background.js?v=6" as="script">
 <link rel="prefetch" href="index.html">
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="kontakt.html">
@@ -88,82 +101,25 @@
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
+    contain: strict;
   }
 
-  .stars-small {
-    position: absolute; top: 0; left: 0; width: 200%; height: 200%;
-    background-image:
-      radial-gradient(1px 1px at 10% 10%, #fff, transparent),
-      radial-gradient(1px 1px at 30% 40%, #fff, transparent),
-      radial-gradient(1px 1px at 60% 20%, #fff, transparent),
-      radial-gradient(1px 1px at 80% 70%, #fff, transparent),
-      radial-gradient(1px 1px at 20% 80%, #fff, transparent),
-      radial-gradient(1px 1px at 50% 50%, #fff, transparent);
-    background-size: 200px 200px;
-    animation: drift 60s linear infinite, twinkle 3s infinite alternate;
-  }
-
-  .stars-medium {
-    position: absolute; top: 0; left: 0; width: 200%; height: 200%;
-    background-image:
-      radial-gradient(2px 2px at 40% 10%, #fff, transparent),
-      radial-gradient(2px 2px at 70% 40%, #fff, transparent),
-      radial-gradient(2px 2px at 15% 60%, #fff, transparent),
-      radial-gradient(2px 2px at 90% 90%, #fff, transparent);
-    background-size: 300px 300px;
-    animation: drift 120s linear infinite, twinkle 5s infinite alternate-reverse;
-  }
-
-  .stars-large {
-    position: absolute; top: 0; left: 0; width: 200%; height: 200%;
-    background-image:
-      radial-gradient(3px 3px at 25% 15%, #fde047, transparent),
-      radial-gradient(3px 3px at 75% 65%, #60a5fa, transparent),
-      radial-gradient(3px 3px at 50% 85%, #fde047, transparent);
-    background-size: 400px 400px;
-    animation: drift 180s linear infinite, twinkle 7s infinite alternate;
-  }
-
-  @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-600px, -600px); } }
-  @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
-
-  /* --- SPADAJĄCE GWIAZDY --- */
-  .star-wrapper {
-    position: absolute; top: 0; left: 0;
-    transform-origin: top left;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .shooting-star {
-    position: absolute; top: 0; left: 0;
-    width: 180px; height: 2px;
-    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
-    opacity: 0;
-    transform-origin: left center;
-  }
-
-  .shooting-star::after {
+  /* Ostatnia klatka gwiazd zapisana przed przejściem — most między podstronami. */
+  body::before {
     content: '';
-    position: absolute;
-    right: -3px; top: 50%;
-    transform: translateY(-50%);
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 10px 2px #fff, 0 0 20px #fff;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: var(--bg-snapshot, none) center / 100% 100% no-repeat;
   }
+  html:not(.bg-snapshot) body::before { display: none; }
 
-  .star-blue { background: linear-gradient(to right, rgba(79,141,255,0), rgba(79,141,255,1)); }
-  .star-blue::after { background: var(--blue); box-shadow: 0 0 10px 2px var(--blue), 0 0 20px var(--blue); }
-  .star-yellow { background: linear-gradient(to right, rgba(253,224,71,0), rgba(253,224,71,1)); }
-  .star-yellow::after { background: #fde047; box-shadow: 0 0 10px 2px #fde047, 0 0 20px #fde047; }
-
-  @keyframes shoot {
-    0% { transform: translateX(0); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateX(200vmax); opacity: 0; }
+  #starfield {
+    position: absolute;
+    top: 0; left: 0;
+    display: block;
+    width: 100%; height: 100%;
   }
 
   /* --- KSIĘŻYC --- */
@@ -185,22 +141,33 @@
   .moon-img {
     width: 100%; height: 100%;
     background-image: url('assets/moon.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-size: contain; background-repeat: no-repeat; background-position: center;
     filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
-    animation: moonGlow 4s infinite alternate;
     will-change: transform;
   }
-
-  @keyframes moonGlow {
-    0% { filter: drop-shadow(0 0 20px rgba(186, 230, 253, 0.7)); }
-    100% { filter: drop-shadow(0 0 40px rgba(186, 230, 253, 1)); }
+  .moon-container.idle .moon-img { animation: moonFloat 6s ease-in-out infinite; }
+  .moon-container::before {
+    content: '';
+    position: absolute;
+    inset: -45px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(186, 230, 253, 0.32) 0%, rgba(79, 141, 255, 0.16) 40%, transparent 70%);
+    opacity: 0.55;
+    animation: moonPulse 4s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: -1;
+  }
+  @keyframes moonFloat {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-10px, -22px); }
+  }
+  @keyframes moonPulse {
+    from { opacity: 0.4; transform: scale(0.94); }
+    to { opacity: 0.85; transform: scale(1.06); }
   }
 
   /* --- EFEKT PODŚWIETLENIA GUI --- */
-  .glow-target { transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; }
-  .glow-target.near-moon { filter: drop-shadow(0 0 15px rgba(79, 141, 255, 0.7)) drop-shadow(0 0 30px rgba(147, 197, 253, 0.5)); }
+  .glow-target { transition: box-shadow 0.3s ease, border-color 0.3s ease, text-shadow 0.3s ease; }
 
   .mc-panel.near-moon {
     border-color: rgba(147, 197, 253, 0.8);
@@ -293,12 +260,9 @@
   }
 
   .rules-text {
-    padding-left: 15px;
-    padding-right: 15px;
-    margin-left: 9px;
-    margin-right: 1px;
     overflow-y: auto;
-font-size: 15px;
+    padding-right: 15px;
+    font-size: 15px;
     line-height: 1.6;
     color: var(--muted);
     flex-grow: 1;
@@ -308,7 +272,7 @@ font-size: 15px;
   .rules-text::-webkit-scrollbar-track { background: var(--panel-border); border-radius: 4px; }
   .rules-text::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
 
-  .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; text-align: center; }
+  .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; }
   .rules-text p { margin-bottom: 10px; }
   .rules-text ul { list-style-position: inside; margin-bottom: 15px; padding-left: 10px; }
   .rules-text li { margin-bottom: 5px; }
@@ -459,65 +423,27 @@ font-size: 15px;
 
     .tooltip { display: none; }
     .moon-container { width: 100px; height: 100px; }
-    .shooting-star { width: 100px; }
+    .moon-container::before { inset: -28px; }
   }
+  /* --- TRYB OSZCZĘDNY / OGRANICZONY RUCH --- */
+  html.low-power .hero h1,
+  html.low-power .mc-panel h1,
+  html.low-power .moon-container::before { animation: none; }
+  html.low-power .moon-img { filter: drop-shadow(0 0 18px rgba(186, 230, 253, 0.75)); }
 
-  /* === HOTBAR MOBILE OPTIMIZATION === */
-  @media (max-width: 600px) {
-    .slot:empty { display: none !important; }
-    .hotbar { display: flex !important; flex-wrap: nowrap; }
-    .slot { flex: 1 1 0; min-width: 0; }
-    .hotbar .slot svg { width: 75% !important; height: 75% !important; }
-    .hotbar .slot .tiktok-icon { width: 55% !important; height: 55% !important; }
-  }
-
-  @media (min-width: 1024px) {
-    .rules-wrapper.wide-layout { max-width: 1000px; margin-left: auto; margin-right: auto; }
-    .hotbar { max-width: 1200px; margin: 0 auto; }
-    .mc-panel { aspect-ratio: 1 / 1; max-width: 700px; max-height: calc(100vh - 180px); overflow-y: auto; margin: 40px auto; }
-    .hotbar { position: relative; z-index: 1000; }
-  }
 </style>
-<script>
-(function(){
-  try {
-    var x = sessionStorage.getItem('moonX');
-    var y = sessionStorage.getItem('moonY');
-    if (x !== null && y !== null && !isNaN(parseFloat(x)) && !isNaN(parseFloat(y))) {
-      var s = document.createElement('style');
-      s.textContent = '#moon { transform: translate(' + parseFloat(x) + 'px, ' + parseFloat(y) + 'px); opacity: 1; transition: none; }';
-      document.head.appendChild(s);
-    }
-  } catch (e) {}
-})();
-</script>
-<script>
-(function(){
-  try {
-    if (!sessionStorage.getItem('starTime')) {
-      sessionStorage.setItem('starTime', Date.now());
-    }
-    var elapsed = (Date.now() - parseInt(sessionStorage.getItem('starTime'))) / 1000;
-    var s = document.createElement('style');
-    s.textContent = '.stars-small, .stars-medium, .stars-large { animation-delay: -' + elapsed + 's, -' + elapsed + 's; }';
-    document.head.appendChild(s);
-  } catch (e) {}
-})();
-</script>
 </head>
 <body>
 
   <div class="space-bg" id="space-bg">
-    <div class="stars-small"></div>
-    <div class="stars-medium"></div>
-    <div class="stars-large"></div>
+    <canvas id="starfield" aria-hidden="true"></canvas>
   </div>
 
-  <div class="moon-container idle" id="moon">
+  <div class="moon-container" id="moon">
     <div class="moon-img"></div>
   </div>
 
-  <main class="rules-wrapper wide-layout drop-in delay-1">
+  <main class="rules-wrapper drop-in delay-1">
     <div class="mc-panel glow-target" id="main-panel">
       <div class="close-btn" onclick="navigateTo('index.html')" title="Wróć do menu">
         <svg class="close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -654,6 +580,6 @@ font-size: 15px;
     </div>
   </div>
 
-<script src="background.js"></script>
+<script src="background.js?v=6"></script>
 </body>
 </html>
