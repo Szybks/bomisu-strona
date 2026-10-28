@@ -16,8 +16,31 @@
     }
   } catch (err) { /* brak dostępu do sessionStorage */ }
 </script>
+<script>
+  // Skala interfejsu: Full HD (1920x1080) jest bazą, a większe ekrany
+  // dostają proporcjonalnie większe elementy (np. 4K = dokładnie 2x).
+  (function () {
+    const root = document.documentElement;
+
+    function applyUiScale() {
+      const scale = Math.max(1, Math.min(window.innerWidth / 1920, window.innerHeight / 1080));
+      const width = window.innerWidth / scale;
+      const height = window.innerHeight / scale;
+
+      root.style.setProperty('--ui-scale', scale.toFixed(4));
+      root.style.setProperty('--ui-w', width.toFixed(2) + 'px');
+      root.style.setProperty('--ui-h', height.toFixed(2) + 'px');
+      root.style.setProperty('--ui-vw', (width / 100).toFixed(4) + 'px');
+      root.style.setProperty('--ui-vh', (height / 100).toFixed(4) + 'px');
+    }
+
+    applyUiScale();
+    window.addEventListener('resize', applyUiScale, { passive: true });
+    window.addEventListener('orientationchange', applyUiScale, { passive: true });
+  })();
+</script>
 <link rel="preload" href="assets/moon.png" as="image">
-<link rel="preload" href="background.js?v=9" as="script">
+<link rel="preload" href="background.js?v=10" as="script">
 <link rel="prefetch" href="index.html">
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="polityka-prywatnosci.html">
@@ -45,6 +68,13 @@
     --shop-blue: #4f8dff;
     --shop-blue-dark: #2563eb;
     --shop-blue-light: #93c5fd;
+
+    /* Skalowanie interfejsu — wartości ustawia skrypt w <head>. */
+    --ui-scale: 1;
+    --ui-w: 100vw;
+    --ui-h: 100vh;
+    --ui-vw: 1vw;
+    --ui-vh: 1vh;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -54,27 +84,42 @@
     font-family: 'Inter', system-ui, sans-serif;
     background: radial-gradient(circle at 50% 0%, var(--bg-purple) 0%, var(--bg-void) 100%);
     color: var(--text);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Warstwa interfejsu skaluje się do rozdzielczości ekranu.
+     Full HD jest bazą, więc 4K wygląda tak samo, tylko większe. */
+  .ui-layer {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--ui-w);
+    height: var(--ui-h);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: 40px 20px;
-    position: relative;
-    overflow: hidden;
-    height: 100vh;
-    height: 100dvh;
-    user-select: none;
-    -webkit-user-select: none;
+    transform: scale(var(--ui-scale));
+    transform-origin: top left;
+    z-index: 3;
+    pointer-events: none;
   }
 
+  .ui-layer > .bottom-bar,
+  .ui-layer > .rules-wrapper { pointer-events: auto; }
+
   @keyframes dropIn {
-    0% { transform: translateY(-100vh); opacity: 0; }
+    0% { transform: translateY(calc(var(--ui-h) * -1)); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
   }
   @keyframes dropOut {
     0%   { transform: translateY(0); opacity: 1; }
     60%  { opacity: 1; }
-    100% { transform: translateY(100vh); opacity: 0; }
+    100% { transform: translateY(var(--ui-h)); opacity: 0; }
   }
   .drop-in { animation: dropIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
   .delay-1 { animation-delay: 0.1s; }
@@ -115,7 +160,7 @@
 
   .moon-container {
     position: fixed; top: 0; left: 0;
-    width: 180px; height: 180px;
+    width: calc(180px * var(--ui-scale)); height: calc(180px * var(--ui-scale));
     cursor: grab; z-index: 2; touch-action: none; will-change: transform; opacity: 0;
   }
   .moon-container.loaded { opacity: 1; transition: opacity 0.3s ease; }
@@ -125,14 +170,14 @@
     width: 100%; height: 100%;
     background-image: url('assets/moon.png');
     background-size: contain; background-repeat: no-repeat; background-position: center;
-    filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
+    filter: drop-shadow(0 0 calc(25px * var(--ui-scale)) rgba(186, 230, 253, 0.8)) drop-shadow(0 0 calc(60px * var(--ui-scale)) rgba(79, 141, 255, 0.5));
     will-change: transform;
   }
   .moon-container.idle .moon-img { animation: moonFloat 6s ease-in-out infinite; }
   .moon-container::before {
     content: '';
     position: absolute;
-    inset: -45px;
+    inset: calc(-45px * var(--ui-scale));
     border-radius: 50%;
     background: radial-gradient(circle, rgba(186, 230, 253, 0.32) 0%, rgba(79, 141, 255, 0.16) 40%, transparent 70%);
     opacity: 0.55;
@@ -142,7 +187,7 @@
   }
   @keyframes moonFloat {
     0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-10px, -22px); }
+    50% { transform: translate(calc(-10px * var(--ui-scale)), calc(-22px * var(--ui-scale))); }
   }
   @keyframes moonPulse {
     from { opacity: 0.4; transform: scale(0.94); }
@@ -173,7 +218,7 @@
     padding: 22px;
     /* Panel dopasowuje wysokość do treści — na dużym oknie nie ma pustej
        przestrzeni między polem nicku a przyciskiem Zapłać. */
-    width: 100%; height: auto; max-height: 75vh;
+    width: 100%; height: auto; max-height: calc(var(--ui-vh) * 75);
     display: flex; flex-direction: column; position: relative;
   }
 
@@ -215,10 +260,11 @@
     display: flex; flex-direction: column;
     overflow-y: auto;
     min-height: 0;
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* stary Edge */
   }
-  .rules-text::-webkit-scrollbar { width: 8px; }
-  .rules-text::-webkit-scrollbar-track { background: var(--panel-border); border-radius: 4px; }
-  .rules-text::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
+  /* Pasek przewijania ukryty — treść nadal można przewijać kółkiem, dotykiem i klawiaturą. */
+  .rules-text::-webkit-scrollbar { display: none; width: 0; height: 0; }
   .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; }
   .rules-text p { margin-bottom: 10px; }
   .rules-text > p:first-of-type { margin-bottom: 10px; }
@@ -462,6 +508,39 @@
     letter-spacing: 0;
     opacity: 0.95;
   }
+  .pay-btn:disabled {
+    opacity: 0.72;
+    cursor: wait;
+    transform: none;
+    box-shadow: 0 6px 20px rgba(79, 141, 255, 0.2);
+  }
+
+  /* --- SKLEP: KOMUNIKATY PŁATNOŚCI --- */
+  .payment-notice {
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    font-size: 13px;
+    line-height: 1.55;
+    font-weight: 600;
+  }
+  .payment-notice[hidden] { display: none; }
+  .payment-notice.is-success {
+    border-color: rgba(16, 185, 129, 0.65);
+    background: rgba(16, 185, 129, 0.12);
+    color: #a7f3d0;
+  }
+  .payment-notice.is-info {
+    border-color: rgba(253, 224, 71, 0.55);
+    background: rgba(253, 224, 71, 0.1);
+    color: #fde68a;
+  }
+  .payment-notice.is-error {
+    border-color: rgba(255, 79, 79, 0.6);
+    background: rgba(255, 79, 79, 0.12);
+    color: #fca5a5;
+  }
 
   .trust-note {
     margin-top: 10px;
@@ -581,9 +660,9 @@
 
   /* --- TELEFONY --- */
   @media (max-width: 600px) {
-    body { padding: 20px 10px; }
+    .ui-layer { padding: 20px 10px; }
     .rules-wrapper { max-width: 100%; padding: 5px 0; }
-    .mc-panel { height: auto; max-height: 70vh; padding: 15px; }
+    .mc-panel { height: auto; max-height: calc(var(--ui-vh) * 70); padding: 15px; }
     .mc-panel h1 { font-size: 22px; padding-left: 30px; padding-right: 30px; }
     .rules-text { font-size: 13px; }
     .amount-display { padding: 14px 12px; margin: 12px 0; }
@@ -622,6 +701,7 @@
     <div class="moon-img"></div>
   </div>
 
+  <div class="ui-layer">
   <main class="rules-wrapper drop-in delay-1">
     <div class="mc-panel glow-target" id="main-panel">
       <div class="close-btn" onclick="navigateTo('index.html')" title="Wróć do menu">
@@ -633,6 +713,8 @@
       <h1>Sklep</h1>
 
       <div class="rules-text">
+        <div class="payment-notice" id="payment-notice" role="status" aria-live="polite" hidden></div>
+
         <p>Ile chcesz wpłacić gemów na serwerze Bomisu? <strong>Za każde 1 zł otrzymujesz 100 gemów</strong>. Kliknij kwotę na górze, aby wpisać dowolną wartość (5–1000 zł). 💎</p>
 
         <div class="amount-display" id="amount-display" title="Kliknij, aby wpisać własną kwotę">
@@ -672,7 +754,7 @@
             <input
               type="text"
               id="nickname-input"
-              placeholder="np. JustAJolty"
+              placeholder="Wpisz Swój Nick"
               maxlength="16"
               autocomplete="off"
               spellcheck="false"
@@ -683,7 +765,7 @@
 
         <div class="shop-footer">
           <button type="button" class="pay-btn" id="pay-btn" onclick="payWithTebex()">
-            <span>💳 Zapłać</span>
+            <span id="pay-btn-label">💳 Zapłać</span>
             <span class="pay-btn-right" id="pay-amount">5 zł · 500 💎</span>
           </button>
 
@@ -777,12 +859,22 @@
     </div>
   </div>
 
-<script src="background.js?v=9"></script>
+  </div><!-- /.ui-layer -->
+
+<script src="background.js?v=10"></script>
 <script>
   // ====== SKLEP — LOGIKA ======
   const MIN_AMOUNT = 5;
   const MAX_AMOUNT = 1000;
   const GEMS_PER_ZL = 100;
+
+  // ====== KONFIGURACJA TEBEX ======
+  // Publiczny token sklepu — jest bezpieczny po stronie przeglądarki.
+  const TEBEX_PUBLIC_TOKEN = '150xo-584e83c7584388fb9ba337266e24588ed8bd2d1b';
+  // Paczka "100 gems" kosztuje 1 zł, więc kwota w zł = liczba sztuk paczki.
+  const TEBEX_PACKAGE_ID = 'pkg_3478586_7761879';
+  const TEBEX_API_BASE = 'https://headless.tebex.io/api';
+  const SHOP_FORM_STORAGE_KEY = 'bomisu-sklep-form';
 
   const amountDisplay = document.getElementById('amount-display');
   const amountInput = document.getElementById('amount-value-input');
@@ -792,6 +884,9 @@
   const presetBtns = document.querySelectorAll('.preset');
   const nicknameInput = document.getElementById('nickname-input');
   const nicknameWrapper = document.getElementById('nickname-wrapper');
+  const payBtn = document.getElementById('pay-btn');
+  const payBtnLabel = document.getElementById('pay-btn-label');
+  const paymentNotice = document.getElementById('payment-notice');
 
   let currentAmount = 5;
 
@@ -872,14 +967,181 @@
     nicknameWrapper.classList.toggle('invalid', raw.length > 0 && raw.length < 3);
   });
 
+  nicknameInput.addEventListener('focus', () => {
+    // Podczas wpisywania pokazujemy statyczną podpowiedź zamiast animacji.
+    stopNicknameAnimation();
+    nicknameInput.placeholder = 'Wpisz Swój Nick';
+  });
+
   nicknameInput.addEventListener('blur', () => {
     const val = nicknameInput.value.trim();
     nicknameWrapper.classList.toggle('invalid', val.length > 0 && val.length < 3);
+    if (!val) startNicknameAnimation();
   });
+
+  // ====== ANIMOWANY PLACEHOLDER Z NICKAMI ======
+  const nicknamePlaceholders = ['JustAJolty', 'SzyPka', 'Wpisz Swój Nick'];
+  let placeholderTimer = null;
+
+  function stopNicknameAnimation() {
+    clearTimeout(placeholderTimer);
+    placeholderTimer = null;
+  }
+
+  function startNicknameAnimation() {
+    stopNicknameAnimation();
+
+    let index = 0;
+    let charCount = 0;
+    let deleting = false;
+
+    function tick() {
+      const word = nicknamePlaceholders[index];
+
+      if (!deleting) {
+        charCount++;
+        nicknameInput.placeholder = word.slice(0, charCount);
+
+        if (charCount === word.length) {
+          deleting = true;
+          const isLast = index === nicknamePlaceholders.length - 1;
+          placeholderTimer = setTimeout(tick, isLast ? 2600 : 1300);
+          return;
+        }
+
+        placeholderTimer = setTimeout(tick, 90);
+        return;
+      }
+
+      charCount--;
+      nicknameInput.placeholder = word.slice(0, charCount);
+
+      if (charCount === 0) {
+        deleting = false;
+        index = (index + 1) % nicknamePlaceholders.length;
+        placeholderTimer = setTimeout(tick, 350);
+        return;
+      }
+
+      placeholderTimer = setTimeout(tick, 45);
+    }
+
+    nicknameInput.placeholder = '';
+    placeholderTimer = setTimeout(tick, 400);
+  }
+
+  startNicknameAnimation();
 
   setState(5);
 
-  function payWithTebex() {
+  // ====== KOMUNIKATY ======
+  function showNotice(type, text) {
+    paymentNotice.className = 'payment-notice is-' + type;
+    paymentNotice.textContent = text;
+    paymentNotice.hidden = false;
+  }
+
+  function hideNotice() {
+    paymentNotice.hidden = true;
+    paymentNotice.textContent = '';
+  }
+
+  // ====== ZAPAMIĘTANIE FORMULARZA ======
+  function saveFormState(nickname, amount) {
+    try {
+      sessionStorage.setItem(SHOP_FORM_STORAGE_KEY, JSON.stringify({ nickname, amount }));
+    } catch (err) { /* sessionStorage może być niedostępny */ }
+  }
+
+  function readFormState() {
+    try {
+      const raw = sessionStorage.getItem(SHOP_FORM_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function clearFormState() {
+    try {
+      sessionStorage.removeItem(SHOP_FORM_STORAGE_KEY);
+    } catch (err) { /* ignorujemy */ }
+  }
+
+  function restoreFormState() {
+    const saved = readFormState();
+    if (!saved) return;
+
+    if (typeof saved.nickname === 'string') {
+      nicknameInput.value = saved.nickname.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 16);
+    }
+    if (Number.isFinite(saved.amount)) {
+      setState(saved.amount);
+    }
+  }
+
+  // ====== POWRÓT Z TEBEX ======
+  function handlePaymentReturn() {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('platnosc');
+    if (!status) return;
+
+    if (status === 'ok') {
+      clearFormState();
+      showNotice('success', 'Dziękujemy za płatność! 🎉 Gemy pojawią się na koncie po zaksięgowaniu wpłaty.');
+    } else if (status === 'anulowana') {
+      restoreFormState();
+      showNotice('info', 'Płatność została anulowana. Możesz spróbować ponownie — Twoje dane zostały zachowane.');
+    }
+
+    // Usuwamy parametr, aby odświeżenie strony nie powtarzało komunikatu.
+    params.delete('platnosc');
+    const query = params.toString();
+    window.history.replaceState({}, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
+  }
+
+  // ====== TEBEX API ======
+  function shopReturnUrl(status) {
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.hash = '';
+    url.searchParams.set('platnosc', status);
+    return url.toString();
+  }
+
+  async function tebexRequest(path, body) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 25000);
+    let response;
+
+    try {
+      response = await fetch(TEBEX_API_BASE + path, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timer);
+    }
+
+    let payload = null;
+    try {
+      payload = await response.json();
+    } catch (err) { /* pusta lub niepoprawna odpowiedź */ }
+
+    if (!response.ok || !payload || !payload.data) {
+      const detail = payload && (payload.detail || payload.message || payload.error);
+      throw new Error(detail || ('Tebex odpowiedział kodem ' + response.status));
+    }
+
+    return payload.data;
+  }
+
+  async function payWithTebex() {
     const nickname = nicknameInput.value.trim();
 
     if (nickname.length < 3) {
@@ -899,9 +1161,48 @@
       return;
     }
 
-    const gems = formatNumber(currentAmount * GEMS_PER_ZL);
-    alert(`Nick: ${nickname}\nKwota: ${currentAmount} zł → ${gems} 💎 gemów\n\n(Tutaj nastąpi płatność Tebex — integracja do dodania)`);
+    if (payBtn.disabled) return;
+
+    hideNotice();
+
+    const amount = currentAmount;
+    const gems = amount * GEMS_PER_ZL;
+
+    saveFormState(nickname, amount);
+    payBtn.disabled = true;
+    payBtnLabel.textContent = '⏳ Przekierowanie…';
+
+    try {
+      // 1. Koszyk z nickiem gracza i adresami powrotu.
+      const basket = await tebexRequest(`/accounts/${TEBEX_PUBLIC_TOKEN}/baskets`, {
+        username: nickname,
+        complete_url: shopReturnUrl('ok'),
+        cancel_url: shopReturnUrl('anulowana'),
+        complete_auto_redirect: true,
+        custom: { nickname, amount, gems }
+      });
+
+      // 2. Kwota jako liczba sztuk paczki "100 gems" (1 zł = 100 gemów).
+      const updated = await tebexRequest(`/baskets/${basket.ident}/packages`, {
+        package_id: TEBEX_PACKAGE_ID,
+        quantity: amount
+      });
+
+      // 3. Przekierowanie na checkout Tebex.
+      const checkoutUrl = updated.links && updated.links.checkout
+        ? updated.links.checkout
+        : `https://pay.tebex.io/${basket.ident}`;
+
+      window.location.href = checkoutUrl;
+    } catch (err) {
+      console.error('Błąd płatności Tebex:', err);
+      payBtn.disabled = false;
+      payBtnLabel.textContent = '💳 Zapłać';
+      showNotice('error', 'Nie udało się rozpocząć płatności. Sprawdź połączenie i spróbuj ponownie za chwilę.');
+    }
   }
+
+  handlePaymentReturn();
 </script>
 </body>
 </html>

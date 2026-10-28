@@ -29,6 +29,13 @@
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
   );
 
+  // Skala interfejsu ustawiana przez skrypt w <head> (Full HD = 1).
+  const readUiScale = () => {
+    const value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ui-scale'));
+    return Number.isFinite(value) && value > 0 ? value : 1;
+  };
+  let uiScale = readUiScale();
+
   if (lowPower) document.documentElement.classList.add('low-power');
 
   // Czas startu całej sesji — wspólny dla gwiazd i animacji tła.
@@ -86,6 +93,7 @@
   function saveState() {
     storage.set('moonX', posX.toFixed(2));
     storage.set('moonY', posY.toFixed(2));
+    storage.set('moonUiScale', uiScale.toFixed(4));
     storage.set('moonVelX', velX.toFixed(4));
     storage.set('moonVelY', velY.toFixed(4));
     storage.set('moonSaveTime', nowMs());
@@ -152,18 +160,23 @@
     const MIN_VELOCITY = 0.15;
     const BASE_STEP = 1000 / 60;
 
-    moonSize = moon.offsetWidth || (window.innerWidth <= 600 ? 100 : 180);
+    moonSize = moon.offsetWidth || (window.innerWidth <= 600 ? 100 : 180) * uiScale;
 
     const savedX = toNumber(storage.get('moonX'), NaN);
     const savedY = toNumber(storage.get('moonY'), NaN);
     const hasSavedMoon = Number.isFinite(savedX) && Number.isFinite(savedY);
+    const savedUiScale = toNumber(storage.get('moonUiScale'), uiScale);
+    const moonScaleRatio = savedUiScale > 0 ? uiScale / savedUiScale : 1;
 
     if (hasSavedMoon) {
-      posX = savedX;
-      posY = savedY;
+      // Po zmianie rozdzielczości pozycja księżyca jest przeliczana tak,
+      // żeby stał w tym samym miejscu względem ekranu.
+      posX = savedX * moonScaleRatio;
+      posY = savedY * moonScaleRatio;
     } else {
-      posX = window.innerWidth > 600 ? window.innerWidth - 300 : window.innerWidth - 130;
-      posY = 60;
+      const margin = (window.innerWidth <= 600 ? 130 : 300) * uiScale;
+      posX = window.innerWidth - margin;
+      posY = 60 * uiScale;
     }
 
     velX = toNumber(storage.get('moonVelX'), 0);
@@ -277,6 +290,7 @@
         enterIdle(true);
         storage.set('moonX', posX.toFixed(2));
         storage.set('moonY', posY.toFixed(2));
+        storage.set('moonUiScale', uiScale.toFixed(4));
         storage.set('moonIdleStart', idleStart);
       }
     }
@@ -416,12 +430,14 @@
         enterIdle(false);
         storage.set('moonX', posX.toFixed(2));
         storage.set('moonY', posY.toFixed(2));
+        storage.set('moonUiScale', uiScale.toFixed(4));
         storage.set('moonIdleStart', idleStart);
         return;
       }
 
       storage.set('moonX', posX.toFixed(2));
       storage.set('moonY', posY.toFixed(2));
+      storage.set('moonUiScale', uiScale.toFixed(4));
 
       if (Math.abs(velX) > 0.5 || Math.abs(velY) > 0.5) {
         startPhysics();
@@ -439,6 +455,17 @@
       if (resizeFrame) window.cancelAnimationFrame(resizeFrame);
       resizeFrame = window.requestAnimationFrame(() => {
         resizeFrame = 0;
+        const nextUiScale = readUiScale();
+        const scaleRatio = uiScale > 0 ? nextUiScale / uiScale : 1;
+
+        if (scaleRatio !== 1 && !isDragging) {
+          posX *= scaleRatio;
+          posY *= scaleRatio;
+          velX *= scaleRatio;
+          velY *= scaleRatio;
+        }
+
+        uiScale = nextUiScale;
         moonSize = moon.offsetWidth || moonSize;
         const limit = bounds();
         posX = clamp(posX, 0, limit.maxX);
@@ -453,8 +480,6 @@
   // Prostokąty elementów są cache'owane. W pętli nie ma getBoundingClientRect,
   // więc księżyc nie wymusza przeliczania layoutu 60 razy na sekundę.
   const glowTargets = Array.from(document.querySelectorAll('.glow-target'));
-  const GLOW_RADIUS = 90;
-  const GLOW_RADIUS_SQ = GLOW_RADIUS * GLOW_RADIUS;
   const RADAR_INTERVAL = 90;
   let targetRects = [];
   let lastRadarTs = 0;
@@ -478,7 +503,7 @@
     const seconds = (nowMs() - idleStart) / 1000;
     const phase = ((seconds % 6) + 6) % 6;
     const k = (1 - Math.cos((phase / 6) * TAU)) / 2;
-    return { x: -10 * k, y: -22 * k };
+    return { x: -10 * uiScale * k, y: -22 * uiScale * k };
   }
 
   function radarLoop(timestamp) {
@@ -494,6 +519,10 @@
     const offset = floatOffsetForRadar();
     const centerX = posX + offset.x + moonSize / 2;
     const centerY = posY + offset.y + moonSize / 2;
+    // Promień poświaty rośnie razem z interfejsem (90 px przy Full HD,
+    // 180 px przy 4K). Na telefonie zostaje 90 px, jak wcześniej.
+    const glowRadius = 90 * uiScale;
+    const glowRadiusSq = glowRadius * glowRadius;
 
     for (let i = 0; i < targetRects.length; i++) {
       const target = targetRects[i];
@@ -501,7 +530,7 @@
       const closestY = Math.max(target.top, Math.min(centerY, target.bottom));
       const dx = centerX - closestX;
       const dy = centerY - closestY;
-      const near = dx * dx + dy * dy < GLOW_RADIUS_SQ;
+      const near = dx * dx + dy * dy < glowRadiusSq;
 
       if (near !== target.near) {
         target.near = near;
@@ -693,9 +722,10 @@
   }
 
   function makeTrailSprite(color) {
-    const length = cw < 600 ? 100 : 180;
-    const headRadius = cw < 600 ? 10 : 14;
-    const padding = 4;
+    const scale = uiScale;
+    const length = (cw < 600 ? 100 : 180) * scale;
+    const headRadius = (cw < 600 ? 10 : 14) * scale;
+    const padding = 4 * scale;
     const width = length + headRadius * 2 + padding * 2;
     const height = headRadius * 2 + padding * 2;
     const buffer = document.createElement('canvas');
@@ -716,7 +746,7 @@
     gradient.addColorStop(1, hexToRgba(color, 1));
 
     bufferCtx.strokeStyle = gradient;
-    bufferCtx.lineWidth = 2;
+    bufferCtx.lineWidth = 2 * scale;
     bufferCtx.lineCap = 'round';
     bufferCtx.beginPath();
     bufferCtx.moveTo(tailX, centerY);
@@ -734,7 +764,7 @@
 
     bufferCtx.fillStyle = color;
     bufferCtx.beginPath();
-    bufferCtx.arc(headX, centerY, 2, 0, TAU);
+    bufferCtx.arc(headX, centerY, 2 * scale, 0, TAU);
     bufferCtx.fill();
 
     return { img: buffer, headX, w: width, h: height };
@@ -1081,6 +1111,7 @@
 
     cw = width;
     ch = height;
+    uiScale = readUiScale();
     // Większe ekrany rysujemy trochę rzadziej, żeby nie obciążać CPU.
     frameInterval = 1000 / (lowPower || cw * ch > 2600000 ? 24 : 30);
     dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);

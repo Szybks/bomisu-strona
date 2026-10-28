@@ -16,8 +16,31 @@
     }
   } catch (err) { /* brak dostępu do sessionStorage */ }
 </script>
+<script>
+  // Skala interfejsu: Full HD (1920x1080) jest bazą, a większe ekrany
+  // dostają proporcjonalnie większe elementy (np. 4K = dokładnie 2x).
+  (function () {
+    const root = document.documentElement;
+
+    function applyUiScale() {
+      const scale = Math.max(1, Math.min(window.innerWidth / 1920, window.innerHeight / 1080));
+      const width = window.innerWidth / scale;
+      const height = window.innerHeight / scale;
+
+      root.style.setProperty('--ui-scale', scale.toFixed(4));
+      root.style.setProperty('--ui-w', width.toFixed(2) + 'px');
+      root.style.setProperty('--ui-h', height.toFixed(2) + 'px');
+      root.style.setProperty('--ui-vw', (width / 100).toFixed(4) + 'px');
+      root.style.setProperty('--ui-vh', (height / 100).toFixed(4) + 'px');
+    }
+
+    applyUiScale();
+    window.addEventListener('resize', applyUiScale, { passive: true });
+    window.addEventListener('orientationchange', applyUiScale, { passive: true });
+  })();
+</script>
 <link rel="preload" href="assets/moon.png" as="image">
-<link rel="preload" href="background.js?v=9" as="script">
+<link rel="preload" href="background.js?v=10" as="script">
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="polityka-prywatnosci.html">
 <link rel="prefetch" href="kontakt.html">
@@ -43,6 +66,13 @@
     --slot-border-dark: #3a3a45;
 
     --shop-blue: #4f8dff;
+
+    /* Skalowanie interfejsu — wartości ustawia skrypt w <head>. */
+    --ui-scale: 1;
+    --ui-w: 100vw;
+    --ui-h: 100vh;
+    --ui-vw: 1vw;
+    --ui-vh: 1vh;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -53,29 +83,44 @@
     font-family: 'Inter', system-ui, sans-serif;
     background: radial-gradient(circle at 50% 0%, var(--bg-purple) 0%, var(--bg-void) 100%);
     color: var(--text);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Warstwa interfejsu skaluje się do rozdzielczości ekranu.
+     Full HD jest bazą, więc 4K wygląda tak samo, tylko większe. */
+  .ui-layer {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--ui-w);
+    height: var(--ui-h);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: 40px 20px;
-    position: relative;
-    overflow: hidden;
-    height: 100vh;
-    height: 100dvh;
-    user-select: none;
-    -webkit-user-select: none;
+    transform: scale(var(--ui-scale));
+    transform-origin: top left;
+    z-index: 3;
+    pointer-events: none;
   }
+
+  .ui-layer > .bottom-bar,
+  .ui-layer > .rules-wrapper { pointer-events: auto; }
 
   /* --- ANIMACJE PRZEJŚCIA --- */
   @keyframes dropIn {
-    0% { transform: translateY(-100vh); opacity: 0; }
+    0% { transform: translateY(calc(var(--ui-h) * -1)); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
   }
 
   @keyframes dropOut {
     0%   { transform: translateY(0); opacity: 1; }
     60%  { opacity: 1; }
-    100% { transform: translateY(100vh); opacity: 0; }
+    100% { transform: translateY(var(--ui-h)); opacity: 0; }
   }
 
   .drop-in {
@@ -126,7 +171,8 @@
   .moon-container {
     position: fixed;
     top: 0; left: 0;
-    width: 180px; height: 180px;
+    width: calc(180px * var(--ui-scale));
+    height: calc(180px * var(--ui-scale));
     cursor: grab;
     z-index: 2;
     touch-action: none;
@@ -144,7 +190,7 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    filter: drop-shadow(0 0 25px rgba(186, 230, 253, 0.8)) drop-shadow(0 0 60px rgba(79, 141, 255, 0.5));
+    filter: drop-shadow(0 0 calc(25px * var(--ui-scale)) rgba(186, 230, 253, 0.8)) drop-shadow(0 0 calc(60px * var(--ui-scale)) rgba(79, 141, 255, 0.5));
     will-change: transform;
   }
 
@@ -155,7 +201,7 @@
   .moon-container::before {
     content: '';
     position: absolute;
-    inset: -45px;
+    inset: calc(-45px * var(--ui-scale));
     border-radius: 50%;
     background: radial-gradient(circle, rgba(186, 230, 253, 0.32) 0%, rgba(79, 141, 255, 0.16) 40%, transparent 70%);
     opacity: 0.55;
@@ -166,7 +212,7 @@
 
   @keyframes moonFloat {
     0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-10px, -22px); }
+    50% { transform: translate(calc(-10px * var(--ui-scale)), calc(-22px * var(--ui-scale))); }
   }
 
   @keyframes moonPulse {
@@ -449,7 +495,7 @@
 
   /* --- TELEFONY --- */
   @media (max-width: 600px) {
-    body { padding: 20px 10px; }
+    .ui-layer { padding: 20px 10px; }
 
     .hero h1 { font-size: 42px; margin-bottom: 10px; }
     .hero p.sub { font-size: 13px; margin-bottom: 20px; }
@@ -488,6 +534,7 @@
     <div class="moon-img"></div>
   </div>
 
+  <div class="ui-layer">
   <header class="hero drop-in delay-1">
     <h1 class="glow-target" id="main-title">BOMISU.PL</h1>
     <p class="sub glow-target">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag i wkrótce Flag Hunt. Wbijaj i graj z nami!</p>
@@ -591,7 +638,9 @@
     </div>
   </div>
 
-<script src="background.js?v=9"></script>
+  </div><!-- /.ui-layer -->
+
+<script src="background.js?v=10"></script>
 <script>
   // ====== KOPIUJ IP ======
   function copyIP() {
