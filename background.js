@@ -123,6 +123,70 @@
   }
   window.navigateTo = navigateTo;
 
+  // ====== NAWIGACJA HOTBARU ======
+  // Sloty hotbaru to elementy div z role="link". Jedno delegowane
+  // przechwycenie obsługuje kliknięcia, środkowy przycisk i klawiaturę.
+  function hotbarSlotFromEvent(event) {
+    const target = event.target instanceof Element ? event.target : null;
+    return target ? target.closest('.hotbar .slot[data-href]') : null;
+  }
+
+  function activateHotbarSlot(slot, newTab) {
+    const url = new URL(slot.dataset.href, location.href);
+    const isInternal = url.origin === location.origin;
+
+    // Slot bieżącej strony nie robi nic.
+    if (isInternal && pageName(url.pathname) === pageName(location.pathname)) return;
+
+    if (newTab || slot.dataset.external === 'true') {
+      window.open(url.href, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    navigateTo(url.href);
+  }
+
+  function onHotbarEvent(event) {
+    if (event.defaultPrevented) return;
+
+    const slot = hotbarSlotFromEvent(event);
+    if (!slot) return;
+
+    if (event.type === 'click') {
+      if (event.button !== 0) return;
+      // Shift i Alt nie mają przypisanej akcji w hotbarze.
+      if (event.shiftKey || event.altKey) return;
+
+      event.preventDefault();
+      activateHotbarSlot(slot, event.ctrlKey || event.metaKey);
+      return;
+    }
+
+    if (event.type === 'auxclick') {
+      if (event.button !== 1) return;
+
+      event.preventDefault();
+      activateHotbarSlot(slot, true);
+      return;
+    }
+
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+
+    const isEnter = event.key === 'Enter';
+    const isSpace = event.key === ' ' || event.key === 'Spacebar' || event.code === 'Space';
+    if (!isEnter && !isSpace) return;
+
+    // Spacja nie może przewijać strony.
+    if (isSpace) event.preventDefault();
+    if (event.repeat) return;
+
+    activateHotbarSlot(slot, false);
+  }
+
+  document.addEventListener('click', onHotbarEvent);
+  document.addEventListener('auxclick', onHotbarEvent);
+  document.addEventListener('keydown', onHotbarEvent);
+
   window.addEventListener('pageshow', event => {
     if (event.persisted) {
       isNavigating = false;
@@ -154,6 +218,7 @@
 
   if (moon) {
     const moonImg = moon.querySelector('.moon-img');
+    const moonGlow = moon.querySelector('.moon-glow');
     const FRICTION = 0.995;
     const BOUNCE = 0.75;
     const MAX_SPEED = 22;
@@ -230,9 +295,11 @@
 
     function applyFloatPhase() {
       if (!moonImg) return;
-      moonImg.style.animationDelay = moon.classList.contains('idle')
+      const delay = moon.classList.contains('idle')
         ? (-floatPhase()).toFixed(3) + 's'
         : '0s';
+      moonImg.style.animationDelay = delay;
+      if (moonGlow) moonGlow.style.animationDelay = delay;
     }
 
     function renderMoon() {
@@ -254,6 +321,7 @@
     function leaveIdle() {
       moon.classList.remove('idle');
       if (moonImg) moonImg.style.animationDelay = '0s';
+      if (moonGlow) moonGlow.style.animationDelay = '0s';
     }
 
     // ====== FIZYKA ======
