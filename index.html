@@ -61,7 +61,7 @@
 <link rel="prefetch" href="kontakt.html">
 <link rel="prefetch" href="sklep.html">
 <link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/style.css?v=12">
+<link rel="stylesheet" href="assets/style.css?v=19">
 <style>
 h1.glow-target.near-moon {
     text-shadow: 0 0 18px rgba(79, 141, 255, 0.65), 0 0 38px rgba(147, 197, 253, 0.45);
@@ -241,7 +241,7 @@ h1.glow-target.near-moon {
       <div class="cd-box glow-target"><div class="cd-num" id="cd-mins">0</div><div class="cd-lbl">Minut</div></div>
       <div class="cd-box glow-target"><div class="cd-num" id="cd-secs">0</div><div class="cd-lbl">Sekund</div></div>
     </div>
-    <div class="cd-caption glow-target">⏳ Do końca beta testów</div>
+    <div class="cd-caption glow-target" id="cd-caption">⏳ Do końca beta testów</div>
 
     <div class="ip-box glow-target">
       <div class="ip-text">
@@ -360,7 +360,9 @@ h1.glow-target.near-moon {
   }
 
   // ====== COUNTDOWN ======
-  const betaEnd = new Date('2026-10-30T23:59:59+01:00');
+  let betaEnd = new Date('2026-10-30T23:59:59+01:00');
+  let countdownEndMessage = '✅ BETA ZAKOŃCZONA!';
+  let countdownEndColor = '#10b981';
   let countdownIntervalId = null;
 
   function updateCountdown() {
@@ -368,7 +370,15 @@ h1.glow-target.near-moon {
     const distance = betaEnd.getTime() - now;
     if (distance < 0) {
       if (countdownIntervalId) clearInterval(countdownIntervalId);
-      document.getElementById('countdown').innerHTML = '<div class="cd-caption" style="font-size:20px; color:var(--green);">✅ BETA ZAKOŃCZONA!</div>';
+      const caption = document.getElementById('cd-caption');
+      if (caption) caption.style.display = 'none';
+      const done = document.createElement('div');
+      done.className = 'cd-caption';
+      done.style.fontSize = '20px';
+      done.style.color = countdownEndColor;
+      done.textContent = countdownEndMessage;
+      const box = document.getElementById('countdown');
+      if (box) box.replaceChildren(done);
       return;
     }
     document.getElementById('cd-days').textContent = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -378,6 +388,41 @@ h1.glow-target.near-moon {
   }
   countdownIntervalId = setInterval(updateCountdown, 1000);
   updateCountdown();
+
+  // Data końca odliczania jest wczytywana z countdown.txt.
+  // Format: DD MM RRRR GG MM, np. "30 10 2026 21 30".
+  fetch('countdown.txt', { cache: 'no-store' })
+    .then(response => (response.ok ? response.text() : ''))
+    .then(text => {
+      const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => {
+        if (!line) return false;
+        // Komentarze zaczynają się od "# " lub "#litera"; sam hex koloru (#abc) zostaje.
+        if (line.startsWith('#') && !/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(line)) return false;
+        return true;
+      });
+      const caption = document.getElementById('cd-caption');
+      if (lines.length >= 2 && caption) {
+        caption.textContent = lines[1];
+      }
+      if (lines.length >= 3) {
+        countdownEndMessage = lines[2];
+      }
+      if (lines.length >= 4 && /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(lines[3])) {
+        countdownEndColor = lines[3];
+      }
+      if (lines.length >= 1) {
+        const parts = (lines[0].match(/\d+/g) || []).map(Number);
+        if (parts.length >= 5) {
+          const [day, month, year, hour, minute] = parts;
+          const parsed = new Date(year, month - 1, day, hour, minute, 0);
+          if (!Number.isNaN(parsed.getTime())) {
+            betaEnd = parsed;
+            updateCountdown();
+          }
+        }
+      }
+    })
+    .catch(() => {});
 </script>
 </body>
 </html>

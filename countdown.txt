@@ -1,0 +1,8 @@
+# Data i godzina końca odliczania (format: DD MM RRRR GG MM)
+7 11 2026 17 00
+# Opis odliczania, wyświetlany pod zegarem:
+Do Startu Edycji <3 
+# Wiadomość po zakończeniu odliczania:
+Zapraszamy Na Edycje Castle
+# Kolor wiadomości (hex):
+#10b981
