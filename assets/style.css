@@ -209,8 +209,7 @@ body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
   pointer-events: none;
   overflow: hidden;
   contain: strict;
-  background: linear-gradient(180deg, #07102a 0%, #111d45 40%, #07040d 100%);
-  background: linear-gradient(180deg, #030611 0%, #070b18 45%, #020306 100%);
+  background: linear-gradient(180deg, #040816 0%, #0b132d 50%, #02030a 100%);
 }
 
 /* Ostatnia klatka gwiazd zapisana przed przejściem — most między podstronami. */
