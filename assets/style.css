@@ -1,3 +1,75 @@
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/inter-latin-400.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/inter-latin-ext-400.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/inter-latin-600.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/inter-latin-ext-600.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('fonts/inter-latin-800.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('fonts/inter-latin-ext-800.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('fonts/inter-latin-900.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('fonts/inter-latin-ext-900.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
 /* ====== BOMISU.PL — WSPÓLNY STYL ====== */
 
 :root {
@@ -24,6 +96,9 @@
   --ui-h: 100vh;
   --ui-vw: 1vw;
   --ui-vh: 1vh;
+
+  --content-align: center;
+  --legal-body-align: left;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -39,6 +114,42 @@ body {
   height: 100%;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* --- WYRÓWNANIE TREŚCI PANELI --- */
+.mc-panel { text-align: var(--content-align); }
+
+.nickname-row input { text-align: center; }
+
+.terms-row { text-align: var(--legal-body-align); }
+
+.contact-card {
+  position: relative;
+  justify-content: center;
+  text-align: center;
+}
+.contact-card > svg {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease;
+}
+.contact-card:hover > svg { transform: translateY(-50%) scale(1.1); }
+.contact-card > div {
+  flex: 0 1 auto;
+  text-align: center;
+}
+
+.legal-page .rules-text {
+  max-width: 62ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: var(--legal-body-align);
+}
+.legal-page .rules-text h2,
+.legal-page .last-updated {
+  text-align: var(--content-align);
 }
 
 /* Warstwa interfejsu skaluje się do rozdzielczości ekranu.
@@ -98,6 +209,8 @@ body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
   pointer-events: none;
   overflow: hidden;
   contain: strict;
+  background: linear-gradient(180deg, #07102a 0%, #111d45 40%, #07040d 100%);
+  background: linear-gradient(180deg, #030611 0%, #070b18 45%, #020306 100%);
 }
 
 /* Ostatnia klatka gwiazd zapisana przed przejściem — most między podstronami. */
@@ -142,10 +255,10 @@ html:not(.bg-snapshot) body::before { display: none; }
   background-repeat: no-repeat;
   background-position: center;
   filter:
-    drop-shadow(0 0 calc(18px * var(--ui-scale)) rgba(255, 255, 255, 0.95))
-    drop-shadow(0 0 calc(38px * var(--ui-scale)) rgba(191, 219, 254, 0.8))
-    drop-shadow(0 0 calc(72px * var(--ui-scale)) rgba(96, 165, 250, 0.5))
-    drop-shadow(0 0 calc(105px * var(--ui-scale)) rgba(37, 99, 235, 0.18));
+    drop-shadow(0 0 calc(12px * var(--ui-scale)) rgba(255, 255, 255, 0.9))
+    drop-shadow(0 0 calc(24px * var(--ui-scale)) rgba(191, 219, 254, 0.65))
+    drop-shadow(0 0 calc(44px * var(--ui-scale)) rgba(96, 165, 250, 0.35))
+    drop-shadow(0 0 calc(68px * var(--ui-scale)) rgba(37, 99, 235, 0.12));
   will-change: transform;
 }
 
@@ -168,7 +281,7 @@ html:not(.bg-snapshot) body::before { display: none; }
 .moon-glow::before {
   content: '';
   position: absolute;
-  inset: calc(-44px * var(--ui-scale));
+  inset: calc(-30px * var(--ui-scale));
   border-radius: 50%;
   background:
     radial-gradient(circle closest-side,
@@ -185,8 +298,8 @@ html:not(.bg-snapshot) body::before { display: none; }
       rgba(96, 165, 250, 0.17) 58%,
       rgba(37, 99, 235, 0.06) 72%,
       transparent 86%);
-  opacity: 0.66;
-  animation: moonPulse 4s ease-in-out infinite alternate;
+  opacity: 0.5;
+  animation: moonPulse 6s ease-in-out infinite alternate;
   will-change: opacity, transform;
 }
 
@@ -196,8 +309,8 @@ html:not(.bg-snapshot) body::before { display: none; }
 }
 
 @keyframes moonPulse {
-  from { opacity: 0.4; transform: scale(0.94); }
-  to { opacity: 0.85; transform: scale(1.06); }
+  from { opacity: 0.25; transform: scale(0.97); }
+  to { opacity: 0.55; transform: scale(1.02); }
 }
 
 /* --- EFEKT PODŚWIETLENIA GUI --- */
@@ -242,34 +355,6 @@ html:not(.bg-snapshot) body::before { display: none; }
   position: relative;
 }
 
-/* --- PRZYCISK ZAMKNIJ (X) --- */
-.close-btn {
-  position: absolute;
-  top: 15px; right: 15px;
-  width: 40px; height: 40px;
-  background-color: var(--slot-bg);
-  border-top: 2px solid #2d3748;
-  border-left: 2px solid #2d3748;
-  border-bottom: 2px solid var(--panel-border);
-  border-right: 2px solid var(--panel-border);
-  box-shadow: inset -2px -2px 0px rgba(0,0,0,0.5), inset 2px 2px 0px rgba(255,255,255,0.05);
-  border-radius: 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  z-index: 1000;
-  transition: all 0.2s;
-}
-
-.close-btn:hover {
-  border-color: var(--red);
-  box-shadow: 0 0 15px rgba(255, 79, 79, 0.4), inset 0 0 10px rgba(255, 79, 79, 0.2);
-}
-
-.close-icon { width: 24px; height: 24px; fill: var(--text); transition: fill 0.2s; }
-.close-btn:hover .close-icon { fill: var(--red); }
-
 .mc-panel h1 {
   text-align: center;
   font-size: 30px;
@@ -284,8 +369,6 @@ html:not(.bg-snapshot) body::before { display: none; }
   animation: textFlow 5s linear infinite;
   border-bottom: 2px solid var(--panel-border);
   padding-bottom: 15px;
-  padding-left: 40px;
-  padding-right: 40px;
 }
 
 @keyframes textFlow {
@@ -308,7 +391,8 @@ html:not(.bg-snapshot) body::before { display: none; }
 
 .rules-text h2 { color: var(--text); font-size: 18px; margin-top: 20px; margin-bottom: 10px; font-weight: 800; }
 .rules-text p { margin-bottom: 10px; }
-.rules-text ul { list-style-position: inside; margin-bottom: 15px; padding-left: 10px; }
+.rules-text ul { list-style-position: inside; margin-bottom: 15px; padding-left: 10px; text-align: var(--legal-body-align); }
+.rules-text ol { text-align: var(--legal-body-align); }
 .rules-text li { margin-bottom: 5px; }
 
 /* --- DOLNA SEKCJA (Hotbar) --- */
@@ -457,11 +541,8 @@ html:not(.bg-snapshot) body::before { display: none; }
 
   .rules-wrapper { max-width: 100%; padding: 5px 0; }
   .mc-panel { height: calc(var(--ui-vh) * 65); max-height: calc(var(--ui-vh) * 65); padding: 15px; }
-  .mc-panel h1 { font-size: 22px; padding-left: 30px; padding-right: 30px; }
+  .mc-panel h1 { font-size: 22px; }
   .rules-text { font-size: 13px; }
-
-  .close-btn { width: 32px; height: 32px; top: 10px; right: 10px; }
-  .close-icon { width: 18px; height: 18px; }
 
   .bottom-bar { padding-left: 5px; padding-right: 5px; }
   .hotbar { width: 100%; padding: 4px; gap: 2px; border-width: 3px; }
@@ -481,4 +562,4 @@ html:not(.bg-snapshot) body::before { display: none; }
 /* --- TRYB OSZCZĘDNY / OGRANICZONY RUCH --- */
 html.low-power .mc-panel h1,
 html.low-power .moon-glow::before { animation: none; }
-html.low-power .moon-img { filter: drop-shadow(0 0 20px rgba(219, 234, 254, 0.9)) drop-shadow(0 0 48px rgba(96, 165, 250, 0.5)); }
+html.low-power .moon-img { filter: drop-shadow(0 0 14px rgba(219, 234, 254, 0.8)) drop-shadow(0 0 32px rgba(96, 165, 250, 0.4)); }

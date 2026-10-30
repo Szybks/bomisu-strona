@@ -60,10 +60,8 @@
 <link rel="prefetch" href="polityka-prywatnosci.html">
 <link rel="prefetch" href="kontakt.html">
 <link rel="prefetch" href="sklep.html">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=3">
+<link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css?v=12">
 <style>
 h1.glow-target.near-moon {
     text-shadow: 0 0 18px rgba(79, 141, 255, 0.65), 0 0 38px rgba(147, 197, 253, 0.45);
@@ -140,11 +138,13 @@ h1.glow-target.near-moon {
     font-weight: 900;
     letter-spacing: -1px;
     line-height: 1;
-    background: linear-gradient(135deg, #93c5fd, #d8b4fe);
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(135deg, #F4F8FA, #def2fc);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    display: inline-block;
   }
 
   .cd-lbl {
@@ -233,7 +233,7 @@ h1.glow-target.near-moon {
   <div class="ui-layer">
   <header class="hero drop-in delay-1">
     <h1 class="glow-target" id="main-title">BOMISU.PL</h1>
-    <p class="sub glow-target">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag i wkrótce Flag Hunt. Wbijaj i graj z nami!</p>
+    <p class="sub glow-target">Polski serwer Minecraft z unikalnymi trybami. Castle, TNT Tag. Wbijaj i graj z nami!</p>
 
     <div class="countdown glow-target" id="countdown">
       <div class="cd-box glow-target"><div class="cd-num" id="cd-days">0</div><div class="cd-lbl">Dni</div></div>
@@ -246,7 +246,7 @@ h1.glow-target.near-moon {
     <div class="ip-box glow-target">
       <div class="ip-text">
         <div class="ip-label">IP Serwera</div>
-        <div class="ip-value" id="ip">bomisu.pl</div>
+        <div class="ip-value" id="ip">Bomisu.pl</div>
       </div>
       <button class="copy-btn glow-target" onclick="copyIP()" id="copy-btn">Kopiuj IP</button>
     </div>

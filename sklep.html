@@ -60,10 +60,8 @@
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="polityka-prywatnosci.html">
 <link rel="prefetch" href="kontakt.html">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=3">
+<link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css?v=12">
 <style>
 :root {
     --shop-blue-dark: #2563eb;
@@ -82,10 +80,10 @@
   }
 
   .rules-text {
-    padding-right: 6px;
     display: flex;
     flex-direction: column;
     min-height: 0;
+    padding-right: 0;
     scrollbar-width: none;      /* Firefox */
     -ms-overflow-style: none;   /* stary Edge */
   }
@@ -131,7 +129,7 @@
   }
   .amount-value-input {
     width: 1em;
-    background: linear-gradient(135deg, var(--shop-blue-light), var(--shop-blue));
+    background: linear-gradient(135deg, #F4F8FA, #def2fc);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -253,7 +251,7 @@
     border-right: 2px solid #2d3748;
     border-radius: 6px;
     overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
   }
   .nickname-row .input-wrapper:focus-within {
     border-color: var(--shop-blue);
@@ -302,7 +300,7 @@
     border-right: 2px solid #2d3748;
     border-radius: 6px;
     cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
   }
   .terms-row:focus-within {
     border-color: var(--shop-blue);
@@ -389,7 +387,7 @@
   .pay-btn {
     width: 100%;
     padding: 16px 20px;
-    background: linear-gradient(135deg, var(--shop-blue), var(--shop-blue-dark));
+    background: linear-gradient(180deg, var(--shop-blue), var(--shop-blue-dark));
     border: none;
     border-top: 3px solid rgba(255,255,255,0.3);
     border-left: 3px solid rgba(255,255,255,0.3);
@@ -407,17 +405,14 @@
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 6px 20px rgba(79, 141, 255, 0.35);
-    transition: all 0.15s ease;
+    box-shadow: none;
+    transition: transform 0.15s ease;
   }
   .pay-btn:hover {
-    filter: brightness(1.1);
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(79, 141, 255, 0.5);
   }
   .pay-btn:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 8px rgba(79, 141, 255, 0.3);
   }
   .pay-btn-right {
     font-size: 14px;
@@ -429,7 +424,6 @@
     opacity: 0.72;
     cursor: wait;
     transform: none;
-    box-shadow: 0 6px 20px rgba(79, 141, 255, 0.2);
   }
 
   /* --- SKLEP: KOMUNIKATY PŁATNOŚCI --- */
@@ -511,11 +505,6 @@
   <div class="ui-layer">
   <main class="rules-wrapper drop-in delay-1">
     <div class="mc-panel glow-target" id="main-panel">
-      <div class="close-btn" onclick="navigateTo('index.html')" title="Wróć do menu">
-        <svg class="close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-      </div>
 
       <h1>Sklep</h1>
 
@@ -557,7 +546,6 @@
         <div class="nickname-row">
           <label for="nickname-input">Nick gracza w Minecraft (który otrzyma gemy):</label>
           <div class="input-wrapper" id="nickname-wrapper">
-            <span class="input-prefix">🎮</span>
             <input
               type="text"
               id="nickname-input"
@@ -1003,7 +991,7 @@
           { transform: 'translateX(3px)' },
           { transform: 'translateX(0)' }
         ],
-        { duration: 300, easing: 'ease-in-out' }
+        { duration: 300, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' }
       );
       return;
     }
@@ -1022,7 +1010,7 @@
           { transform: 'translateX(3px)' },
           { transform: 'translateX(0)' }
         ],
-        { duration: 300, easing: 'ease-in-out' }
+        { duration: 300, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' }
       );
       return;
     }

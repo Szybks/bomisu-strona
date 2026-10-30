@@ -60,10 +60,8 @@
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="kontakt.html">
 <link rel="prefetch" href="sklep.html">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=3">
+<link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css?v=12">
 <style>
 .privacy-icon {
     fill: #4ade80;
@@ -89,18 +87,13 @@
   </div>
 
   <div class="ui-layer">
-  <main class="rules-wrapper drop-in delay-1">
+  <main class="rules-wrapper legal-page drop-in delay-1">
     <div class="mc-panel glow-target" id="main-panel">
-      <div class="close-btn" onclick="navigateTo('index.html')" title="Wróć do menu">
-        <svg class="close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-      </div>
 
       <h1>Polityka Prywatności</h1>
 
       <div class="rules-text">
-        <p>Ostatnia aktualizacja: Październik 2026</p>
+        <p class="last-updated">Ostatnia aktualizacja: Październik 2026</p>
         <p>Twoja prywatność jest dla nas niezwykle ważna. W tym dokumencie wyjaśniamy, jakie dane zbieramy podczas korzystania z serwera <strong>Bomisu.pl</strong> oraz w jaki sposób je przetwarzamy i chronimy.</p>
 
         <h2>1. Jakie dane zbieramy?</h2>
