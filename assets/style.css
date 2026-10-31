@@ -218,9 +218,12 @@ body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
   left: 0;
   right: 0;
   bottom: 0;
-  height: clamp(170px, 33vh, 360px);
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1920 / 320;
   pointer-events: none;
   z-index: 2;
+  overflow: hidden;
 }
 
 .scenery > div {
@@ -240,10 +243,6 @@ body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
 }
 
 @media (max-width: 700px) {
-  .scenery {
-    height: clamp(150px, 22vh, 230px);
-  }
-
   .scenery > div {
     background-position: 8% bottom;
   }
