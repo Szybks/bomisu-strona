@@ -55,13 +55,15 @@
   })();
 </script>
 <link rel="preload" href="assets/moon.png" as="image">
+<link rel="preload" as="image" href="assets/mountains-lake.svg">
+<link rel="preload" as="image" href="assets/lake-shimmer.svg">
 <link rel="preload" href="background.js?v=15" as="script">
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="polityka-prywatnosci.html">
 <link rel="prefetch" href="kontakt.html">
 <link rel="prefetch" href="sklep.html">
 <link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/style.css?v=19">
+<link rel="stylesheet" href="assets/style.css?v=20">
 <style>
 h1.glow-target.near-moon {
     text-shadow: 0 0 18px rgba(79, 141, 255, 0.65), 0 0 38px rgba(147, 197, 253, 0.45);
@@ -223,6 +225,7 @@ h1.glow-target.near-moon {
 
   <div class="space-bg" id="space-bg">
     <canvas id="starfield" aria-hidden="true"></canvas>
+    <div class="scenery" aria-hidden="true"><div class="scenery-land"></div><div class="scenery-water"></div></div>
   </div>
 
   <div class="moon-container" id="moon">
@@ -343,6 +346,7 @@ h1.glow-target.near-moon {
   </div><!-- /.ui-layer -->
 
 <script src="background.js?v=15"></script>
+<script src="countdown.js"></script>
 <script>
   // ====== KOPIUJ IP ======
   function copyIP() {
@@ -360,10 +364,19 @@ h1.glow-target.near-moon {
   }
 
   // ====== COUNTDOWN ======
-  let betaEnd = new Date('2026-10-30T23:59:59+01:00');
+  let betaEnd = new Date('2099-12-31T23:59:59');
   let countdownEndMessage = '✅ BETA ZAKOŃCZONA!';
   let countdownEndColor = '#10b981';
   let countdownIntervalId = null;
+
+  function ensureCountdownBoxes() {
+    const box = document.getElementById('countdown');
+    if (!box || document.getElementById('cd-days')) return;
+    box.innerHTML = '<div class="cd-box glow-target"><div class="cd-num" id="cd-days">0</div><div class="cd-lbl">Dni</div></div>' +
+      '<div class="cd-box glow-target"><div class="cd-num" id="cd-hours">0</div><div class="cd-lbl">Godzin</div></div>' +
+      '<div class="cd-box glow-target"><div class="cd-num" id="cd-mins">0</div><div class="cd-lbl">Minut</div></div>' +
+      '<div class="cd-box glow-target"><div class="cd-num" id="cd-secs">0</div><div class="cd-lbl">Sekund</div></div>';
+  }
 
   function updateCountdown() {
     const now = new Date().getTime();
@@ -381,6 +394,10 @@ h1.glow-target.near-moon {
       if (box) box.replaceChildren(done);
       return;
     }
+
+    const caption = document.getElementById('cd-caption');
+    if (caption) caption.style.display = '';
+    ensureCountdownBoxes();
     document.getElementById('cd-days').textContent = Math.floor(distance / (1000 * 60 * 60 * 24));
     document.getElementById('cd-hours').textContent = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     document.getElementById('cd-mins').textContent = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -389,40 +406,36 @@ h1.glow-target.near-moon {
   countdownIntervalId = setInterval(updateCountdown, 1000);
   updateCountdown();
 
-  // Data końca odliczania jest wczytywana z countdown.txt.
-  // Format: DD MM RRRR GG MM, np. "30 10 2026 21 30".
-  fetch('countdown.txt', { cache: 'no-store' })
-    .then(response => (response.ok ? response.text() : ''))
-    .then(text => {
-      const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => {
-        if (!line) return false;
-        // Komentarze zaczynają się od "# " lub "#litera"; sam hex koloru (#abc) zostaje.
-        if (line.startsWith('#') && !/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(line)) return false;
-        return true;
-      });
-      const caption = document.getElementById('cd-caption');
-      if (lines.length >= 2 && caption) {
-        caption.textContent = lines[1];
+  // Data końca odliczania jest wczytywana z countdown.js.
+  // Format daty: "DD MM RRRR GG MM", np. "30 10 2026 21 30".
+  (function applyCountdownConfig() {
+    const cfg = window || {};
+    const dateText = (cfg.countdownDate || '').toString();
+    const description = (cfg.countdownDescription || '').toString().trim();
+    const endMessage = (cfg.countdownEndMessage || '').toString().trim();
+    const endColor = (cfg.countdownEndColor || '').toString().trim();
+
+    const caption = document.getElementById('cd-caption');
+    if (description && caption) {
+      caption.textContent = description;
+    }
+    if (endMessage) {
+      countdownEndMessage = endMessage;
+    }
+    if (/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(endColor)) {
+      countdownEndColor = endColor;
+    }
+
+    const parts = (dateText.match(/\d+/g) || []).map(Number);
+    if (parts.length >= 5) {
+      const [day, month, year, hour, minute] = parts;
+      const parsed = new Date(year, month - 1, day, hour, minute, 0);
+      if (!Number.isNaN(parsed.getTime())) {
+        betaEnd = parsed;
+        updateCountdown();
       }
-      if (lines.length >= 3) {
-        countdownEndMessage = lines[2];
-      }
-      if (lines.length >= 4 && /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(lines[3])) {
-        countdownEndColor = lines[3];
-      }
-      if (lines.length >= 1) {
-        const parts = (lines[0].match(/\d+/g) || []).map(Number);
-        if (parts.length >= 5) {
-          const [day, month, year, hour, minute] = parts;
-          const parsed = new Date(year, month - 1, day, hour, minute, 0);
-          if (!Number.isNaN(parsed.getTime())) {
-            betaEnd = parsed;
-            updateCountdown();
-          }
-        }
-      }
-    })
-    .catch(() => {});
+    }
+  })();
 </script>
 </body>
 </html>

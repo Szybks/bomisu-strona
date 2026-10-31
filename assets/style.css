@@ -212,6 +212,43 @@ body.page-exit .bottom-bar.drop-in { animation-delay: 0.06s !important; }
   background: linear-gradient(180deg, #040816 0%, #0b132d 50%, #02030a 100%);
 }
 
+/* --- TŁO Z GÓRAMI I JEZIOREM --- */
+.scenery {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(170px, 33vh, 360px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.scenery > div {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom center;
+}
+
+.scenery-land {
+  background-image: url('mountains-lake.svg');
+}
+
+.scenery-water {
+  background-image: url('lake-shimmer.svg');
+}
+
+@media (max-width: 700px) {
+  .scenery {
+    height: clamp(150px, 22vh, 230px);
+  }
+
+  .scenery > div {
+    background-position: 8% bottom;
+  }
+}
+
 /* Ostatnia klatka gwiazd zapisana przed przejściem — most między podstronami. */
 body::before {
   content: '';

@@ -55,13 +55,15 @@
   })();
 </script>
 <link rel="preload" href="assets/moon.png" as="image">
+<link rel="preload" as="image" href="assets/mountains-lake.svg">
+<link rel="preload" as="image" href="assets/lake-shimmer.svg">
 <link rel="preload" href="background.js?v=15" as="script">
 <link rel="prefetch" href="index.html">
 <link rel="prefetch" href="regulamin.html">
 <link rel="prefetch" href="polityka-prywatnosci.html">
 <link rel="prefetch" href="kontakt.html">
 <link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/style.css?v=19">
+<link rel="stylesheet" href="assets/style.css?v=20">
 <style>
 :root {
     --shop-blue-dark: #2563eb;
@@ -495,6 +497,7 @@
 
   <div class="space-bg" id="space-bg">
     <canvas id="starfield" aria-hidden="true"></canvas>
+    <div class="scenery" aria-hidden="true"><div class="scenery-land"></div><div class="scenery-water"></div></div>
   </div>
 
   <div class="moon-container" id="moon">
