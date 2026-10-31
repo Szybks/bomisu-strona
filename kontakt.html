@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kontakt — Bomisu.pl</title>
+<meta name="description" content="Skontaktuj się z Bomisu.pl przez Discord lub TikTok. Zgłoś problem techniczny, odwołanie od bana albo pytanie o płatności Tebex — czas odpowiedzi 24–48 h." />
+<link rel="canonical" href="https://bomisu.pl/kontakt.html" />
+<meta name="theme-color" content="#07040d" />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Kontakt — Bomisu.pl" />
+<meta property="og:description" content="Skontaktuj się z Bomisu.pl przez Discord lub TikTok. Zgłoś problem techniczny, odwołanie od bana albo pytanie o płatności Tebex — czas odpowiedzi 24–48 h." />
+<meta property="og:url" content="https://bomisu.pl/kontakt.html" />
+<meta property="og:image" content="https://bomisu.pl/assets/og-image.png" />
+<meta property="og:locale" content="pl_PL" />
+<meta property="og:site_name" content="Bomisu.pl" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Kontakt — Bomisu.pl" />
+<meta name="twitter:description" content="Skontaktuj się z Bomisu.pl przez Discord lub TikTok. Zgłoś problem techniczny, odwołanie od bana albo pytanie o płatności Tebex — czas odpowiedzi 24–48 h." />
+<meta name="twitter:image" content="https://bomisu.pl/assets/og-image.png" />
+<script>
+  // Nowa podstrona od razu pokazuje ostatnią klatkę gwiazd zapisaną przed
+  // przejściem, dzięki czemu tło jest ciągłe i nie mruga.
+  try {
+    const starSnapshot = sessionStorage.getItem('bgSnapshot');
+    if (starSnapshot) {
+      sessionStorage.removeItem('bgSnapshot');
+      document.documentElement.style.setProperty('--bg-snapshot', 'url("' + starSnapshot + '")');
+      document.documentElement.classList.add('bg-snapshot');
+    }
+  } catch (err) { /* brak dostępu do sessionStorage */ }
+</script>
+<script>
+  // Skala interfejsu: Full HD (1920x1080) jest bazą, a większe ekrany
+  // dostają proporcjonalnie większe elementy (np. 4K = dokładnie 2x).
+  (function () {
+    const root = document.documentElement;
+
+    function applyUiScale() {
+      const scale = Math.max(1, Math.min(window.innerWidth / 1920, window.innerHeight / 1080));
+      const width = window.innerWidth / scale;
+      const height = window.innerHeight / scale;
+
+      root.style.setProperty('--ui-scale', scale.toFixed(4));
+      root.style.setProperty('--ui-w', width.toFixed(2) + 'px');
+      root.style.setProperty('--ui-h', height.toFixed(2) + 'px');
+      root.style.setProperty('--ui-vw', (width / 100).toFixed(4) + 'px');
+      root.style.setProperty('--ui-vh', (height / 100).toFixed(4) + 'px');
+    }
+
+    applyUiScale();
+    window.addEventListener('resize', applyUiScale, { passive: true });
+    window.addEventListener('orientationchange', applyUiScale, { passive: true });
+  })();
+</script>
+<link rel="preload" href="assets/moon.png" as="image">
+<link rel="preload" href="background.js?v=15" as="script">
+<link rel="prefetch" href="index.html">
+<link rel="prefetch" href="regulamin.html">
+<link rel="prefetch" href="polityka-prywatnosci.html">
+<link rel="prefetch" href="sklep.html">
+<link rel="preload" href="assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css?v=19">
+<style>
+.contact-icon {
+    fill: #f59e0b;
+    transition: transform 0.2s, filter 0.2s;
+    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+  }
+  .contact-slot:hover .contact-icon {
+    transform: scale(1.15);
+    fill: #f59e0b;
+    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+  }
+
+  /* --- KARTY KONTAKTOWE --- */
+  .contact-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: var(--slot-bg);
+    border-top: 2px solid var(--slot-border-dark);
+    border-left: 2px solid var(--slot-border-dark);
+    border-bottom: 2px solid var(--slot-border-light);
+    border-right: 2px solid var(--slot-border-light);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    user-select: none;
+  }
+  .contact-card:hover {
+    background: #252530;
+    transform: translateX(4px);
+  }
+  .contact-card > svg {
+    width: 32px; height: 32px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  .contact-card:hover > svg { transform: scale(1.1); }
+  .contact-card h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 2px;
+    color: var(--text);
+  }
+  .contact-card p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .discord-card > svg { fill: #5865F2; }
+  .discord-card:hover {
+    border-color: #5865F2;
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.35);
+  }
+  .discord-card:hover h3 { color: #5865F2; }
+
+  .tiktok-card > svg { color: #ff0050; }
+  .tiktok-card:hover {
+    border-color: #ff0050;
+    box-shadow: 0 0 20px rgba(255, 0, 80, 0.35);
+  }
+  .tiktok-card:hover h3 { color: #ff0050; }
+
+  .ip-card > svg { fill: var(--green); }
+  .ip-card:hover {
+    border-color: var(--green);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+  }
+  .ip-card:hover h3 { color: var(--green); }
+
+  /* --- TELEFONY --- */
+  @media (max-width: 600px) {
+    .contact-card { padding: 12px 14px; gap: 12px; }
+    .contact-card > svg { width: 26px; height: 26px; }
+    .contact-card h3 { font-size: 14px; }
+    .contact-card p { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="space-bg" id="space-bg">
+    <canvas id="starfield" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="moon-container" id="moon">
+    <div class="moon-glow"></div>
+    <div class="moon-img"></div>
+  </div>
+
+  <div class="ui-layer">
+  <main class="rules-wrapper drop-in delay-1">
+    <div class="mc-panel glow-target" id="main-panel">
+
+      <h1>Kontakt</h1>
+
+      <div class="rules-text">
+        <p>Masz pytanie, problem techniczny albo chcesz coś zgłosić? Skontaktuj się z nami przez jeden z kanałów poniżej — najszybciej odpowiadamy na naszym <strong>Discordzie</strong>.</p>
+
+        <div class="contact-grid">
+          <a href="https://dc.bomisu.pl/" target="_blank" rel="noopener" class="contact-card discord-card">
+            <svg viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+              <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.2,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+            </svg>
+            <div>
+              <h3>Discord</h3>
+              <p>dc.bomisu.pl — główny kanał kontaktu</p>
+            </div>
+          </a>
+
+          <a href="https://www.tiktok.com/@bomisumc" target="_blank" rel="noopener" class="contact-card tiktok-card">
+            <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+              <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+            </svg>
+            <div>
+              <h3>TikTok</h3>
+              <p>@bomisumc — nowości, update'y i zapowiedzi</p>
+            </div>
+          </a>
+
+          <div class="contact-card ip-card" onclick="copyContactIP()" id="ip-card" title="Kliknij, aby skopiować IP">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <div>
+              <h3>IP Serwera</h3>
+              <p id="contact-ip">bomisu.pl — kliknij, aby skopiować</p>
+            </div>
+          </div>
+        </div>
+
+        <h2>W sprawie...</h2>
+        <ul>
+          <li><strong>Odwołania od banów i mute</strong> — wyłącznie przez Discorda (otwórz ticket).</li>
+          <li><strong>Problemy z płatnościami (Tebex)</strong> — Discord (ticket) z numerem transakcji.</li>
+          <li><strong>Zgłoszenia błędów</strong> — Discord, kanał <code>#bug-reports</code>.</li>
+          <li><strong>Współpraca i reklama</strong> — kontakt przez Discord.</li>
+          <li><strong>Problemy techniczne ze stroną</strong> — Discord lub ticket techniczny.</li>
+        </ul>
+
+        <h2>Czas odpowiedzi</h2>
+        <p>Staramy się odpowiadać w ciągu <strong>24–48 godzin</strong>. W weekendy i święta może to potrwać nieco dłużej. Prosimy o cierpliwość — każdy ticket jest przez nas sprawdzany.</p>
+
+        <p>⚠️ <strong>Nie wysyłaj tej samej sprawy wielokrotnie</strong> — duplikaty tylko wydłużają czas oczekiwania na odpowiedź.</p>
+
+        <p style="margin-top: 20px; color: var(--blue); font-weight: bold; text-align: center;">Do zobaczenia na serwerze i na Discordzie! 🌙</p>
+      </div>
+    </div>
+  </main>
+
+  <div class="bottom-bar drop-in delay-2">
+    <nav aria-label="Nawigacja główna">
+      <div class="hotbar glow-target" id="hotbar">
+
+        <div class="slot tiktok-slot" role="link" tabindex="0" data-href="https://www.tiktok.com/@bomisumc" data-external="true" aria-label="TikTok — otwiera się w nowej karcie">
+          <svg aria-hidden="true" class="tiktok-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(-8, -8)"/>
+            <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" transform="translate(8, 8)"/>
+            <path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+          </svg>
+          <div class="tooltip">
+            <div class="tooltip-title">TikTok</div>
+            <div class="tooltip-desc">Zobacz naszego TikToka! Kliknij, aby wejść.</div>
+          </div>
+        </div>
+
+        <div class="slot rules-slot" role="link" tabindex="0" data-href="regulamin.html" aria-label="Regulamin">
+          <svg aria-hidden="true" class="rules-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
+          </svg>
+          <div class="tooltip">
+            <div class="tooltip-title">Regulamin</div>
+            <div class="tooltip-desc">Zapoznaj się z zasadami panującymi na serwerze.</div>
+          </div>
+        </div>
+
+        <div class="slot"></div>
+
+        <div class="slot contact-slot" role="link" tabindex="0" data-href="kontakt.html" aria-label="Kontakt" aria-current="page">
+          <svg aria-hidden="true" class="contact-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+          <div class="tooltip">
+            <div class="tooltip-title">Kontakt</div>
+            <div class="tooltip-desc">Jesteś na tej stronie.</div>
+          </div>
+        </div>
+
+        <div class="slot home-slot" role="link" tabindex="0" data-href="index.html" aria-label="Strona główna">
+          <svg aria-hidden="true" class="home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          <div class="tooltip">
+            <div class="tooltip-title">Strona Główna</div>
+            <div class="tooltip-desc">Wróć do menu głównego.</div>
+          </div>
+        </div>
+
+        <div class="slot shop-slot" role="link" tabindex="0" data-href="sklep.html" aria-label="Sklep">
+          <svg aria-hidden="true" class="shop-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12zm-7-8c-1.66 0-3-1.34-3-3H7c0 2.76 2.24 5 5 5s5-2.24 5-5h-2c0 1.66-1.34 3-3 3z"/>
+          </svg>
+          <div class="tooltip">
+            <div class="tooltip-title">Sklep</div>
+            <div class="tooltip-desc">Wybierz kwotę i wesprzyj serwer.</div>
+          </div>
+        </div>
+
+        <div class="slot"></div>
+
+        <div class="slot privacy-slot" role="link" tabindex="0" data-href="polityka-prywatnosci.html" aria-label="Polityka prywatności">
+          <svg aria-hidden="true" class="privacy-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+          </svg>
+          <div class="tooltip">
+            <div class="tooltip-title">Polityka Prywatności</div>
+            <div class="tooltip-desc">Informacje o przetwarzaniu danych i ciasteczkach.</div>
+          </div>
+        </div>
+
+        <div class="slot discord-slot" role="link" tabindex="0" data-href="https://dc.bomisu.pl/" data-external="true" aria-label="Discord — otwiera się w nowej karcie">
+          <svg aria-hidden="true" class="discord-icon" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+            <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.2,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+          </svg>
+          <div class="tooltip">
+            <div class="tooltip-title">Discord</div>
+            <div class="tooltip-desc">Dołącz do naszej społeczności! Kliknij, aby wejść.</div>
+          </div>
+        </div>
+
+      </div>
+    </nav>
+  </div>
+
+  </div><!-- /.ui-layer -->
+
+<script src="background.js?v=15"></script>
+<script>
+  // ====== KOPIUJ IP (karta kontaktowa) ======
+  function copyContactIP() {
+    const label = document.getElementById('contact-ip');
+    navigator.clipboard.writeText('bomisu.pl').then(() => {
+      const old = label.textContent;
+      label.textContent = '✅ Skopiowano: bomisu.pl';
+      setTimeout(() => { label.textContent = old; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
